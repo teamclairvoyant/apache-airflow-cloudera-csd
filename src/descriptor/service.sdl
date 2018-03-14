@@ -15,7 +15,8 @@
       "label" : "Master",
       "pluralLabel" : "Masters",
       "startRunner" : {
-        "program" : "scripts/airflow.sh"
+        "program" : "scripts/airflow.sh",
+        "args" : ["--dbtype" : "mysql", "--dbhost" : "localhost","--dbuser" : "airflow","--dbpassword" : "hahaha","--dbport" : "8080","--rabbitmqhost" : "localhost","--version" : "1.7."]
       },
       "topology" : { "minInstances" : 1 },
       "logging" : {
