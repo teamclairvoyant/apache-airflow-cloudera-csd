@@ -43,7 +43,6 @@ print_help () {
   echo "          -r|--rabbitmqhost  <hostname>"
   echo "          [airflow version]"
   echo "          [-h|--help]"
-  echo "          [-v|--version]"
   echo ""
   echo "   ex.  $1 --dbtype postgresql --dbhost hostA --dbuser airflow --dbpassword bar --rabbitmqhost hostB"
   exit 1
