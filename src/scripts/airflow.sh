@@ -134,7 +134,7 @@ while [[ $1 = -* ]]; do
       print_help "$(basename $0)"
       ;;
     -v|--version)
-      echo "Install Airflow."
+      echo "Installing Airflow Version 1.8.0."
       exit 0
       ;;
     *)
@@ -168,10 +168,12 @@ fi
 check_root
 
 # main
+
+## Theoretically we would just remove this check
 echo "Installing Airflow..."
-if [ -n "$1" ]; then
-  VERSION="==$1"
-fi
+#if [ -n "$1" ]; then
+#  VERSION="==$1"
+#fi
 
 if ! getent group airflow >/dev/null; then
   echo "** Installing airflow group."
@@ -208,6 +210,8 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   fi
 
   echo "** Installing Airflow."
+  VERSION="==1.8.0"
+  # If version usage ever extends to >=1.9.0, it would need to be installed as "apache-airflow"
   pip $PIPOPTS install airflow${VERSION}
   # Fix a bug in celery 4
   pip $PIPOPTS install 'celery<4'
