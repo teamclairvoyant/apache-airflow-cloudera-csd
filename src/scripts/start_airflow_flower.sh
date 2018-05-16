@@ -1,0 +1,1 @@
+exec airflow flower

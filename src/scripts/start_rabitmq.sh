@@ -1,0 +1,1 @@
+exec aabbitmq-server start
