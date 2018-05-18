@@ -1,1 +1,1 @@
-exec aabbitmq-server start
+exec rabbitmq-server start
