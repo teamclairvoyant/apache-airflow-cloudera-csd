@@ -1,1 +1,1 @@
-exec airflow flower
+sudo -u airflow bash -c 'exec airflow flower'

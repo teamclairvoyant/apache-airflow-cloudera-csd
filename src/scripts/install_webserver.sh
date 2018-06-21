@@ -189,27 +189,7 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   echo "** Installing software dependencies via YUM."
   yum $YUMOPTS groupinstall "Development tools"
   yum $YUMOPTS install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel python-devel wget cyrus-sasl-devel.x86_64
-  echo "Break point..."
-  #echo "** Installing python pip."
-  #yum $YUMOPTS install epel-release || rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-${OSREL}.noarch.rpm
-  #yum $YUMOPTS install python-pip
-
-  #echo "** Installing python setuptools."
-  #yum $YUMOPTS install python-setuptools
-  #easy_install pip
-
-  echo "** Installing python easy_install."
-  pushd /tmp
-  wget -q https://bootstrap.pypa.io/ez_setup.py
-  #python ez_setup.py
-  popd
-  #if [ ! -f /usr/bin/pip ]; then
-  #  echo "** Installing python pip."
-  #  easy_install pip || \
-  #  ( yum $YUMOPTS reinstall python-setuptools && \
-  #  easy_install pip )
-  #fi
-
+  
   echo "** Installing Airflow."
   pip $PIPOPTS install airflow${VERSION}
   # Fix a bug in celery 4
@@ -220,7 +200,6 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
     if [ -z "$DB_PORT" ]; then DB_PORT=$MYSQL_PORT; fi
     #####
     echo "** Installing Airflow[mysql]."
-    #yum $YUMOPTS install mysql-devel
     pip $PIPOPTS install airflow[mysql]
     DBCONNSTRING="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
 
@@ -228,14 +207,10 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
     if [ -z "$DB_PORT" ]; then DB_PORT=$PGSQL_PORT; fi
     #####
     echo "** Installing Airflow[postgres]."
-    yum $YUMOPTS install postgresql-devel
     pip $PIPOPTS install airflow[postgres]
     DBCONNSTRING="postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
   fi
 
-  yum install rabbitmq-server 
-  echo "DBCONNSTRING is "
-  echo $DBCONNSTRING
   #####
   echo "** Installing Airflow[kerberos]."
   pip $PIPOPTS install airflow[kerberos]==1.7.1.3
@@ -248,9 +223,6 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   #pip $PIPOPTS install airflow[hdfs]
   #pip $PIPOPTS install airflow[ldap]
   pip $PIPOPTS install airflow[password]==1.7.1.3
-  echo "** Installing Airflow[rabbitmq]."
-  pip $PIPOPTS install airflow[rabbitmq]==1.7.1.3
-  #pip $PIPOPTS install airflow[s3]
 
   echo "** Installing Airflow configs."
   install -o airflow -g airflow -m0750 -d /var/lib/airflow
@@ -280,7 +252,6 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
 
   #echo "** Initializing Airflow database."
   su airflow -c 'airflow initdb'
-  #airflow initdb
   #airflow -c '/tmp/mkuser.sh'
 
  

@@ -24,12 +24,14 @@ if [ $DEBUG ]; then ECHO=echo; fi
 MYSQL_PORT=3306
 PGSQL_PORT=5432
 
-
-echo "User name is $(who am i)"
-echo $USER
 ##### STOP CONFIG ####################################################
 PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin
 FILEPATH=`dirname $0`
+echo "FILEPATH is"
+echo $FILEPATH
+echo $pwd
+echo "User name is"
+echo "$USER"
 PWCMD='< /dev/urandom tr -dc A-Za-z0-9 | head -c 20;echo'
 #PIPOPTS="-q"
 YUMOPTS="-y -e1 -d1"
@@ -178,18 +180,22 @@ fi
 
 if ! getent group airflow >/dev/null; then
   echo "** Installing airflow group."
+  #sudo groupadd $AIRFLOWGID -r airflow
   groupadd $AIRFLOWGID -r airflow
 fi
 if ! getent passwd airflow >/dev/null; then
   echo "** Installing airflow user."
+  #sudo useradd $AIRFLOWUID -g airflow -c "Airflow Daemon" -m -d /var/lib/airflow -k /dev/null -r airflow
   useradd $AIRFLOWUID -g airflow -c "Airflow Daemon" -m -d /var/lib/airflow -k /dev/null -r airflow
 fi
 
 if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   echo "** Installing software dependencies via YUM."
+  #sudo yum $YUMOPTS groupinstall "Development tools"
   yum $YUMOPTS groupinstall "Development tools"
+  #sudo yum $YUMOPTS install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel python-devel wget cyrus-sasl-devel.x86_64
   yum $YUMOPTS install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel python-devel wget cyrus-sasl-devel.x86_64
-  echo "Break point..."
+
   #echo "** Installing python pip."
   #yum $YUMOPTS install epel-release || rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-${OSREL}.noarch.rpm
   #yum $YUMOPTS install python-pip
@@ -228,17 +234,18 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
     if [ -z "$DB_PORT" ]; then DB_PORT=$PGSQL_PORT; fi
     #####
     echo "** Installing Airflow[postgres]."
+    #sudo yum $YUMOPTS install postgresql-devel
     yum $YUMOPTS install postgresql-devel
     pip $PIPOPTS install airflow[postgres]
     DBCONNSTRING="postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
   fi
 
-  yum install rabbitmq-server 
   echo "DBCONNSTRING is "
   echo $DBCONNSTRING
   #####
   echo "** Installing Airflow[kerberos]."
   pip $PIPOPTS install airflow[kerberos]==1.7.1.3
+  #sudo yum $YUMOPTS install libffi-devel
   yum $YUMOPTS install libffi-devel
   echo "** Installing Airflow[crypto]."
   pip $PIPOPTS install airflow[crypto]==1.7.1.3
@@ -253,24 +260,37 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   #pip $PIPOPTS install airflow[s3]
 
   echo "** Installing Airflow configs."
-  install -o airflow -g airflow -m0750 -d /var/lib/airflow
-  install -o airflow -g airflow -m0750 -d /var/lib/airflow/plugins
-  install -o airflow -g airflow -m0750 -d /var/lib/airflow/dags
+  #sudo install -o root -g airflow -m0750 -d /var/lib/airflow
+  install -o root -g airflow -m0750 -d /var/lib/airflow
+  #sudo install -o root -g airflow -m0750 -d /var/lib/airflow/plugins
+  install -o root -g airflow -m0750 -d /var/lib/airflow/plugins
+  #sudo install -o root -g airflow -m0750 -d /var/lib/airflow/dags
+  install -o root -g airflow -m0750 -d /var/lib/airflow/dags
+  #sudo install -o airflow -g airflow -m0750 -d /var/log/airflow
   install -o airflow -g airflow -m0750 -d /var/log/airflow
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.profile /etc/profile.d/airflow.sh
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/*.service /etc/systemd/system/
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow /etc/sysconfig/airflow
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.conf /etc/tmpfiles.d/airflow.conf
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.cfg /var/lib/airflow/
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/unittests.cfg /var/lib/airflow/
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.logrotate /etc/logrotate.d/
-  install -o airflow -g airflow -m0755 ${FILEPATH}/airflow/mkuser.sh /tmp/mkuser.sh
+  #sudo install -o root -g root -m0644 ${FILEPATH}/airflow/airflow.profile /etc/profile.d/airflow.sh
+  install -o root -g root -m0644 ${FILEPATH}/airflow/airflow.profile /etc/profile.d/airflow.sh
+  #sudo install -o root -g root -m0644 ${FILEPATH}/airflow/*.service /etc/systemd/system/
+  install -o root -g root -m0644 ${FILEPATH}/airflow/*.service /etc/systemd/system/
+  #sudo install -o root -g root -m0644 ${FILEPATH}/airflow/airflow /etc/sysconfig/airflow
+  install -o root -g root -m0644 ${FILEPATH}/airflow/airflow /etc/sysconfig/airflow
+  #sudo install -o root -g root -m0644 ${FILEPATH}/airflow/airflow.conf /etc/tmpfiles.d/airflow.conf
+  install -o root -g root -m0644 ${FILEPATH}/airflow/airflow.conf /etc/tmpfiles.d/airflow.conf
+  #sudo install -o root -g root -m0644 ${FILEPATH}/airflow/airflow.cfg /var/lib/airflow/
+  install -o root -g root -m0644 ${FILEPATH}/airflow/airflow.cfg /var/lib/airflow/
+  #sudo install -o root -g root -m0644 ${FILEPATH}/airflow/unittests.cfg /var/lib/airflow/
+  install -o root -g root -m0644 ${FILEPATH}/airflow/unittests.cfg /var/lib/airflow/
+  #sudo install -o root -g root -m0644 ${FILEPATH}/airflow/airflow.logrotate /etc/logrotate.d/
+  install -o root -g root -m0644 ${FILEPATH}/airflow/airflow.logrotate /etc/logrotate.d/
+  #sudo install -o root -g root -m0755 ${FILEPATH}/airflow/mkuser.sh /tmp/mkuser.sh
+  install -o root -g root -m0755 ${FILEPATH}/airflow/mkuser.sh /tmp/mkuser.sh
 
   systemd-tmpfiles --create --prefix=/run
 
   CRYPTOKEY=`eval $PWCMD`
   FERNETCRYPTOKEY=`python -c 'from cryptography.fernet import Fernet;key=Fernet.generate_key().decode();print key'`
 
+  #sudo sed -e "s|RABBITMQHOST|$RABBITMQ_HOST|" \
   sed -e "s|RABBITMQHOST|$RABBITMQ_HOST|" \
       -e "s|LOCALHOST|`hostname`|" \
       -e "s|DBCONNSTRING|$DBCONNSTRING|" \
@@ -278,10 +298,9 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
       -e "s|cryptography_not_found_storing_passwords_in_plain_text|$FERNETCRYPTOKEY|" \
       -i /var/lib/airflow/airflow.cfg
 
-  #echo "** Initializing Airflow database."
-  su airflow -c 'airflow initdb'
-  #airflow initdb
-  #airflow -c '/tmp/mkuser.sh'
+  echo "** Initializing Airflow database."
+  airflow -c 'airflow initdb'
+  airflow -c '/tmp/mkuser.sh'
 
  
 elif [ "$OS" == Debian -o "$OS" == Ubuntu ]; then
