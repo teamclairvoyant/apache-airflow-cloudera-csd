@@ -1,1 +1,1 @@
-sudo -u airflow bash -c 'exec airflow worker'
+su - airflow -c 'exec airflow worker'

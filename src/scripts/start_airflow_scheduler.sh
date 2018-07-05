@@ -1,1 +1,1 @@
-sudo -u airflow bash -c 'exec airflow scheduler'
+su - airflow -c 'exec airflow scheduler'

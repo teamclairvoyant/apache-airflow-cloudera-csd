@@ -224,6 +224,8 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   #pip $PIPOPTS install airflow[ldap]
   pip $PIPOPTS install airflow[password]==1.7.1.3
 
+  mkdir -p /var/lib/airflow/conf
+
   echo "** Installing Airflow configs."
   install -o airflow -g airflow -m0750 -d /var/lib/airflow
   install -o airflow -g airflow -m0750 -d /var/lib/airflow/plugins
@@ -233,7 +235,7 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/*.service /etc/systemd/system/
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow /etc/sysconfig/airflow
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.conf /etc/tmpfiles.d/airflow.conf
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.cfg /var/lib/airflow/
+  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.cfg /var/lib/airflow/conf/
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/unittests.cfg /var/lib/airflow/
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.logrotate /etc/logrotate.d/
   install -o airflow -g airflow -m0755 ${FILEPATH}/airflow/mkuser.sh /tmp/mkuser.sh
@@ -248,8 +250,13 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
       -e "s|DBCONNSTRING|$DBCONNSTRING|" \
       -e "s|temporary_key|$CRYPTOKEY|" \
       -e "s|cryptography_not_found_storing_passwords_in_plain_text|$FERNETCRYPTOKEY|" \
-      -i /var/lib/airflow/airflow.cfg
+      -i /var/lib/airflow/conf/airflow.cfg
+  
+  echo "Exit code for sed is" $?
 
+  ln -s /var/lib/airflow/conf/airflow.cfg /var/lib/airflow/airflow.cfg
+
+  echo "Soft link exit code is " $?
   #echo "** Initializing Airflow database."
   su airflow -c 'airflow initdb'
   #airflow -c '/tmp/mkuser.sh'

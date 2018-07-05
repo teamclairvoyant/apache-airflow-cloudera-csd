@@ -46,15 +46,224 @@
       "required" : "true"
     },
     {
-      "name" : "RabbitMQ.ipadd",
+      "name" : "RabbitMQ.ipaddress",
       "label" : "RabbitMQ Ip address",
       "description" : "Ip address of the RabbitMQ node",
       "type" : "string",
       "default" : "",
       "configurableInWizard" : true,
       "required" : "true"
+    },
+    {
+      "name" : "airflow_home",
+      "label" : "Airflow Home",
+      "description" : "The home folder for airflow, default is ~/airflow.",
+      "configName" : "airflow.home",
+      "required" : "true",
+      "type" : "string",
+      "default" : "/var/lib/airflow"
+    },
+    {
+      "name" : "dags_folder",
+      "label" : "Dags Folder",
+      "description" : "The folder where your airflow pipelines live, most likely a subfolder in a code repository",
+      "configName" : "dags.folder",
+      "required" : "true",
+      "type" : "string",
+      "default" : "/var/lib/airflow/dags"
+    },
+    {
+      "name" : "base_log_folder",
+      "label" : "Base Log Folder",
+      "description" : "The folder where airflow should store its log files.",
+      "configName" : "base.log.folder",
+      "required" : "true",
+      "type" : "string",
+      "default" : "/var/log/airflow"
+    },
+    {
+      "name" : "remote_base_log_folder",
+      "label" : "Remote Base Log Folder",
+      "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
+  "configName" : "remote.base.log.folder",
+      "required" : "false",
+      "type" : "string",
+      "default" : ""
+    },
+    {
+      "name" : "remote_log_conn_id",
+      "label" : "Remote Log Conn Id",
+      "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
+  "configName" : "remote.log.conn.id",
+      "required" : "false",
+      "type" : "string",
+      "default" : ""
+    },
+    {
+      "name" : "encrypt_s3_logs",
+      "label" : "Encrypt S3 Logs",
+      "description" : "Use server-side encryption for logs stored in S3.",
+  "configName" : "encrypt.s3.logs",
+      "required" : "false",
+      "type" : "string",
+      "default" : "False"
+    },
+    {
+      "name" : "executor",
+      "label" : "Executor",
+      "description" : "The executor class that airflow should use. Choices include SequentialExecutor, LocalExecutor, CeleryExecutor",
+  "configName" : "executor",
+      "required" : "true",
+      "type" : "string",
+      "default" : "CeleryExecutor"
+    },
+    {
+      "name" : "sql_alchemy_conn",
+      "label" : "SQL Alchemy Conn",
+      "description" : "The SqlAlchemy connection string to the metadata database.SqlAlchemy supports many different database engine, more information their website.",
+  "configName" : "sql.alchemy.conn",
+      "required" : "true",
+      "type" : "string",
+      "default" : "DBCONNSTRING"
+    },
+    {
+      "name" : "sql_alchemy_pool_size",
+      "label" : "SQL Alchemy Pool Size",
+      "description" : "The SqlAlchemy pool size is the maximum number of database connections in the pool.",
+  "configName" : "sql.alchemy.pool.size",
+      "required" : "true",
+      "type" : "string",
+      "default" : "5"
+    },
+    {
+      "name" : "sql_alchemy_pool_recycle",
+      "label" : "SQL Alchemy Pool Recycle",
+      "description" : "The SqlAlchemy pool recycle is the number of seconds a connection can be idle in the pool before it is invalidated. This config does not apply to sqlite.",
+  "configName" : "sql.alchemy.pool.recycle",
+      "required" : "true",
+      "type" : "string",
+      "default" : "3600"
+    },
+    {
+      "name" : "parallelism",
+      "label" : "parallelism",
+      "description" : "The amount of parallelism as a setting to the executor. This defines the max number of task instances that should run simultaneously on this airflow installation.",
+  "configName" : "parallelism",
+      "required" : "true",
+      "type" : "string",
+      "default" : "32"
+    },
+    {
+      "name" : "dag_concurrency",
+      "label" : "Dag Concurrency",
+      "description" : "The number of task instances allowed to run concurrently by the scheduler",
+  "configName" : "dag.concurrency",
+      "required" : "true",
+      "type" : "string",
+      "default" : "16"
+    },
+    {
+      "name" : "dags_are_paused_at_creation",
+      "label" : "Dags Are Paused At Creation",
+      "description" : "Are DAGs paused by default at creation",
+  "configName" : "dags.are.paused.at.creation",
+      "required" : "true",
+      "type" : "string",
+      "default" : "True"
+    },
+    {
+      "name" : "non_pooled_task_slot_count",
+      "label" : "Non Pooled Task Slot Count",
+      "description" : "When not using pools, tasks are run in the 'default pool', whose size is guided by this config element",
+  "configName" : "non.pooled.task.slot.count",
+      "required" : "true",
+      "type" : "string",
+      "default" : "128"
+    },
+    {
+      "name" : "max_active_runs_per_dag",
+      "label" : "Max Active Runs Per Dag",
+      "description" : "The maximum number of active DAG runs per DAG",
+  "configName" : "max.active.runs.per.dag",
+      "required" : "true",
+      "type" : "string",
+      "default" : "16"
+    },
+    {
+      "name" : "default_owner",
+      "label" : "Default Owner",
+      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via 'default_args'",
+  "configName" : "default.owner",
+      "required" : "true",
+      "type" : "string",
+      "default" : "airflow"
+    },
+    {
+      "name" : "web_server_port",
+      "label" : "Web Server Port",
+      "description" : "The port on which to run the web server",
+  "configName" : "web.server.port",
+      "required" : "true",
+      "type" : "port",
+      "default" : 8080
     }
   ],
+  "gateway" : {
+    "alternatives" : {
+      "name" : "airflow",
+      "priority" : 50,
+      "linkRoot" : "/tmp/airflowParent"
+    },
+    "scriptRunner" : {
+      "program" : "scripts/update_cfg.sh",
+      "environmentVariables" : {
+        "airflow_home" : "${airflow_home}",
+        "dags_folder" : "${dags_folder}",
+        "base_log_folder" : "${base_log_folder}",
+        "remote_base_log_folder" : "${remote_base_log_folder}",
+        "remote_log_conn_id" : "${remote_log_conn_id}",
+        "encrypt_s3_logs" : "${encrypt_s3_logs}",
+        "executor" : "${executor}",
+        "sql_alchemy_conn" : "${sql_alchemy_conn}",
+        "sql_alchemy_pool_size" : "${sql_alchemy_pool_size}",
+        "sql_alchemy_pool_recycle" : "${sql_alchemy_pool_recycle}",
+        "parallelism" : "${parallelism}",
+        "dag_concurrency" : "${dag_concurrency}",
+        "dags_are_paused_at_creation" : "${dags_are_paused_at_creation}",
+        "non_pooled_task_slot_count" : "${non_pooled_task_slot_count}",
+        "max_active_runs_per_dag" : "${max_active_runs_per_dag}",
+        "default_owner" : "${default_owner}",
+        "web_server_port" : "${web_server_port}"
+      }
+    },
+    "configWriter" : {
+      "generators" : [
+        {
+          "filename" : "airflow/airflowTest.cfg",
+          "configFormat" : "properties",
+          "includedParams" : [
+            "airflow_home",
+            "dags_folder",
+            "base_log_folder",
+            "remote_base_log_folder",
+            "remote_log_conn_id",
+            "encrypt_s3_logs",
+            "executor",
+            "sql_alchemy_conn",
+            "sql_alchemy_pool_size",
+            "sql_alchemy_pool_recycle",
+            "parallelism",
+            "dag_concurrency",
+            "dags_are_paused_at_creation",
+            "non_pooled_task_slot_count",
+            "max_active_runs_per_dag",
+            "default_owner",
+            "web_server_port"
+          ]
+        }
+      ]
+    }
+  },
   "inExpressWizard" : true,
   "icon" : "images/airflow.png",
   "commands": [
@@ -125,7 +334,7 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipadd}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
          }
         }
       ],
@@ -137,172 +346,10 @@
          "modifiable" : true,
          "loggingType" : "log4j"
       },
-      "parameters" : [
-        {
-          "name" : "airflow_home",
-          "label" : "Airflow Home",
-          "description" : "The home folder for airflow, default is ~/airflow.",
-          "configName" : "airflow.home",
-          "required" : "true",
-          "type" : "string",
-          "default" : "/root/airflow"
-        },
-        {
-          "name" : "dags_folder",
-          "label" : "Dags Folder",
-          "description" : "The folder where your airflow pipelines live, most likely a subfolder in a code repository",
-          "configName" : "dags.folder",
-          "required" : "true",
-          "type" : "string",
-          "default" : "/root/airflow/dags"
-        },
-        {
-          "name" : "base_log_folder",
-          "label" : "Base Log Folder",
-          "description" : "The folder where airflow should store its log files.",
-          "configName" : "base.log.folder",
-          "required" : "true",
-          "type" : "string",
-          "default" : "/root/airflow/logs"
-        },
-        {
-          "name" : "remote_base_log_folder",
-          "label" : "Remote Base Log Folder",
-          "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
-      "configName" : "remote.base.log.folder",
-          "required" : "false",
-          "type" : "string",
-          "default" : ""
-        },
-        {
-          "name" : "remote_log_conn_id",
-          "label" : "Remote Log Conn Id",
-          "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
-      "configName" : "remote.log.conn.id",
-          "required" : "false",
-          "type" : "string",
-          "default" : ""
-        },
-        {
-          "name" : "encrypt_s3_logs",
-          "label" : "Encrypt S3 Logs",
-          "description" : "Use server-side encryption for logs stored in S3.",
-      "configName" : "encrypt.s3.logs",
-          "required" : "false",
-          "type" : "string",
-          "default" : "False"
-        },
-        {
-          "name" : "executor",
-          "label" : "Executor",
-          "description" : "The executor class that airflow should use. Choices include SequentialExecutor, LocalExecutor, CeleryExecutor",
-      "configName" : "executor",
-          "required" : "true",
-          "type" : "string",
-          "default" : "CeleryExecutor"
-        },
-        {
-          "name" : "sql_alchemy_conn",
-          "label" : "SQL Alchemy Conn",
-          "description" : "The SqlAlchemy connection string to the metadata database.SqlAlchemy supports many different database engine, more information their website.",
-      "configName" : "sql.alchemy.conn",
-          "required" : "true",
-          "type" : "string",
-          "default" : "mysql://root:{{ root_password }}@{ansible_hostname}:3306/airflow"
-        },
-        {
-          "name" : "sql_alchemy_pool_size",
-          "label" : "SQL Alchemy Pool Size",
-          "description" : "The SqlAlchemy pool size is the maximum number of database connections in the pool.",
-      "configName" : "sql.alchemy.pool.size",
-          "required" : "true",
-          "type" : "string",
-          "default" : "5"
-        },
-        {
-          "name" : "sql_alchemy_pool_recycle",
-          "label" : "SQL Alchemy Pool Recycle",
-          "description" : "The SqlAlchemy pool recycle is the number of seconds a connection can be idle in the pool before it is invalidated. This config does not apply to sqlite.",
-      "configName" : "sql.alchemy.pool.recycle",
-          "required" : "true",
-          "type" : "string",
-          "default" : "3600"
-        },
-        {
-          "name" : "parallelism",
-          "label" : "parallelism",
-          "description" : "The amount of parallelism as a setting to the executor. This defines the max number of task instances that should run simultaneously on this airflow installation.",
-      "configName" : "parallelism",
-          "required" : "true",
-          "type" : "string",
-          "default" : "32"
-        },
-        {
-          "name" : "dag_concurrency",
-          "label" : "Dag Concurrency",
-          "description" : "The number of task instances allowed to run concurrently by the scheduler",
-      "configName" : "dag.concurrency",
-          "required" : "true",
-          "type" : "string",
-          "default" : "16"
-        },
-        {
-          "name" : "dags_are_paused_at_creation",
-          "label" : "Dags Are Paused At Creation",
-          "description" : "Are DAGs paused by default at creation",
-      "configName" : "dags.are.paused.at.creation",
-          "required" : "true",
-          "type" : "string",
-          "default" : "True"
-        },
-        {
-          "name" : "non_pooled_task_slot_count",
-          "label" : "Non Pooled Task Slot Count",
-          "description" : "When not using pools, tasks are run in the 'default pool', whose size is guided by this config element",
-      "configName" : "non.pooled.task.slot.count",
-          "required" : "true",
-          "type" : "string",
-          "default" : "128"
-        },
-        {
-          "name" : "max_active_runs_per_dag",
-          "label" : "Max Active Runs Per Dag",
-          "description" : "The maximum number of active DAG runs per DAG",
-      "configName" : "max.active.runs.per.dag",
-          "required" : "true",
-          "type" : "string",
-          "default" : "16"
-        },
-        {
-          "name" : "default_owner",
-          "label" : "Default Owner",
-          "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via 'default_args'",
-      "configName" : "default.owner",
-          "required" : "true",
-          "type" : "string",
-          "default" : "airflow"
-        },
-        {
-          "name" : "web_server_port",
-          "label" : "Web Server Port",
-          "description" : "The port on which to run the web server",
-      "configName" : "web.server.port",
-          "required" : "true",
-          "type" : "port",
-          "default" : 8080
-        }
-      ],
-       "configWriter" : {
-        "generators" : [
-          {
-            "filename" : "airflow.cfg",
-            "configFormat" : "properties"
-          }
-        ]
-      },
       "stopRunner" : {
          "runner" : {
-             "program" : "scripts/stop_airflow_webserver.sh"
+             "program" : "scripts/stop_airflow_webserver.sh",
+	     "args" : ["${base_log_folder}"]
         }
       }
     },
@@ -322,7 +369,7 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipadd}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
          }
         }
       ]
@@ -343,7 +390,7 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipadd}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
          }
         }
       ],
@@ -369,7 +416,7 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipadd}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
          }
         }
       ],
@@ -398,7 +445,7 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipadd}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
          }
         }
       ]

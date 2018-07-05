@@ -1,1 +1,1 @@
-sudo -u airflow bash -c 'exec airflow webserver'
+su - airflow -c 'exec airflow webserver'

@@ -153,7 +153,7 @@ echo "**************************************************************************
 # Check to see if we are on a supported OS.
 # Currently only EL7.
 discover_os
-if [ \( "$OS" != RedHatEnterpriseServer -o "$OS" != CentOS \) -a "$OSREL" != 7 ]; then
+if [ \( "$OS" != RedHatEnterpriseServer -o "$OS" != CentOS \) -a "$OSREL" != 6 ]; then
 #if [ "$OS" != RedHatEnterpriseServer -a "$OS" != CentOS -a "$OS" != Debian -a "$OS" != Ubuntu ]; then
   echo "ERROR: Unsupported OS."
   exit 3
@@ -211,7 +211,7 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   #fi
 
   echo "** Installing Airflow."
-  pip $PIPOPTS install airflow${VERSION}
+  pip $PIPOPTS install airflow==1.7.1.3
   # Fix a bug in celery 4
   pip $PIPOPTS install 'celery<4'
   pip $PIPOPTS install airflow[celery]
@@ -220,7 +220,7 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
     if [ -z "$DB_PORT" ]; then DB_PORT=$MYSQL_PORT; fi
     #####
     echo "** Installing Airflow[mysql]."
-    #yum $YUMOPTS install mysql-devel
+    yum $YUMOPTS install mysql-devel
     pip $PIPOPTS install airflow[mysql]
     DBCONNSTRING="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
 
@@ -252,6 +252,8 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   pip $PIPOPTS install airflow[rabbitmq]==1.7.1.3
   #pip $PIPOPTS install airflow[s3]
 
+  mkdir -p /var/lib/airflow/conf
+
   echo "** Installing Airflow configs."
   install -o airflow -g airflow -m0750 -d /var/lib/airflow
   install -o airflow -g airflow -m0750 -d /var/lib/airflow/plugins
@@ -261,7 +263,7 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/*.service /etc/systemd/system/
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow /etc/sysconfig/airflow
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.conf /etc/tmpfiles.d/airflow.conf
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.cfg /var/lib/airflow/
+  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.cfg /var/lib/airflow/conf/
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/unittests.cfg /var/lib/airflow/
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.logrotate /etc/logrotate.d/
   install -o airflow -g airflow -m0755 ${FILEPATH}/airflow/mkuser.sh /tmp/mkuser.sh
@@ -276,7 +278,9 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
       -e "s|DBCONNSTRING|$DBCONNSTRING|" \
       -e "s|temporary_key|$CRYPTOKEY|" \
       -e "s|cryptography_not_found_storing_passwords_in_plain_text|$FERNETCRYPTOKEY|" \
-      -i /var/lib/airflow/airflow.cfg
+      -i /var/lib/airflow/conf/airflow.cfg
+
+  ln -s /var/lib/airflow/conf/airflow.cfg /var/lib/airflow/airflow.cfg
 
   #echo "** Initializing Airflow database."
   su airflow -c 'airflow initdb'
