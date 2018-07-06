@@ -1,24 +1,24 @@
 #!/bin/bash
 
 function replace {
+    # sed -i -e "s/${1}/${2}/g" $3
     perl -pi -e "s#${1}#${2}#g" $3
 }
 
-dags_folder=testing
 function prepare_airflow_cfg {
-    counter=0
+    echo $remote_base_log_folder >> /tmp/test2.txt
     while read line; do
-        counter=$((counter+1))
         key=$(cut -d '=' -f1 <<< "$line" | xargs)
-        value=$(cut -d '=' -f2 <<< "$line" | xargs)
+        value=$(cut -d '=' -f2 <<< "$line")
+        echo "Key : '${key}', value : '${value}'" >> /tmp/test.txt
         if [[ ${!key} ]]; then
             if [[ "$key" != "#" ]]; then
-                echo "Key : ${key}, value : ${value}, keyvalue : ${!key}, linenumber : $counter" >> /tmp/test.txt
-                replace "$key = ${value}" "$key = ${!key}" /tmp/airflow.cfg
+                echo "'$key =${value}' '$key = ${!key}'" >> /tmp/test.txt
+                replace "$key =${value}" "$key = ${!key}" ${airflow_home}/airflow.cfg
             fi
         fi
 
-    done < /tmp/airflow.cfg
+    done < ${airflow_home}/airflow.cfg
 
 }
 
