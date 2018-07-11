@@ -5,6 +5,10 @@
 2. Centos 6 or RedHatEnterpriseServer 6
 3. Incase postgres is used: Postgres has to be installed and a database should be created for which the username and password has to be provided during the CSD installation.
 
+## Installing the CSD
+1. Copy the jar file to /opt/cloudera/csd location
+2. Restart the cloudera server
+
 ## Structure of the service.sdl file
 service.sdl file is used to manage all the configurations and commands for the services and roles in the CSD.
 
