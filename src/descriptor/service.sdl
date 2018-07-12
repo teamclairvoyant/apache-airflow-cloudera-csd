@@ -13,7 +13,7 @@
       "label": "Database Type",
       "description": "Type of the database for the Airflow to use",
       "type": "string",
-      "default": "",
+      "default": "mysql",
       "configurableInWizard": true,
       "validValues" : [ "postgresql", "mysql"],
       "required" : "true"
@@ -23,7 +23,7 @@
       "label": "Database Host",
       "description": "Ip Address of the host where the Database has to be installed or already installed",
       "type": "string",
-      "default": "",
+      "default": "localhost",
       "configurableInWizard": true,
       "required" : "true"
     },
@@ -32,7 +32,7 @@
       "label": "Database Username",
       "description": "Username of the database",
       "type": "string",
-      "default": "",
+      "default": "root",
       "configurableInWizard": true,
       "required" : "true"
     },
@@ -41,6 +41,24 @@
       "label": "Database Password",
       "description": "Password of the above username to access the database",
       "type": "password",
+      "default": "cloudera",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
+      "name": "pip_home",
+      "label": "PIP Home",
+      "description": "Location of the pip to be used. If no pip is specified, then default pip command will be used",
+      "type": "string",
+      "default": "",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
+      "name": "python_home",
+      "label": "Python Home",
+      "description": "Location where Python interpreter to be used. If no interpreter is specified, then default python interpreter will be used",
+      "type": "string",
       "default": "",
       "configurableInWizard": true,
       "required" : "true"
@@ -50,9 +68,41 @@
       "label" : "RabbitMQ Ip address",
       "description" : "Ip address of the RabbitMQ node",
       "type" : "string",
-      "default" : "",
+      "default" : "localhost",
       "configurableInWizard" : true,
       "required" : "true"
+    },
+    {
+      "name" : "security",
+      "label" : "Security",
+      "description" : "What security module to use (for example kerberos)",
+      "type" : "string",
+      "default" : "",
+      "configurableInWizard": true
+    },
+    {
+      "name" : "keytab",
+      "label" : "keytab",
+      "description" : "Location of keytab file",
+      "type" : "string",
+      "default" : "",
+      "configurableInWizard": true
+    },
+    {
+      "name" : "reinit_frequency",
+      "label" : "Reinit Frequency",
+      "description" : "Frequency of tickets",
+      "type" : "string",
+      "default" : "",
+      "configurableInWizard": true
+    },
+    {
+      "name" : "principal",
+      "label" : "Principal",
+      "description" : "Kerberos Principal",
+      "type" : "string",
+      "default" : "",
+      "configurableInWizard": true
     },
     {
       "name" : "airflow_home",
@@ -116,15 +166,6 @@
       "required" : "true",
       "type" : "string",
       "default" : "CeleryExecutor"
-    },
-    {
-      "name" : "sql_alchemy_conn",
-      "label" : "SQL Alchemy Conn",
-      "description" : "The SqlAlchemy connection string to the metadata database.SqlAlchemy supports many different database engine, more information their website.",
-  "configName" : "sql.alchemy.conn",
-      "required" : "true",
-      "type" : "string",
-      "default" : "DBCONNSTRING"
     },
     {
       "name" : "sql_alchemy_pool_size",
@@ -217,6 +258,10 @@
     "scriptRunner" : {
       "program" : "scripts/update_cfg.sh",
       "environmentVariables" : {
+        "dbType" : "${dbType}",
+        "dbHost" : "${dbHost}",
+        "dbUser" : "${dbUser}",
+        "dbPass" : "${dbPass}",
         "airflow_home" : "${airflow_home}",
         "dags_folder" : "${dags_folder}",
         "base_log_folder" : "${base_log_folder}",
@@ -224,16 +269,20 @@
         "remote_log_conn_id" : "${remote_log_conn_id}",
         "encrypt_s3_logs" : "${encrypt_s3_logs}",
         "executor" : "${executor}",
-        "sql_alchemy_conn" : "${sql_alchemy_conn}",
         "sql_alchemy_pool_size" : "${sql_alchemy_pool_size}",
         "sql_alchemy_pool_recycle" : "${sql_alchemy_pool_recycle}",
         "parallelism" : "${parallelism}",
         "dag_concurrency" : "${dag_concurrency}",
         "dags_are_paused_at_creation" : "${dags_are_paused_at_creation}",
-        "non_pooled_task_slot_count" : "${non_pooled_task_slot_count}",
+        "non_pooled_task_slot_count" :  "${non_pooled_task_slot_count}",
         "max_active_runs_per_dag" : "${max_active_runs_per_dag}",
         "default_owner" : "${default_owner}",
-        "web_server_port" : "${web_server_port}"
+        "web_server_port" : "${web_server_port}",
+        "security" : "${security}",
+        "keytab" : "${keytab}",
+        "reinit_frequency" : "${reinit_frequency}",
+        "principal" : "${principal}",
+        "python_home" : "${python_home}"
       }
     },
     "configWriter" : {
@@ -249,7 +298,6 @@
             "remote_log_conn_id",
             "encrypt_s3_logs",
             "executor",
-            "sql_alchemy_conn",
             "sql_alchemy_pool_size",
             "sql_alchemy_pool_recycle",
             "parallelism",
@@ -334,7 +382,11 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
+           "environmentVariables" : {
+            "pip_home" : "${pip_home}",
+            "airflow_home" : "${airflow_home}"
+           }
          }
         }
       ],
@@ -348,8 +400,7 @@
       },
       "stopRunner" : {
          "runner" : {
-             "program" : "scripts/stop_airflow_webserver.sh",
-	     "args" : ["${base_log_folder}"]
+             "program" : "scripts/stop_airflow_webserver.sh"
         }
       }
     },
@@ -369,7 +420,11 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
+           "environmentVariables" : {
+            "pip_home" : "${pip_home}",
+            "airflow_home" : "${airflow_home}"
+           }
          }
         }
       ]
@@ -390,7 +445,11 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
+           "environmentVariables" : {
+            "pip_home" : "${pip_home}",
+            "airflow_home" : "${airflow_home}"
+           }
          }
         }
       ],
@@ -416,7 +475,11 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
+           "environmentVariables" : {
+            "pip_home" : "${pip_home}",
+            "airflow_home" : "${airflow_home}"
+           }
          }
         }
       ],
@@ -434,7 +497,7 @@
          "program" : "scripts/start_airflow_flower.sh"
       },
       "topology": {
-        "minInstances": "0"
+        "minInstances" : "0"
       },
       "commands" : [
         {
@@ -445,10 +508,25 @@
          "requiredRoleState" : "stopped",
          "commandRunner" : {
            "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"]
+           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
+           "environmentVariables" : {
+            "pip_home" : "${pip_home}",
+            "airflow_home" : "${airflow_home}"
+           }
          }
         }
       ]
+    },
+    {
+      "name" : "KERBEROS",
+      "label" : "Kerberos",
+      "pluralLabel" : "Kerberos",
+      "startRunner" : {
+        "program" : "scripts/start_kerberos.sh"
+      },
+      "topology" : {
+        "minInstances" : "0"
+      }
     }
   ]
 }
