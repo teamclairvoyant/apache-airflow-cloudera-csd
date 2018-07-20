@@ -8,9 +8,9 @@ cp ../scripts/airflow/airflow.cfg ${airflow_home}/
 MYSQL_PORT=3306
 PGSQL_PORT=5432
 
-if [ "$dbType"=="mysql" ]; then
+if [ "$dbType" == "mysql" ]; then
     DBCONNSTRING="mysql://${dbUser}:${dbPass}\@${dbHost}:${MYSQL_PORT}/airflow"
-elif [ "$dbType"=="postgresql" ]; then
+elif [ "$dbType" == "postgresql" ]; then
     DBCONNSTRING="postgresql+psycopg2://${dbUser}:${dbPass}\@${dbHost}:${PGSQL_PORT}/airflow"
 fi
 
@@ -29,7 +29,6 @@ function prepare_airflow_cfg {
             fi
         fi
     done < ${airflow_home}/airflow.cfg
-
 }
 
 prepare_airflow_cfg
@@ -39,10 +38,8 @@ if [[ "${python_home}" != "" ]]; then
   python=${python_home}
 fi
 
-echo "Python set ${python}"
-
 CRYPTOKEY=`eval $PWCMD`
-FERNETCRYPTOKEY=`${python} -c 'from cryptography.fernet import Fernet;key=Fernet.generate_key().decode();print key'`
+FERNETCRYPTOKEY=`${python_home} -c 'from cryptography.fernet import Fernet;key=Fernet.generate_key().decode();print key'`
 
 sed -e "s|RABBITMQHOST|$RABBITMQ_HOST|" \
   -e "s|LOCALHOST|`hostname`|" \

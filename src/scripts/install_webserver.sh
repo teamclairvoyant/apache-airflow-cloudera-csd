@@ -24,14 +24,13 @@ if [ $DEBUG ]; then ECHO=echo; fi
 MYSQL_PORT=3306
 PGSQL_PORT=5432
 
-
-echo "User name is $(who am i)"
-echo $USER
+AIRFLOW_VERSION=1.7.1.3
 ##### STOP CONFIG ####################################################
 PATH=/usr/bin:/usr/sbin:/bin:/sbin:/usr/local/bin
 FILEPATH=`dirname $0`
-PWCMD='< /dev/urandom tr -dc A-Za-z0-9 | head -c 20;echo'
 #PIPOPTS="-q"
+
+PWCMD='< /dev/urandom tr -dc A-Za-z0-9 | head -c 20;echo'
 YUMOPTS="-y -e1 -d1"
 
 # Function to print the help screen.
@@ -48,7 +47,7 @@ print_help () {
   echo "          [-h|--help]"
   echo "          [-v|--version]"
   echo ""
-  echo "   ex.  $1 --dbtype postgresql --dbhost hostA --dbuser airflow --dbpassword bar --rabbitmqhost hostB"
+  echo "   ex.  $1 --dbtype postgresql --DB_HOST hostA --DB_USER airflow --dbpassword bar --rabbitmqhost hostB"
   exit 1
 }
 
@@ -91,20 +90,45 @@ discover_os () {
   fi
 }
 
-## If the variable DEBUG is set, then turn on tracing.
-## http://www.research.att.com/lists/ast-users/2003/05/msg00009.html
-#if [ $DEBUG ]; then
-#  # This will turn on the ksh xtrace option for mainline code
-#  set -x
-#
-#  # This will turn on the ksh xtrace option for all functions
-#  typeset +f |
-#  while read F junk
-#  do
-#    typeset -ft $F
-#  done
-#  unset F junk
-#fi
+install_mysql () {
+
+  yum $YUMOPTS install mysql-devel
+  echo "Creating users and databases in MySQL for Airflow..."
+  AIRFLOWDB_PASSWORD=`eval $PWCMD`
+  echo "****************************************"
+  echo "****************************************"
+  echo "****************************************"
+  echo "*** SAVE THIS PASSWORD"
+  $ECHO mysql -h $DB_HOST -u $DB_USER -p${DB_PASSWORD} -e 'CREATE DATABASE airflow DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;'
+  $ECHO mysql -h $DB_HOST -u $DB_USER -p${DB_PASSWORD} -e "GRANT ALL ON airflow.* TO 'airflow'@'localhost' IDENTIFIED BY '$AIRFLOWDB_PASSWORD';"
+  $ECHO mysql -h $DB_HOST -u $DB_USER -p${DB_PASSWORD} -e "GRANT ALL ON airflow.* TO 'airflow'@'%' IDENTIFIED BY '$AIRFLOWDB_PASSWORD';"
+  echo "airflow : $AIRFLOWDB_PASSWORD"
+  echo "****************************************"
+  echo "****************************************"
+  echo "****************************************"
+  DB_USER=airflow
+  DB_PASSWORD=$AIRFLOWDB_PASSWORD
+  echo "Completed MySQL configuration"
+}
+
+install_postgres(){
+  cd /tmp
+  wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
+  rpm -ivh pgdg*
+  yum $YUMOPTS list postgres*
+  yum $YUMOPTS install postgresql96-server
+  service postgresql-9.6 initdb
+  sed -e "s|ident|md5|g" -i /var/lib/pgsql/9.6/data/pg_hba.conf
+  chkconfig postgresql-9.6 on
+  service postgresql-9.6 start
+  AIRFLOWDB_PASSWORD=`eval $PWCMD`
+  sudo -u postgres psql -c "CREATE ROLE airflow LOGIN ENCRYPTED PASSWORD '$AIRFLOWDB_PASSWORD' NOSUPERUSER INHERIT CREATEDB NOCREATEROLE;"
+  sudo -u postgres psql -c 'ALTER ROLE airflow SET search_path = airflow, "$user", public;'
+  sudo -u postgres psql -c "CREATE DATABASE airflow WITH OWNER = airflow ENCODING = 'UTF8' TABLESPACE = pg_default CONNECTION LIMIT = -1;"
+  echo "airflow : $AIRFLOWDB_PASSWORD"
+  DB_USER=airflow
+  DB_PASSWORD=$AIRFLOWDB_PASSWORD
+}
 
 # Process arguments.
 while [[ $1 = -* ]]; do
@@ -153,7 +177,7 @@ echo "**************************************************************************
 # Check to see if we are on a supported OS.
 # Currently only EL7.
 discover_os
-if [ \( "$OS" != RedHatEnterpriseServer -o "$OS" != CentOS \) -a "$OSREL" != 7 ]; then
+if [ \( "$OS" != RedHatEnterpriseServer -o "$OS" != CentOS \) -a \( "$OSREL" != 6 -a "$OSREL" != 7 \) ]; then
 #if [ "$OS" != RedHatEnterpriseServer -a "$OS" != CentOS -a "$OS" != Debian -a "$OS" != Ubuntu ]; then
   echo "ERROR: Unsupported OS."
   exit 3
@@ -182,86 +206,82 @@ if ! getent group airflow >/dev/null; then
 fi
 if ! getent passwd airflow >/dev/null; then
   echo "** Installing airflow user."
-  useradd $AIRFLOWUID -g airflow -c "Airflow Daemon" -m -d /var/lib/airflow -k /dev/null -r airflow
+  useradd $AIRFLOWUID -g airflow -c "Airflow Daemon" -m -d ${airflow_home} -k /dev/null -r airflow
 fi
 
 if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
+
+  chown airflow:airflow ${airflow_home}/airflow.cfg 
   echo "** Installing software dependencies via YUM."
   yum $YUMOPTS groupinstall "Development tools"
   yum $YUMOPTS install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel python-devel wget cyrus-sasl-devel.x86_64
-  
+
   echo "** Installing Airflow."
-  pip $PIPOPTS install airflow${VERSION}
+  pip=pip
+  if [[ "${pip_home}" != "" ]]; then
+    pip=${pip_home}
+  fi
+  echo "Using pip ${pip}"
+  ${pip} $PIPOPTS install airflow==$AIRFLOW_VERSION
   # Fix a bug in celery 4
-  pip $PIPOPTS install 'celery<4'
-  pip $PIPOPTS install airflow[celery]
+  ${pip} $PIPOPTS install 'celery<4'
+  ${pip} $PIPOPTS install airflow[celery]
 
   if [ "$DB_TYPE" == "mysql" ]; then
     if [ -z "$DB_PORT" ]; then DB_PORT=$MYSQL_PORT; fi
     #####
+    # install_mysql
+    yum $YUMOPTS install mysql-devel
     echo "** Installing Airflow[mysql]."
-    pip $PIPOPTS install airflow[mysql]
-    DBCONNSTRING="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
+    ${pip} $PIPOPTS install airflow[mysql]
+    # r=`mysql -h {DB_HOST} -u root -pcloudera -e "select * from airflow.users" | grep -v "username"`
+    # if [[ "$r" != "" ]]; then
+    #   mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASSWORD} -e "drop database airflow"
+    # fi
+    # mysql -u ${DB_USER} -p${DB_PASSWORD} -e "create database airflow"
+    # DBCONNSTRING="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
 
   elif [ "$DB_TYPE" == "postgresql" ]; then
     if [ -z "$DB_PORT" ]; then DB_PORT=$PGSQL_PORT; fi
     #####
+    # install_postgres
+    yum $YUMOPTS install postgresql-devel
     echo "** Installing Airflow[postgres]."
-    pip $PIPOPTS install airflow[postgres]
-    DBCONNSTRING="postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
+    ${pip} $PIPOPTS install airflow[postgres]
+    # DBCONNSTRING="postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
   fi
 
-  #####
+  yum $YUMOPTS install rabbitmq-server 
+  
   echo "** Installing Airflow[kerberos]."
-  pip $PIPOPTS install airflow[kerberos]==1.7.1.3
+  ${pip} $PIPOPTS install airflow[kerberos]==$AIRFLOW_VERSION
   yum $YUMOPTS install libffi-devel
   echo "** Installing Airflow[crypto]."
-  pip $PIPOPTS install airflow[crypto]==1.7.1.3
+  ${pip} $PIPOPTS install airflow[crypto]==$AIRFLOW_VERSION
   #pip $PIPOPTS install airflow[jdbc]
   echo "** Installing Airflow[hive]."
-  pip $PIPOPTS install airflow[hive]==1.7.1.3
+  ${pip} $PIPOPTS install airflow[hive]==$AIRFLOW_VERSION
   #pip $PIPOPTS install airflow[hdfs]
   #pip $PIPOPTS install airflow[ldap]
-  pip $PIPOPTS install airflow[password]==1.7.1.3
-
-  mkdir -p /var/lib/airflow/conf
+  ${pip} $PIPOPTS install airflow[password]==$AIRFLOW_VERSION
+  echo "** Installing Airflow[rabbitmq]."
+  ${pip} $PIPOPTS install airflow[rabbitmq]==$AIRFLOW_VERSION
+  #pip $PIPOPTS install airflow[s3]
 
   echo "** Installing Airflow configs."
-  install -o airflow -g airflow -m0750 -d /var/lib/airflow
-  install -o airflow -g airflow -m0750 -d /var/lib/airflow/plugins
-  install -o airflow -g airflow -m0750 -d /var/lib/airflow/dags
+  install -o airflow -g airflow -m0750 -d ${airflow_home}
+  install -o airflow -g airflow -m0750 -d ${airflow_home}/plugins
+  install -o airflow -g airflow -m0750 -d ${airflow_home}/dags
   install -o airflow -g airflow -m0750 -d /var/log/airflow
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.profile /etc/profile.d/airflow.sh
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/*.service /etc/systemd/system/
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow /etc/sysconfig/airflow
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.conf /etc/tmpfiles.d/airflow.conf
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.cfg /var/lib/airflow/conf/
-  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/unittests.cfg /var/lib/airflow/
+  install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/unittests.cfg ${airflow_home}/
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.logrotate /etc/logrotate.d/
-  install -o airflow -g airflow -m0755 ${FILEPATH}/airflow/mkuser.sh /tmp/mkuser.sh
+  install -o airflow -g airflow -m0755 ${FILEPATH}/airflow/mkuser.py /tmp/mkuser.py
 
-  systemd-tmpfiles --create --prefix=/run
-
-  CRYPTOKEY=`eval $PWCMD`
-  FERNETCRYPTOKEY=`python -c 'from cryptography.fernet import Fernet;key=Fernet.generate_key().decode();print key'`
-
-  sed -e "s|RABBITMQHOST|$RABBITMQ_HOST|" \
-      -e "s|LOCALHOST|`hostname`|" \
-      -e "s|DBCONNSTRING|$DBCONNSTRING|" \
-      -e "s|temporary_key|$CRYPTOKEY|" \
-      -e "s|cryptography_not_found_storing_passwords_in_plain_text|$FERNETCRYPTOKEY|" \
-      -i /var/lib/airflow/conf/airflow.cfg
-  
-  echo "Exit code for sed is" $?
-
-  ln -s /var/lib/airflow/conf/airflow.cfg /var/lib/airflow/airflow.cfg
-
-  echo "Soft link exit code is " $?
-  #echo "** Initializing Airflow database."
+  echo "** Initializing Airflow database."
   su airflow -c 'airflow initdb'
-  #airflow -c '/tmp/mkuser.sh'
+  su airflow -c '${python_home} /tmp/mkuser.py'
 
- 
+
 elif [ "$OS" == Debian -o "$OS" == Ubuntu ]; then
   :
 fi

@@ -1,7 +1,7 @@
-#!/usr/bin/python
+#!/usr/local/bin/python2.7
 # https://airflow.incubator.apache.org/security.html
-username = 'naveenbalusu'
-email = 'naveen.balusu@clairvoyantsoft.com'
+username = 'admin'
+email = '-'
 #####
 
 import airflow
@@ -14,8 +14,7 @@ from random import sample, choice
 chars = string.letters + string.digits
 length = 20
 password_temp = ''.join(choice(chars) for _ in range(length))
-print "%s : %s" % (username, password_temp)
-
+print "Username : password = %s : %s" % (username, password_temp)
 user = PasswordUser(models.User())
 user.username = username
 user.email = email
@@ -25,5 +24,5 @@ session.add(user)
 session.commit()
 session.close()
 
-exit()
+# exit()
 

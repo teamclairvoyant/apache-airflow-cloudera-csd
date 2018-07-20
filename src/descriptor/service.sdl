@@ -47,7 +47,7 @@
     },
     {
       "name": "pip_home",
-      "label": "PIP Home",
+      "label": "PIP Home (Optional)",
       "description": "Location of the pip to be used. If no pip is specified, then default pip command will be used",
       "type": "string",
       "default": "",
@@ -56,7 +56,7 @@
     },
     {
       "name": "python_home",
-      "label": "Python Home",
+      "label": "Python Home (Optional)",
       "description": "Location where Python interpreter to be used. If no interpreter is specified, then default python interpreter will be used",
       "type": "string",
       "default": "",
@@ -74,7 +74,7 @@
     },
     {
       "name" : "security",
-      "label" : "Security",
+      "label" : "Security (Optional)",
       "description" : "What security module to use (for example kerberos)",
       "type" : "string",
       "default" : "",
@@ -82,7 +82,7 @@
     },
     {
       "name" : "keytab",
-      "label" : "keytab",
+      "label" : "Keytab (Optional)",
       "description" : "Location of keytab file",
       "type" : "string",
       "default" : "",
@@ -90,7 +90,7 @@
     },
     {
       "name" : "reinit_frequency",
-      "label" : "Reinit Frequency",
+      "label" : "Reinit Frequency (Optional)",
       "description" : "Frequency of tickets",
       "type" : "string",
       "default" : "",
@@ -98,10 +98,26 @@
     },
     {
       "name" : "principal",
-      "label" : "Principal",
+      "label" : "Principal (Optional)",
       "description" : "Kerberos Principal",
       "type" : "string",
       "default" : "",
+      "configurableInWizard": true
+    },
+    {
+      "name" : "expose_config",
+      "label" : "Expose Config (Optional)",
+      "description" : "Expose the configuration file in the web server",
+      "type" : "string",
+      "default" : "False",
+      "configurableInWizard": true
+    },
+    {
+      "name" : "load_examples",
+      "label" : "Load Examples (Optional)",
+      "description" : "Whether to load the examples that ship with Airflow. It's good to get started, but you probably want to set this to False in a production environment",
+      "type" : "string",
+      "default" : "False",
       "configurableInWizard": true
     },
     {
@@ -135,7 +151,7 @@
       "name" : "remote_base_log_folder",
       "label" : "Remote Base Log Folder",
       "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
-  "configName" : "remote.base.log.folder",
+      "configName" : "remote.base.log.folder",
       "required" : "false",
       "type" : "string",
       "default" : ""
@@ -144,7 +160,7 @@
       "name" : "remote_log_conn_id",
       "label" : "Remote Log Conn Id",
       "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
-  "configName" : "remote.log.conn.id",
+      "configName" : "remote.log.conn.id",
       "required" : "false",
       "type" : "string",
       "default" : ""
@@ -153,7 +169,7 @@
       "name" : "encrypt_s3_logs",
       "label" : "Encrypt S3 Logs",
       "description" : "Use server-side encryption for logs stored in S3.",
-  "configName" : "encrypt.s3.logs",
+      "configName" : "encrypt.s3.logs",
       "required" : "false",
       "type" : "string",
       "default" : "False"
@@ -162,7 +178,7 @@
       "name" : "executor",
       "label" : "Executor",
       "description" : "The executor class that airflow should use. Choices include SequentialExecutor, LocalExecutor, CeleryExecutor",
-  "configName" : "executor",
+      "configName" : "executor",
       "required" : "true",
       "type" : "string",
       "default" : "CeleryExecutor"
@@ -171,7 +187,7 @@
       "name" : "sql_alchemy_pool_size",
       "label" : "SQL Alchemy Pool Size",
       "description" : "The SqlAlchemy pool size is the maximum number of database connections in the pool.",
-  "configName" : "sql.alchemy.pool.size",
+      "configName" : "sql.alchemy.pool.size",
       "required" : "true",
       "type" : "string",
       "default" : "5"
@@ -180,7 +196,7 @@
       "name" : "sql_alchemy_pool_recycle",
       "label" : "SQL Alchemy Pool Recycle",
       "description" : "The SqlAlchemy pool recycle is the number of seconds a connection can be idle in the pool before it is invalidated. This config does not apply to sqlite.",
-  "configName" : "sql.alchemy.pool.recycle",
+      "configName" : "sql.alchemy.pool.recycle",
       "required" : "true",
       "type" : "string",
       "default" : "3600"
@@ -189,7 +205,7 @@
       "name" : "parallelism",
       "label" : "parallelism",
       "description" : "The amount of parallelism as a setting to the executor. This defines the max number of task instances that should run simultaneously on this airflow installation.",
-  "configName" : "parallelism",
+      "configName" : "parallelism",
       "required" : "true",
       "type" : "string",
       "default" : "32"
@@ -198,7 +214,7 @@
       "name" : "dag_concurrency",
       "label" : "Dag Concurrency",
       "description" : "The number of task instances allowed to run concurrently by the scheduler",
-  "configName" : "dag.concurrency",
+      "configName" : "dag.concurrency",
       "required" : "true",
       "type" : "string",
       "default" : "16"
@@ -207,16 +223,17 @@
       "name" : "dags_are_paused_at_creation",
       "label" : "Dags Are Paused At Creation",
       "description" : "Are DAGs paused by default at creation",
-  "configName" : "dags.are.paused.at.creation",
+      "configName" : "dags.are.paused.at.creation",
       "required" : "true",
       "type" : "string",
-      "default" : "True"
+      "default" : "True",
+      "configurableInWizard": true
     },
     {
       "name" : "non_pooled_task_slot_count",
       "label" : "Non Pooled Task Slot Count",
       "description" : "When not using pools, tasks are run in the 'default pool', whose size is guided by this config element",
-  "configName" : "non.pooled.task.slot.count",
+      "configName" : "non.pooled.task.slot.count",
       "required" : "true",
       "type" : "string",
       "default" : "128"
@@ -225,7 +242,7 @@
       "name" : "max_active_runs_per_dag",
       "label" : "Max Active Runs Per Dag",
       "description" : "The maximum number of active DAG runs per DAG",
-  "configName" : "max.active.runs.per.dag",
+      "configName" : "max.active.runs.per.dag",
       "required" : "true",
       "type" : "string",
       "default" : "16"
@@ -234,7 +251,7 @@
       "name" : "default_owner",
       "label" : "Default Owner",
       "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via 'default_args'",
-  "configName" : "default.owner",
+      "configName" : "default.owner",
       "required" : "true",
       "type" : "string",
       "default" : "airflow"
@@ -243,7 +260,7 @@
       "name" : "web_server_port",
       "label" : "Web Server Port",
       "description" : "The port on which to run the web server",
-  "configName" : "web.server.port",
+      "configName" : "web.server.port",
       "required" : "true",
       "type" : "port",
       "default" : 8080
@@ -262,6 +279,7 @@
         "dbHost" : "${dbHost}",
         "dbUser" : "${dbUser}",
         "dbPass" : "${dbPass}",
+        "RABBITMQ_HOST" : "${RabbitMQ.ipaddress}",
         "airflow_home" : "${airflow_home}",
         "dags_folder" : "${dags_folder}",
         "base_log_folder" : "${base_log_folder}",
@@ -282,7 +300,9 @@
         "keytab" : "${keytab}",
         "reinit_frequency" : "${reinit_frequency}",
         "principal" : "${principal}",
-        "python_home" : "${python_home}"
+        "python_home" : "${python_home}",
+        "expose_config" : "${expose_config}",
+        "load_examples" : "${load_examples}"
       }
     },
     "configWriter" : {
@@ -381,7 +401,7 @@
          "expectedExitCodes" : [0],
          "requiredRoleState" : "stopped",
          "commandRunner" : {
-           "program" : "scripts/install.sh",
+           "program" : "scripts/install_webserver.sh",
            "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
            "environmentVariables" : {
             "pip_home" : "${pip_home}",
@@ -405,11 +425,11 @@
       }
     },
     {
-    	"name" : "AIRFLOW_SCHEDULER",
-    	"label" : "Scheduler",
-    	"pluralLabel" : "Schedulers",
-    	"startRunner" : {
-    	   "program" : "scripts/start_airflow_scheduler.sh"
+      "name" : "AIRFLOW_SCHEDULER",
+      "label" : "Scheduler",
+      "pluralLabel" : "Schedulers",
+      "startRunner" : {
+         "program" : "scripts/start_airflow_scheduler.sh"
       },
       "commands" : [
         {
