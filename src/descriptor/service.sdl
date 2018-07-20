@@ -405,12 +405,16 @@
            "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
            "environmentVariables" : {
             "pip_home" : "${pip_home}",
-            "airflow_home" : "${airflow_home}"
+            "airflow_home" : "${airflow_home}",
+            "python_home" : "${python_home}"
            }
          }
         }
       ],
-      "topology" : { "minInstances" : 1 },
+      "topology" : { 
+          "minInstances" : 1,
+          "maxInstances" : 1 
+      },
       "logging" : {
          "dir" : "/var/log/airflow",
          "filename" : "airflow-master-${host}.log",

@@ -90,46 +90,6 @@ discover_os () {
   fi
 }
 
-install_mysql () {
-
-  yum $YUMOPTS install mysql-devel
-  echo "Creating users and databases in MySQL for Airflow..."
-  AIRFLOWDB_PASSWORD=`eval $PWCMD`
-  echo "****************************************"
-  echo "****************************************"
-  echo "****************************************"
-  echo "*** SAVE THIS PASSWORD"
-  $ECHO mysql -h $DB_HOST -u $DB_USER -p${DB_PASSWORD} -e 'CREATE DATABASE airflow DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;'
-  $ECHO mysql -h $DB_HOST -u $DB_USER -p${DB_PASSWORD} -e "GRANT ALL ON airflow.* TO 'airflow'@'localhost' IDENTIFIED BY '$AIRFLOWDB_PASSWORD';"
-  $ECHO mysql -h $DB_HOST -u $DB_USER -p${DB_PASSWORD} -e "GRANT ALL ON airflow.* TO 'airflow'@'%' IDENTIFIED BY '$AIRFLOWDB_PASSWORD';"
-  echo "airflow : $AIRFLOWDB_PASSWORD"
-  echo "****************************************"
-  echo "****************************************"
-  echo "****************************************"
-  DB_USER=airflow
-  DB_PASSWORD=$AIRFLOWDB_PASSWORD
-  echo "Completed MySQL configuration"
-}
-
-install_postgres(){
-  cd /tmp
-  wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-centos96-9.6-3.noarch.rpm
-  rpm -ivh pgdg*
-  yum $YUMOPTS list postgres*
-  yum $YUMOPTS install postgresql96-server
-  service postgresql-9.6 initdb
-  sed -e "s|ident|md5|g" -i /var/lib/pgsql/9.6/data/pg_hba.conf
-  chkconfig postgresql-9.6 on
-  service postgresql-9.6 start
-  AIRFLOWDB_PASSWORD=`eval $PWCMD`
-  sudo -u postgres psql -c "CREATE ROLE airflow LOGIN ENCRYPTED PASSWORD '$AIRFLOWDB_PASSWORD' NOSUPERUSER INHERIT CREATEDB NOCREATEROLE;"
-  sudo -u postgres psql -c 'ALTER ROLE airflow SET search_path = airflow, "$user", public;'
-  sudo -u postgres psql -c "CREATE DATABASE airflow WITH OWNER = airflow ENCODING = 'UTF8' TABLESPACE = pg_default CONNECTION LIMIT = -1;"
-  echo "airflow : $AIRFLOWDB_PASSWORD"
-  DB_USER=airflow
-  DB_PASSWORD=$AIRFLOWDB_PASSWORD
-}
-
 # Process arguments.
 while [[ $1 = -* ]]; do
   case $1 in
@@ -230,25 +190,16 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   if [ "$DB_TYPE" == "mysql" ]; then
     if [ -z "$DB_PORT" ]; then DB_PORT=$MYSQL_PORT; fi
     #####
-    # install_mysql
     yum $YUMOPTS install mysql-devel
     echo "** Installing Airflow[mysql]."
     ${pip} $PIPOPTS install airflow[mysql]
-    # r=`mysql -h {DB_HOST} -u root -pcloudera -e "select * from airflow.users" | grep -v "username"`
-    # if [[ "$r" != "" ]]; then
-    #   mysql -h ${DB_HOST} -u ${DB_USER} -p${DB_PASSWORD} -e "drop database airflow"
-    # fi
-    # mysql -u ${DB_USER} -p${DB_PASSWORD} -e "create database airflow"
-    # DBCONNSTRING="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
 
   elif [ "$DB_TYPE" == "postgresql" ]; then
     if [ -z "$DB_PORT" ]; then DB_PORT=$PGSQL_PORT; fi
     #####
-    # install_postgres
     yum $YUMOPTS install postgresql-devel
     echo "** Installing Airflow[postgres]."
     ${pip} $PIPOPTS install airflow[postgres]
-    # DBCONNSTRING="postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
   fi
 
   yum $YUMOPTS install rabbitmq-server 
@@ -280,7 +231,7 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   echo "** Initializing Airflow database."
   su airflow -c 'airflow initdb'
   su airflow -c '${python_home} /tmp/mkuser.py'
-
+  
 
 elif [ "$OS" == Debian -o "$OS" == Ubuntu ]; then
   :

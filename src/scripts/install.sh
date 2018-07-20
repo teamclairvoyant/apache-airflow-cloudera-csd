@@ -88,21 +88,6 @@ discover_os () {
   fi
 }
 
-## If the variable DEBUG is set, then turn on tracing.
-## http://www.research.att.com/lists/ast-users/2003/05/msg00009.html
-#if [ $DEBUG ]; then
-#  # This will turn on the ksh xtrace option for mainline code
-#  set -x
-#
-#  # This will turn on the ksh xtrace option for all functions
-#  typeset +f |
-#  while read F junk
-#  do
-#    typeset -ft $F
-#  done
-#  unset F junk
-#fi
-
 # Process arguments.
 while [[ $1 = -* ]]; do
   case $1 in
@@ -186,16 +171,6 @@ if ! getent passwd airflow >/dev/null; then
   useradd $AIRFLOWUID -g airflow -c "Airflow Daemon" -m -d ${airflow_home} -k /dev/null -r airflow
 fi
 
-install_postgres(){
-  cd /tmp
-  curl -O https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-6-x86_64/pgdg-centos10-10-2.noarch.rpm
-  rpm -ivh pgdg-centos10-10-2.noarch.rpm
-  yum $YUMOPTS install postgresql10-server
-  service postgresql-10 initdb
-  sed -e "s|ident|md5" -i "/var/lib/pgsql/10/data/pg_hba.conf"
-  chkconfig postgresql-10 on
-  service postgresql-10 start
-}
 if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
 
   chown airflow:airflow ${airflow_home}/airflow.cfg 
@@ -220,8 +195,6 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
     echo "** Installing Airflow[mysql]."
     yum $YUMOPTS install mysql-devel
     ${pip} $PIPOPTS install airflow[mysql]
-    # mysql -u ${DB_USER} -p${DB_PASSWORD} -e "create database airflow"
-    # DBCONNSTRING="mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
 
   elif [ "$DB_TYPE" == "postgresql" ]; then
     if [ -z "$DB_PORT" ]; then DB_PORT=$PGSQL_PORT; fi
@@ -229,7 +202,6 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
     echo "** Installing Airflow[postgres]."
     yum $YUMOPTS install postgresql-devel
     ${pip} $PIPOPTS install airflow[postgres]
-    # DBCONNSTRING="postgresql+psycopg2://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/airflow"
   fi
 
   yum $YUMOPTS install rabbitmq-server 
@@ -256,7 +228,6 @@ if [ "$OS" == RedHatEnterpriseServer -o "$OS" == CentOS ]; then
   install -o airflow -g airflow -m0750 -d /var/log/airflow
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/unittests.cfg ${airflow_home}/
   install -o airflow -g airflow -m0644 ${FILEPATH}/airflow/airflow.logrotate /etc/logrotate.d/
-  # install -o airflow -g airflow -m0755 ${FILEPATH}/airflow/mkuser.sh /tmp/mkuser.sh
 
   echo "** Initializing Airflow database."
   su airflow -c 'airflow initdb'
