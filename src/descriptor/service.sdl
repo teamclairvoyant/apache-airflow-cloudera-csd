@@ -7,12 +7,16 @@
     "user" : "root",
     "group" : "root"
   },
+  "parcel" : {
+    "requiredTags" : [ "airflow", "rabbitmq" ],
+    "optionalTags" : []
+  },
   "parameters" : [
     {
       "name": "dbType",
       "label": "Database Type",
       "description": "Type of the database for the Airflow to use",
-      "type": "string",
+      "type": "string_enum",
       "default": "mysql",
       "configurableInWizard": true,
       "validValues" : [ "postgresql", "mysql"],
@@ -46,78 +50,54 @@
       "required" : "true"
     },
     {
-      "name": "pip_home",
-      "label": "PIP Home (Optional)",
-      "description": "Location of the pip to be used. If no pip is specified, then default pip command will be used",
-      "type": "string",
-      "default": "",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name": "python_home",
-      "label": "Python Home (Optional)",
-      "description": "Location where Python interpreter to be used. If no interpreter is specified, then default python interpreter will be used",
-      "type": "string",
-      "default": "",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
       "name" : "RabbitMQ.ipaddress",
       "label" : "RabbitMQ Ip address",
       "description" : "Ip address of the RabbitMQ node",
       "type" : "string",
-      "default" : "localhost",
-      "configurableInWizard" : true,
-      "required" : "true"
+      "default" : "localhost"
     },
     {
       "name" : "security",
       "label" : "Security (Optional)",
       "description" : "What security module to use (for example kerberos)",
       "type" : "string",
-      "default" : "",
-      "configurableInWizard": true
+      "default" : ""
     },
     {
       "name" : "keytab",
       "label" : "Keytab (Optional)",
       "description" : "Location of keytab file",
       "type" : "string",
-      "default" : "",
-      "configurableInWizard": true
+      "default" : ""
     },
     {
       "name" : "reinit_frequency",
       "label" : "Reinit Frequency (Optional)",
       "description" : "Frequency of tickets",
       "type" : "string",
-      "default" : "",
-      "configurableInWizard": true
+      "default" : ""
     },
     {
       "name" : "principal",
       "label" : "Principal (Optional)",
       "description" : "Kerberos Principal",
       "type" : "string",
-      "default" : "",
-      "configurableInWizard": true
+      "default" : ""
     },
     {
       "name" : "expose_config",
       "label" : "Expose Config (Optional)",
       "description" : "Expose the configuration file in the web server",
-      "type" : "string",
-      "default" : "False",
+      "type" : "boolean",
+      "default" : "false",
       "configurableInWizard": true
     },
     {
       "name" : "load_examples",
       "label" : "Load Examples (Optional)",
       "description" : "Whether to load the examples that ship with Airflow. It's good to get started, but you probably want to set this to False in a production environment",
-      "type" : "string",
-      "default" : "False",
+      "type" : "boolean",
+      "default" : "true",
       "configurableInWizard": true
     },
     {
@@ -127,7 +107,8 @@
       "configName" : "airflow.home",
       "required" : "true",
       "type" : "string",
-      "default" : "/var/lib/airflow"
+      "default" : "/var/lib/airflow",
+      "configurableInWizard": true
     },
     {
       "name" : "dags_folder",
@@ -171,8 +152,8 @@
       "description" : "Use server-side encryption for logs stored in S3.",
       "configName" : "encrypt.s3.logs",
       "required" : "false",
-      "type" : "string",
-      "default" : "False"
+      "type" : "boolean",
+      "default" : "false"
     },
     {
       "name" : "executor",
@@ -225,8 +206,8 @@
       "description" : "Are DAGs paused by default at creation",
       "configName" : "dags.are.paused.at.creation",
       "required" : "true",
-      "type" : "string",
-      "default" : "True",
+      "type" : "boolean",
+      "default" : "true",
       "configurableInWizard": true
     },
     {
@@ -266,11 +247,18 @@
       "default" : 8080
     }
   ],
+  "serviceInit" : {
+    "preStartSteps" : [
+      {
+        "commandName" : "INSTALL_AIRFLOW_INITDB_SERVCMD"
+      }
+    ]
+  },
   "gateway" : {
     "alternatives" : {
       "name" : "airflow",
       "priority" : 50,
-      "linkRoot" : "/tmp/airflowParent"
+      "linkRoot" : "/tmp/airflowParent/"
     },
     "scriptRunner" : {
       "program" : "scripts/update_cfg.sh",
@@ -281,6 +269,7 @@
         "dbPass" : "${dbPass}",
         "RABBITMQ_HOST" : "${RabbitMQ.ipaddress}",
         "airflow_home" : "${airflow_home}",
+        "AIRFLOW_HOME" : "${airflow_home}",
         "dags_folder" : "${dags_folder}",
         "base_log_folder" : "${base_log_folder}",
         "remote_base_log_folder" : "${remote_base_log_folder}",
@@ -300,7 +289,6 @@
         "keytab" : "${keytab}",
         "reinit_frequency" : "${reinit_frequency}",
         "principal" : "${principal}",
-        "python_home" : "${python_home}",
         "expose_config" : "${expose_config}",
         "load_examples" : "${load_examples}"
       }
@@ -334,57 +322,25 @@
   },
   "inExpressWizard" : true,
   "icon" : "images/airflow.png",
+  "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER"],
   "commands": [
     {
-      "name": "INSTALL_AIRFLOW_WEBSERVER_DEPENDENCIES_SERVCMD",
-      "label": "Install Airflow Dependencies",
-      "description": "Installs all the Airflow dependencies",
-      "roleName": "AIRFLOW_WEBSERVER",
-      "roleCommand": "install_airflow_webserver_dependencies_rolecmd",
-      "runMode": "single"
-    },
-    {
-      "name": "INSTALL_AIRFLOW_SCHEDULER_DEPENDENCIES_SERVCMD",
-      "label": "Install Airflow Scheduler Dependencies",
-      "description": "Installs all the Airflow Scheduler dependencies",
+      "name": "INSTALL_AIRFLOW_INITDB_SERVCMD",
+      "label": "Initialize Airflow DB",
+      "description": "Initializes the Airflow DB",
       "roleName": "AIRFLOW_SCHEDULER",
-      "roleCommand": "install_airflow_scheduler_dependencies_rolecmd",
+      "roleCommand": "airflow_initdb_scheduler_rolecmd",
       "runMode": "single"
     },
     {
-      "name": "INSTALL_AIRFLOW_WORKER_DEPENDENCIES_SERVCMD",
-      "label": "Install Airflow worker Dependencies",
-      "description": "Installs all the Airflow Worker dependencies",
-      "roleName": "AIRFLOW_WORKER",
-      "roleCommand": "install_airflow_worker_dependencies_rolecmd",
-      "runMode": "single"
-    },
-    {
-      "name": "INSTALL_RABBITMQ_DEPENDENCIES_SERVCMD",
-      "label": "Install RabbitMQ Dependencies",
-      "description": "Installs all the RabbitMQ dependencies",
-      "roleName": "RABBITMQ",
-      "roleCommand": "install_rabbitmq_dependencies_rolecmd",
-      "runMode": "single"
-    },
-    {
-      "name": "INSTALL_AIRFLOW_FLOWER_DEPENDENCIES_SERVCMD",
-      "label": "Install Airflow Flower Dependencies",
-      "description": "Installs all the Airflow Flower dependencies",
-      "roleName": "AIRFLOW_FLOWER",
-      "roleCommand": "install_airflow_flower_dependencies_rolecmd",
+      "name": "INSTALL_AIRFLOW_RESETDB_SERVCMD",
+      "label": "Resets Airflow DB",
+      "description": "Resets the Airflow DB",
+      "roleName": "AIRFLOW_SCHEDULER",
+      "roleCommand": "airflow_resetdb_scheduler_rolecmd",
       "runMode": "single"
     }
   ],
-  "serviceInit": {
-    "preStartSteps" : [
-      { "commandName" : "INSTALL_AIRFLOW_WEBSERVER_DEPENDENCIES_SERVCMD" },
-      { "commandName" : "INSTALL_AIRFLOW_SCHEDULER_DEPENDENCIES_SERVCMD" },
-      { "commandName" : "INSTALL_AIRFLOW_WORKER_DEPENDENCIES_SERVCMD" },
-      { "commandName" : "INSTALL_RABBITMQ_DEPENDENCIES_SERVCMD" },
-      { "commandName" : "INSTALL_AIRFLOW_FLOWER_DEPENDENCIES_SERVCMD" }
-    ]
-  },
   "roles" : [
     {
       "name" : "AIRFLOW_WEBSERVER",
@@ -393,27 +349,13 @@
       "startRunner" : {
          "program" : "scripts/start_airflow_webserver.sh"
       },
-      "commands" : [
-        {
-         "name" : "install_airflow_webserver_dependencies_rolecmd",
-         "label" : "Install Airflow Webserver and its Dependencies",
-         "description" : "This command will install Airflow webserver and all of its dependencies",
-         "expectedExitCodes" : [0],
-         "requiredRoleState" : "stopped",
-         "commandRunner" : {
-           "program" : "scripts/install_webserver.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
-           "environmentVariables" : {
-            "pip_home" : "${pip_home}",
-            "airflow_home" : "${airflow_home}",
-            "python_home" : "${python_home}"
-           }
-         }
-        }
-      ],
+      "externalLink" : {
+        "name" : "webserver_web_ui",
+        "label" : "Airflow WebUI",
+        "url" : "http://${host}:8080"
+      },
       "topology" : { 
-          "minInstances" : 1,
-          "maxInstances" : 1 
+          "minInstances" : 1 
       },
       "logging" : {
          "dir" : "/var/log/airflow",
@@ -437,21 +379,29 @@
       },
       "commands" : [
         {
-         "name" : "install_airflow_scheduler_dependencies_rolecmd",
-         "label" : "Install Airflow Scheduler  and its Dependencies",
-         "description" : "This command will install Airflow scheduler and all of its dependencies",
+         "name" : "airflow_initdb_scheduler_rolecmd",
+         "label" : "Intialize Airflow DB",
+         "description" : "This command will initialize the Airflow Database",
          "expectedExitCodes" : [0],
          "requiredRoleState" : "stopped",
          "commandRunner" : {
-           "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
-           "environmentVariables" : {
-            "pip_home" : "${pip_home}",
-            "airflow_home" : "${airflow_home}"
+           "program" : "scripts/airflow_initdb.sh"
+         }
+        },
+        {
+         "name" : "airflow_resetdb_scheduler_rolecmd",
+         "label" : "Reset Airflow DB",
+         "description" : "This command will reset the Airflow Database",
+         "expectedExitCodes" : [0],
+         "requiredRoleState" : "stopped",
+         "commandRunner" : {
+           "program" : "scripts/airflow_resetdb.sh"
            }
          }
-        }
-      ]
+      ],
+      "topology" : { 
+          "maxInstances" : 1 
+      }
     },
     {
       "name" : "AIRFLOW_WORKER",
@@ -460,23 +410,6 @@
       "startRunner" : {
          "program" : "scripts/start_airflow_worker.sh"
       },
-      "commands" : [
-        {
-         "name" : "install_airflow_worker_dependencies_rolecmd",
-         "label" : "Install Airflow Worker and its Dependencies",
-         "description" : "This command will install Airflow worker and all of its dependencies",
-         "expectedExitCodes" : [0],
-         "requiredRoleState" : "stopped",
-         "commandRunner" : {
-           "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
-           "environmentVariables" : {
-            "pip_home" : "${pip_home}",
-            "airflow_home" : "${airflow_home}"
-           }
-         }
-        }
-      ],
       "stopRunner" : {
          "runner" : {
              "program" : "scripts/stop_airflow_worker.sh"
@@ -490,23 +423,6 @@
       "startRunner" : {
          "program" : "scripts/start_rabbitmq.sh"
       },
-      "commands" : [
-        {
-         "name" : "install_rabbitmq_dependencies_rolecmd",
-         "label" : "Install RabbitMq and its Dependencies",
-         "description" : "This command will install RabbitMq and all of its dependencies",
-         "expectedExitCodes" : [0],
-         "requiredRoleState" : "stopped",
-         "commandRunner" : {
-           "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
-           "environmentVariables" : {
-            "pip_home" : "${pip_home}",
-            "airflow_home" : "${airflow_home}"
-           }
-         }
-        }
-      ],
       "stopRunner" : {
          "runner" : {
              "program" : "scripts/stop_rabbitmq.sh"
@@ -522,24 +438,7 @@
       },
       "topology": {
         "minInstances" : "0"
-      },
-      "commands" : [
-        {
-         "name" : "install_airflow_flower_dependencies_rolecmd",
-         "label" : "Install Airflow Flower and its Dependencies",
-         "description" : "This command will install Airflow Flower and all of its dependencies",
-         "expectedExitCodes" : [0],
-         "requiredRoleState" : "stopped",
-         "commandRunner" : {
-           "program" : "scripts/install.sh",
-           "args" : ["--dbtype","${dbType}" , "--dbhost", "${dbHost}", "--dbuser", "${dbUser}", "--dbpassword", "${dbPass}", "--rabbitmqhost", "${RabbitMQ.ipaddress}"],
-           "environmentVariables" : {
-            "pip_home" : "${pip_home}",
-            "airflow_home" : "${airflow_home}"
-           }
-         }
-        }
-      ]
+      }
     },
     {
       "name" : "KERBEROS",
