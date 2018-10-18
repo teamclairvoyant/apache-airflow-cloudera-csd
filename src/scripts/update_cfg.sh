@@ -54,7 +54,19 @@ else
         sleep 3
     done
 
-    if [ $counter -gt 4 ] && [ $exit_code != 0 ]
+    ${RABBITMQ_DIR}/usr/lib/rabbitmq/bin/rabbitmqctl status
+    exit_code_status="$?"
+    counter_status=0
+
+    while [ $counter_status -le 4 ] && [ $exit_code_status != 0 ]
+    do
+        sleep 3
+        ${RABBITMQ_DIR}/usr/lib/rabbitmq/bin/rabbitmqctl status
+        exit_code_status="$?"
+        counter_status=$(($counter_status+1))
+    done
+
+    if [ $counter -gt 4 ] && [ $exit_code != 0 ] && [ $counter_status -gt 4 ] && [ $exit_code_status != 0 ]
     then
         echo "Cannot start Rabbitmq server to create users"
         exit 1
