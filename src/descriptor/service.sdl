@@ -9,7 +9,7 @@
   },
   "parcel" : {
     "requiredTags" : [ "airflow", "rabbitmq" ],
-    "optionalTags" : []
+    "sTags" : []
   },
   "parameters" : [
     {
@@ -50,55 +50,103 @@
       "required" : "true"
     },
     {
+      "name": "dbName",
+      "label": "Database Name",
+      "description": "Database to be used by the Airflow",
+      "type": "string",
+      "default": "airflow",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
+      "name": "dbPort",
+      "label": "Database port",
+      "description": "Database port to connect to the database",
+      "type": "string",
+      "default": "3306",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
       "name" : "RabbitMQ.ipaddress",
       "label" : "RabbitMQ Ip address",
       "description" : "Ip address of the RabbitMQ node",
       "type" : "string",
-      "default" : "localhost"
+      "default" : "localhost",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
+      "name" : "RabbitMQ.username",
+      "label" : "RabbitMQ Username",
+      "description" : "Username of the RabbitMQ",
+      "type" : "string",
+      "default" : "rabbitmq",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
+      "name" : "RabbitMQ.password",
+      "label" : "RabbitMQ Password",
+      "description" : "Password of the RabbitMQ",
+      "type" : "password",
+      "default" : "",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
+      "name" : "RabbitMQ.port",
+      "label" : "RabbitMQ Port",
+      "description" : "Port of the RabbitMQ node",
+      "type" : "string",
+      "default" : "5672",
+      "configurableInWizard": true,
+      "required" : "true"
     },
     {
       "name" : "security",
-      "label" : "Security (Optional)",
+      "label" : "Security",
       "description" : "What security module to use (for example kerberos)",
       "type" : "string",
       "default" : ""
     },
     {
       "name" : "keytab",
-      "label" : "Keytab (Optional)",
+      "label" : "Keytab",
       "description" : "Location of keytab file",
       "type" : "string",
       "default" : ""
     },
     {
       "name" : "reinit_frequency",
-      "label" : "Reinit Frequency (Optional)",
+      "label" : "Reinit Frequency",
       "description" : "Frequency of tickets",
       "type" : "string",
       "default" : ""
     },
     {
       "name" : "principal",
-      "label" : "Principal (Optional)",
+      "label" : "Principal",
       "description" : "Kerberos Principal",
       "type" : "string",
       "default" : ""
     },
     {
       "name" : "expose_config",
-      "label" : "Expose Config (Optional)",
+      "label" : "Expose Config",
       "description" : "Expose the configuration file in the web server",
       "type" : "boolean",
-      "default" : "false",
+      "default" : "true",
       "configurableInWizard": true
     },
     {
       "name" : "load_examples",
-      "label" : "Load Examples (Optional)",
+      "label" : "Load Examples",
       "description" : "Whether to load the examples that ship with Airflow. It's good to get started, but you probably want to set this to False in a production environment",
       "type" : "boolean",
-      "default" : "true",
-      "configurableInWizard": true
+      "default" : "false",
+      "configurableInWizard": true,
+      "required" : "true"
     },
     {
       "name" : "airflow_home",
@@ -126,7 +174,8 @@
       "configName" : "base.log.folder",
       "required" : "true",
       "type" : "string",
-      "default" : "/var/log/airflow"
+      "default" : "/var/log/airflow",
+      "configurableInWizard": true
     },
     {
       "name" : "remote_base_log_folder",
@@ -247,18 +296,11 @@
       "default" : 8080
     }
   ],
-  "serviceInit" : {
-    "preStartSteps" : [
-      {
-        "commandName" : "INSTALL_AIRFLOW_INITDB_SERVCMD"
-      }
-    ]
-  },
   "gateway" : {
     "alternatives" : {
       "name" : "airflow",
       "priority" : 50,
-      "linkRoot" : "/tmp/airflowParent/"
+      "linkRoot" : "/tmp/airflowTemp/"
     },
     "scriptRunner" : {
       "program" : "scripts/update_cfg.sh",
@@ -266,8 +308,13 @@
         "dbType" : "${dbType}",
         "dbHost" : "${dbHost}",
         "dbUser" : "${dbUser}",
+        "dbName" : "${dbName}",
+        "dbPort" : "${dbPort}",
         "dbPass" : "${dbPass}",
         "RABBITMQ_HOST" : "${RabbitMQ.ipaddress}",
+        "RABBITMQ_USER" : "${RabbitMQ.username}",
+        "RABBITMQ_PASS" : "${RabbitMQ.password}",
+        "RABBITMQ_PORT" : "${RabbitMQ.port}",
         "airflow_home" : "${airflow_home}",
         "AIRFLOW_HOME" : "${airflow_home}",
         "dags_folder" : "${dags_folder}",
@@ -296,7 +343,7 @@
     "configWriter" : {
       "generators" : [
         {
-          "filename" : "airflow/airflowTest.cfg",
+          "filename" : "airflow/airflowTemp.cfg",
           "configFormat" : "properties",
           "includedParams" : [
             "airflow_home",
@@ -322,7 +369,7 @@
   },
   "inExpressWizard" : true,
   "icon" : "images/airflow.png",
-  "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER"],
+  "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER", "RABBITMQ"],
   "commands": [
     {
       "name": "INSTALL_AIRFLOW_INITDB_SERVCMD",
@@ -341,13 +388,23 @@
       "runMode": "single"
     }
   ],
+  "serviceInit" : {
+    "preStartSteps" : [
+      {
+        "commandName" : "INSTALL_AIRFLOW_INITDB_SERVCMD"
+      }
+    ]
+  },
   "roles" : [
     {
       "name" : "AIRFLOW_WEBSERVER",
       "label" : "Webserver",
       "pluralLabel" : "Webservers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_webserver.sh"
+         "program" : "scripts/start_airflow_webserver.sh",
+         "environmentVariables" : {
+          "AIRFLOW_HOME" : "${airflow_home}"
+         }
       },
       "externalLink" : {
         "name" : "webserver_web_ui",
@@ -358,7 +415,7 @@
           "minInstances" : 1 
       },
       "logging" : {
-         "dir" : "/var/log/airflow",
+         "dir" : "./logs",
          "filename" : "airflow-master-${host}.log",
          "configName" : "log.dir",
          "modifiable" : true,
@@ -375,7 +432,10 @@
       "label" : "Scheduler",
       "pluralLabel" : "Schedulers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_scheduler.sh"
+         "program" : "scripts/start_airflow_scheduler.sh",
+         "environmentVariables" : {
+          "AIRFLOW_HOME" : "${airflow_home}"
+         }
       },
       "commands" : [
         {
@@ -385,7 +445,10 @@
          "expectedExitCodes" : [0],
          "requiredRoleState" : "stopped",
          "commandRunner" : {
-           "program" : "scripts/airflow_initdb.sh"
+           "program" : "scripts/airflow_initdb.sh",
+           "environmentVariables" : {
+            "AIRFLOW_HOME" : "${airflow_home}"
+           }
          }
         },
         {
@@ -395,12 +458,22 @@
          "expectedExitCodes" : [0],
          "requiredRoleState" : "stopped",
          "commandRunner" : {
-           "program" : "scripts/airflow_resetdb.sh"
+             "program" : "scripts/airflow_resetdb.sh",
+             "environmentVariables" : {
+              "AIRFLOW_HOME" : "${airflow_home}"
+             }
            }
          }
       ],
       "topology" : { 
           "maxInstances" : 1 
+      },
+      "logging" : {
+         "dir" : "./logs",
+         "filename" : "airflow-master-${host}.log",
+         "configName" : "log.dir",
+         "modifiable" : true,
+         "loggingType" : "log4j"
       }
     },
     {
@@ -408,12 +481,22 @@
       "label" : "Worker",
       "pluralLabel" : "Workers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_worker.sh"
+         "program" : "scripts/start_airflow_worker.sh",
+         "environmentVariables" : {
+          "AIRFLOW_HOME" : "${airflow_home}"
+         }
       },
       "stopRunner" : {
          "runner" : {
              "program" : "scripts/stop_airflow_worker.sh"
         }
+      },
+      "logging" : {
+         "dir" : "./logs",
+         "filename" : "airflow-master-${host}.log",
+         "configName" : "log.dir",
+         "modifiable" : true,
+         "loggingType" : "log4j"
       }
     },
     {
@@ -427,6 +510,21 @@
          "runner" : {
              "program" : "scripts/stop_rabbitmq.sh"
         }
+      },
+      "topology" : { 
+          "maxInstances" : 1 
+      },
+      "externalLink" : {
+        "name" : "rabbitmq_ui",
+        "label" : "RabbitMQ WebUI",
+        "url" : "http://${host}:15672"
+      },
+      "logging" : {
+         "dir" : "./logs",
+         "filename" : "airflow-master-${host}.log",
+         "configName" : "log.dir",
+         "modifiable" : true,
+         "loggingType" : "log4j"
       }
     },
     {
@@ -434,10 +532,20 @@
       "label" : "Flower (Optional)",
       "pluralLabel" : "Flowers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_flower.sh"
+         "program" : "scripts/start_airflow_flower.sh",
+         "environmentVariables" : {
+          "AIRFLOW_HOME" : "${airflow_home}"
+         }
       },
       "topology": {
         "minInstances" : "0"
+      },
+      "logging" : {
+         "dir" : "./logs",
+         "filename" : "airflow-master-${host}.log",
+         "configName" : "log.dir",
+         "modifiable" : true,
+         "loggingType" : "log4j"
       }
     },
     {

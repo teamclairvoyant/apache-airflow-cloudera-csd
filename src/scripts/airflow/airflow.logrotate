@@ -1,9 +1,0 @@
-/var/log/airflow/*.log {
-	rotate 12
-	weekly
-	compress
-	delaycompress
-	create 640 airflow airflow
-	postrotate
-	endscript
-}
