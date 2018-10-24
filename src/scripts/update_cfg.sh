@@ -155,13 +155,32 @@ function replace {
     sed -i "s#${1}#${2}#g" $3
 }
 
+auth_backend_flag=false
 # Updating airflow.cfg
 while read line; do
     key=$(cut -d '=' -f1 <<< "$line" | xargs)
     value=$(cut -d '=' -f2 <<< "$line")
     if [[ ${!key} ]]; then
         if [[ "$key" != "#" ]]; then
-            replace "$key =${value}" "$key = ${!key}" ${airflow_home}/airflow.cfg
+            if [[ "$key" == "authenticate" ]]; then
+                replace "$key =${value}" "$key = ${!key}\nauth_backend = airflow.contrib.auth.backends.password_auth" ${airflow_home}/airflow.cfg
+            elif [[ "$key" == "auth_backend" ]]; then
+                if [[ "$auth_backend_flag" = true ]]; then
+                    replace "$key =${value}" "" ${airflow_home}/airflow.cfg
+                fi
+                auth_backend_flag=true
+            else
+                replace "$key =${value}" "$key = ${!key}" ${airflow_home}/airflow.cfg
+            fi
         fi
     fi
 done < ${airflow_home}/airflow.cfg
+
+
+# Creating Airflow User
+
+if [[ ! -z "$AIRFLOW_USER" ]];
+then 
+    export PYTHONPATH=${AIRFLOW_DIR}/usr/lib/python2.7/site-packages:$PATH
+    ${AIRFLOW_DIR}/usr/bin/python2.7 ../scripts/mkuser.py $AIRFLOW_USER $AIRFLOW_EMAIL $AIRFLOW_PASS
+fi

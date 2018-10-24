@@ -2,7 +2,7 @@
   "name" : "AIRFLOW",
   "label" : "Airflow",
   "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.",
-  "version" : "1.0.1",
+  "version" : "1.0.0",
   "runAs" : { 
     "user" : "root",
     "group" : "root"
@@ -66,6 +66,34 @@
       "default": "3306",
       "configurableInWizard": true,
       "required" : "true"
+    },
+    {
+      "name" : "Airflow.authenticate",
+      "label" : "Enable Airflow Authentication",
+      "description" : "Enable Airflow Authentication",
+      "type" : "boolean",
+      "default" : "false"
+    },
+    {
+      "name" : "Airflow.username",
+      "label" : "Airflow Username (Only to create Airflow User)",
+      "description" : "Username of the Airflow to create",
+      "type" : "string",
+      "default" : ""
+    },
+    {
+      "name" : "Airflow.email",
+      "label" : "Email of the Airflow user",
+      "description" : "Email of the Airflow user",
+      "type" : "string",
+      "default" : ""
+    },
+    {
+      "name" : "Airflow.password",
+      "label" : "Airflow Password",
+      "description" : "Password of the Airflow",
+      "type" : "password",
+      "default" : ""
     },
     {
       "name" : "RabbitMQ.ipaddress",
@@ -136,7 +164,7 @@
       "label" : "Expose Config",
       "description" : "Expose the configuration file in the web server",
       "type" : "boolean",
-      "default" : "true",
+      "default" : "false",
       "configurableInWizard": true
     },
     {
@@ -311,6 +339,10 @@
         "dbName" : "${dbName}",
         "dbPort" : "${dbPort}",
         "dbPass" : "${dbPass}",
+        "authenticate" : "${Airflow.authenticate}",
+        "AIRFLOW_USER" : "${Airflow.username}",
+        "AIRFLOW_PASS" : "${Airflow.password}",
+        "AIRFLOW_EMAIL" : "${Airflow.email}",
         "RABBITMQ_HOST" : "${RabbitMQ.ipaddress}",
         "RABBITMQ_USER" : "${RabbitMQ.username}",
         "RABBITMQ_PASS" : "${RabbitMQ.password}",
