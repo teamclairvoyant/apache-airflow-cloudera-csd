@@ -35,6 +35,7 @@ Gateway role: The purpose of the gateway role is to write the configurations fro
 		export PYTHONPATH=/opt/cloudera/parcels/AIRFLOW-1.0.0-1.7.1.3-python2.7/usr/lib/python2.7/site-packages
 		export AIRFLOW_HOME=/var/lib/airflow
 	```
+	Alternatively, you can also source the `envs.sh` file in `/opt/cloudera/parcels/AIRFLOW-1.0.0-1.7.1.3-python2.7/usr/bin`
 3. Trigger the DAG using airflow binary from `/opt/cloudera/parcels/AIRFLOW-1.0.0-1.7.1.3-python2.7/usr/bin`.
 	```
 		./airflow trigger_dag <DAG>
