@@ -6,10 +6,7 @@
 3. A relational database needs to be installed.
 
 ## Installing the CSD
-1. Download the Jar file from 
-	```
-		http://apache-airflow.s3-website-us-east-1.amazonaws.com/cloudera/csd
-	```
+1. Download the Jar file from `http://apache-airflow.s3-website-us-east-1.amazonaws.com/cloudera/csd`
 2. Copy the jar file to /opt/cloudera/csd location
 3. Restart the cloudera server
 
