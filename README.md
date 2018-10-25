@@ -19,6 +19,7 @@ There are five roles defined in the CSD.
 3. Airflow Worker
 4. RabbitMQ
 5. Airflow Flower
+6. Kerberos
 
 Along with these five roles, a gateway has been defined for the purpose of writing configurations to the airflow.cfg
 
@@ -27,6 +28,8 @@ Each role has its own install script which will be run as a command before the r
 Airflow webserver, Worker and RabbitMQ services needs to be stopped using a stop script for each of the roles.
 
 Gateway role: The purpose of the gateway role is to write the configurations from the configurations tab into the airflow.cfg file. This is done through the update_cfg.sh file which is executed from the scriptRunner within the gateway role.
+
+Kerberos Role can be 
 
 ## Manually triggering a DAG:
 1. Navigate to Airflow parcel from the terminal.
@@ -40,6 +43,9 @@ Gateway role: The purpose of the gateway role is to write the configurations fro
 	```
 		./airflow trigger_dag <DAG>
 	```
+
+## Creating Airflow Users:
+1. 
 
 ## Limitations:
 1. Number of RabbitMQ instance is limited to 1. 

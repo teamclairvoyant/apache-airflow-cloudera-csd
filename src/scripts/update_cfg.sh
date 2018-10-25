@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-# Creating the AIRFLOE_HOME directory
+# Creating the AIRFLOW_HOME directory
 if [ ! -d ${airflow_home} ]; then
     mkdir -p ${airflow_home}
     chown -R airflow:airflow ${airflow_home}
@@ -176,11 +176,19 @@ while read line; do
     fi
 done < ${airflow_home}/airflow.cfg
 
-
 # Creating Airflow User
 
 if [[ ! -z "$AIRFLOW_USER" ]];
 then 
-    export PYTHONPATH=${AIRFLOW_DIR}/usr/lib/python2.7/site-packages:$PATH
     ${AIRFLOW_DIR}/usr/bin/python2.7 ../scripts/mkuser.py $AIRFLOW_USER $AIRFLOW_EMAIL $AIRFLOW_PASS
+fi
+
+
+# Creating the airflow binary
+if [ ! -f /usr/bin/airflow ]; then
+    echo "export AIRFLOW_HOME=${AIRFLOW_HOME}" > /usr/bin/airflow
+    echo "export PYTHONPATH=${PYTHONPATH}" >> /usr/bin/airflow
+
+    echo "${AIRFLOW_DIR}/usr/bin/airflow \$1" >> /usr/bin/airflow
+    chmod 755 /usr/bin/airflow
 fi
