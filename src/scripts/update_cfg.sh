@@ -188,7 +188,14 @@ fi
 if [ ! -f /usr/bin/airflow ]; then
     echo "export AIRFLOW_HOME=${AIRFLOW_HOME}" > /usr/bin/airflow
     echo "export PYTHONPATH=${PYTHONPATH}" >> /usr/bin/airflow
+    echo "export PATH=${AIRFLOW_DIR}/usr/bin:\$PATH" >> /usr/bin/airflow
 
     echo "${AIRFLOW_DIR}/usr/bin/airflow \$1" >> /usr/bin/airflow
     chmod 755 /usr/bin/airflow
+fi
+
+# Creating gunicorn binary
+
+if [ ! -f /usr/bin/gunicorn ]; then
+    ln -s ${AIRFLOW_DIR}/usr/bin/gunicorn /usr/bin/gunicorn
 fi

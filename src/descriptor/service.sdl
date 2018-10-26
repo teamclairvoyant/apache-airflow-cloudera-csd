@@ -97,8 +97,8 @@
     },
     {
       "name" : "RabbitMQ.ipaddress",
-      "label" : "RabbitMQ Ip address",
-      "description" : "Ip address of the RabbitMQ node",
+      "label" : "RabbitMQ Hostname or Ip address",
+      "description" : "Ip address or Hostname of the node you want to deploy RabbitMQ on",
       "type" : "string",
       "default" : "",
       "configurableInWizard": true,

@@ -3,7 +3,7 @@
 ## Requirements:
 1. Airflow and RabbitMQ parcels needs to be installed. Link to parcel repo: `https://github.com/teamclairvoyant/apache-airflow-parcels`
 2. Centos 6 or RHEL 6 or Centos 7 or RHEL 7
-3. A relational database needs to be installed.
+3. A relational database needs to be installed. A database, database user is created and 
 
 ## Installing the CSD
 1. Download the Jar file from `http://apache-airflow.s3-website-us-east-1.amazonaws.com/cloudera/csd`
@@ -45,7 +45,8 @@ Kerberos Role can be
 	```
 
 ## Creating Airflow Users:
-1. 
+1. Navigate to Airflow CSD. In the configurations page, enter the Airflow Username, Airflow Email, Airflow Password you want to create. 
+2. Deploy the client configurations to create the Airflow user.
 
 ## Limitations:
 1. Number of RabbitMQ instance is limited to 1. 
