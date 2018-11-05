@@ -96,8 +96,8 @@
       "default" : ""
     },
     {
-      "name" : "RabbitMQ.ipaddress",
-      "label" : "RabbitMQ Hostname or Ip address",
+      "name" : "RabbitMQ.host",
+      "label" : "RabbitMQ Host",
       "description" : "Ip address or Hostname of the node you want to deploy RabbitMQ on",
       "type" : "string",
       "default" : "",
@@ -163,6 +163,8 @@
       "name" : "expose_config",
       "label" : "Expose Config",
       "description" : "Expose the configuration file in the web server",
+      "configName" : "expose.config",
+      "required" : "true",
       "type" : "boolean",
       "default" : "false",
       "configurableInWizard": true
@@ -320,8 +322,8 @@
       "description" : "The port on which to run the web server",
       "configName" : "web.server.port",
       "required" : "true",
-      "type" : "port",
-      "default" : 8080
+      "type" : "string",
+      "default" : "8080"
     }
   ],
   "gateway" : {
@@ -343,7 +345,7 @@
         "AIRFLOW_USER" : "${Airflow.username}",
         "AIRFLOW_PASS" : "${Airflow.password}",
         "AIRFLOW_EMAIL" : "${Airflow.email}",
-        "RABBITMQ_HOST" : "${RabbitMQ.ipaddress}",
+        "RABBITMQ_HOST" : "${RabbitMQ.host}",
         "RABBITMQ_USER" : "${RabbitMQ.username}",
         "RABBITMQ_PASS" : "${RabbitMQ.password}",
         "RABBITMQ_PORT" : "${RabbitMQ.port}",
@@ -376,25 +378,7 @@
       "generators" : [
         {
           "filename" : "airflow/airflowTemp.cfg",
-          "configFormat" : "properties",
-          "includedParams" : [
-            "airflow_home",
-            "dags_folder",
-            "base_log_folder",
-            "remote_base_log_folder",
-            "remote_log_conn_id",
-            "encrypt_s3_logs",
-            "executor",
-            "sql_alchemy_pool_size",
-            "sql_alchemy_pool_recycle",
-            "parallelism",
-            "dag_concurrency",
-            "dags_are_paused_at_creation",
-            "non_pooled_task_slot_count",
-            "max_active_runs_per_dag",
-            "default_owner",
-            "web_server_port"
-          ]
+          "configFormat" : "properties"
         }
       ]
     }
@@ -438,10 +422,45 @@
           "AIRFLOW_HOME" : "${airflow_home}"
          }
       },
+      "parameters" : [
+        {
+          "name" : "web_server_port",
+          "label" : "Web Server Port",
+          "description" : "The port on which to run the web server",
+          "configName" : "web.server.port",
+          "required" : "true",
+          "type" : "port",
+          "default" : 8080
+        },
+        {
+          "name" : "expose_config",
+          "label" : "Expose Config",
+          "description" : "Expose the configuration file in the web server",
+          "configName" : "expose.config",
+          "required" : "true",
+          "type" : "boolean",
+          "default" : "false"
+        },
+        {
+          "name" : "Airflow.authenticate",
+          "label" : "Enable Airflow Authentication",
+          "description" : "Enable Airflow Authentication",
+          "configName" : "airflow.authenticate",
+          "required" : "true",
+          "type" : "boolean",
+          "default" : "false"
+        }
+      ],
+      "generators" : [
+          {
+            "filename" : "sample_xml_file.xml",
+            "configFormat" : "hadoop_xml"
+          }
+      ],
       "externalLink" : {
         "name" : "webserver_web_ui",
         "label" : "Airflow WebUI",
-        "url" : "http://${host}:8080"
+        "url" : "http://${host}:${web_server_port}"
       },
       "topology" : { 
           "minInstances" : 1 

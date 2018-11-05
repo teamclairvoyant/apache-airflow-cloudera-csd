@@ -34,6 +34,9 @@ elif [ "$dbType" == "postgresql" ]; then
     sql_alchemy_conn="postgresql+psycopg2://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}"
 fi
 
+
+# Creating RabbitMQ User
+
 export HOME=`eval echo ~$USER`
 
 ${RABBITMQ_DIR}/usr/lib/rabbitmq/bin/rabbitmqctl status
@@ -145,6 +148,9 @@ else
         
 fi
 
+
+# Updating airflow.cfg
+
 broker_url="amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@${RABBITMQ_HOST}:${RABBITMQ_PORT}/"
 celery_result_backend="db+${sql_alchemy_conn}"
 
@@ -155,18 +161,25 @@ function replace {
     sed -i "s#${1}#${2}#g" $3
 }
 
+function remove_line {
+    sed -i "/${1}/d" $2
+}
+
+echo "Updating airflow.cfg..."
 auth_backend_flag=false
+auth_backend=airflow.contrib.auth.backends.password_auth
+
 # Updating airflow.cfg
 while read line; do
-    key=$(cut -d '=' -f1 <<< "$line" | xargs)
-    value=$(cut -d '=' -f2 <<< "$line")
+    key=$(cut -d "=" -f1 <<< "$line" | xargs)
+    value=$(cut -d "=" -f2 <<< "$line")
     if [[ ${!key} ]]; then
         if [[ "$key" != "#" ]]; then
             if [[ "$key" == "authenticate" ]]; then
                 replace "$key =${value}" "$key = ${!key}\nauth_backend = airflow.contrib.auth.backends.password_auth" ${airflow_home}/airflow.cfg
             elif [[ "$key" == "auth_backend" ]]; then
                 if [[ "$auth_backend_flag" = true ]]; then
-                    replace "$key =${value}" "" ${airflow_home}/airflow.cfg
+                    sed -i "/auth_backend = airflow.contrib.auth.backends.password_auth/d" ${airflow_home}/airflow.cfg
                 fi
                 auth_backend_flag=true
             else
@@ -176,6 +189,8 @@ while read line; do
     fi
 done < ${airflow_home}/airflow.cfg
 
+
+echo "Creating Airflow user..."
 # Creating Airflow User
 
 if [[ ! -z "$AIRFLOW_USER" ]];
@@ -184,18 +199,10 @@ then
 fi
 
 
+echo "Creating Airflow Binary under /usr/bin..."
 # Creating the airflow binary
-if [ ! -f /usr/bin/airflow ]; then
-    echo "export AIRFLOW_HOME=${AIRFLOW_HOME}" > /usr/bin/airflow
-    echo "export PYTHONPATH=${PYTHONPATH}" >> /usr/bin/airflow
-    echo "export PATH=${AIRFLOW_DIR}/usr/bin:\$PATH" >> /usr/bin/airflow
-
-    echo "${AIRFLOW_DIR}/usr/bin/airflow \$1" >> /usr/bin/airflow
-    chmod 755 /usr/bin/airflow
-fi
-
-# Creating gunicorn binary
-
-if [ ! -f /usr/bin/gunicorn ]; then
-    ln -s ${AIRFLOW_DIR}/usr/bin/gunicorn /usr/bin/gunicorn
-fi
+echo "export AIRFLOW_HOME=${AIRFLOW_HOME}" > /usr/bin/airflow
+echo "export PYTHONPATH=${PYTHONPATH}" >> /usr/bin/airflow
+echo "export PATH=${AIRFLOW_DIR}/usr/bin:\$PATH" >> /usr/bin/airflow
+echo "${AIRFLOW_DIR}/usr/bin/airflow \$@" >> /usr/bin/airflow
+chmod 755 /usr/bin/airflow
