@@ -54,7 +54,6 @@ Kerberos: Kerberos is used to enable Kerberos protocol for the Airflow. It inter
 
 Gateway role: The purpose of the gateway role is to write the configurations from the configurations tab into the airflow.cfg file. This is done through the update_cfg.sh file which is executed from the scriptRunner within the gateway role.
 
-    
 ## Using airflow binary: 
 Here are some of the examples for airflow commands: 
 
@@ -68,12 +67,15 @@ airflow initdb
 airflow list_dags
 ```
 #### Manually triggering a DAG:
+The dag file has to be copied to all the nodes to the dags folder manually. 
 ```bash
 airflow trigger_dag <DAG Name>
 ```
 
 For a complete list of airflow commands refer to `https://airflow.apache.org/cli.html`
 
+## Deploying a dag:
+  The DAG file has to be copied to `dags_folder` directory within all the nodes. It is important to manually distribute to all the nodes where the roles are deployed. 
 
 ## Enabling Authentication for Airflow Web UI:
    Inorder to enable authentication for Airflow Web UI check the "Enable Airflow Authentication" option. You can create Airflow users using one of two options below
@@ -89,21 +91,21 @@ Another way to add Airflow users is using the mkuser.sh file. Users can be added
 1. Navigate to the current working directory of the CSD under `/var/run/cloudera-scm-agent/process`
 2. Export PYTHONPATH and AIRFLOW_HOME environment variables. By Default these are 
     PYTHONPATH:
-        ```bash
+```bash
         export PYTHONPATH=/opt/cloudera/parcels/AIRFLOW/usr/lib/python2.7/site-packages:$PYTHONPATH
-        ```
+```
     Airflow Home: 
-        ```bash
+```bash
         export AIRFLOW_HOME=/var/lib/airflow
-        ```
+```
 3. Within the scripts directory, you can find `mkuser.py` file. Execute `mkuser.py` to add Airflow user
-    ```bash
-       <PATH TO PYTHON_INTERPRETER> mkuser.py <Username> <User email> <Password>
-    ```
+```bash
+ <PATH_TO_PYTHON_INTERPRETER> mkuser.py <Username> <User Email> <Password>
+```
     For example, this can be like 
-       ```
+```bash
        /opt/cloudera/parcels/AIRFLOW/usr/bin/python2.7 mkuser.py airflowUser airflow@email.com airflowUserPassword
-       ```
+```
 
 ## Limitations:
 1. Number of RabbitMQ instance is limited to 1. 
@@ -121,6 +123,10 @@ Another way to add Airflow users is using the mkuser.sh file. Users can be added
 ### Markup already exists Error:
 
 Upon many deployments, you may face an error called Markup file already exists while trying to stop a role and the process never stops. In that case, stop the process using "Abort" command. And navigate to `/var/run/cloudera-scm-agent/process` and delete all the `GracefulRoleStopRunner` directories.
+
+### Lag in DAG Execution:
+
+Occasionally, we experienced some delay in DAG execution. We are working to fix this. 
 
 ## Resources:
 1. https://github.com/cloudera/cm_ext/wiki/The-Structure-of-a-CSD
