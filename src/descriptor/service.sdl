@@ -2,7 +2,7 @@
   "name" : "AIRFLOW",
   "label" : "Airflow",
   "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.",
-  "version" : "1.0.0",
+  "version" : "1.8.0",
   "runAs" : { 
     "user" : "root",
     "group" : "root"

@@ -24,8 +24,8 @@
       ```
    
 ## Installing the CSD
-1. Download the Jar file from `http://teamclairvoyant.s3-website-us-west-2.amazonaws.com/apache-airflow/cloudera/parcels/`
-2. Copy the jar file to /opt/cloudera/csd location
+1. Download the Jar file from `http://teamclairvoyant.s3-website-us-west-2.amazonaws.com/apache-airflow/cloudera/csd/`
+2. Copy the jar file to `/opt/cloudera/csd` location
 3. Restart the cloudera server
 
 ## Structure of the service.sdl file
@@ -56,12 +56,10 @@ Gateway role: The purpose of the gateway role is to write the configurations fro
 
 ## Using airflow binary: 
 Here are some of the examples for airflow commands: 
-
 #### Initializing airflow database: 
 ```bash
 airflow initdb
 ```
-
 #### Listing Airflow dags:
 ```bash
 airflow list_dags
@@ -90,19 +88,19 @@ Note: Although the last created User shows up in the Airflow configurations, you
 Another way to add Airflow users is using the mkuser.sh file. Users can be added as follows:
 1. Navigate to the current working directory of the CSD under `/var/run/cloudera-scm-agent/process`
 2. Export PYTHONPATH and AIRFLOW_HOME environment variables. By Default these are 
-    PYTHONPATH:
+PYTHONPATH:
 ```bash
         export PYTHONPATH=/opt/cloudera/parcels/AIRFLOW/usr/lib/python2.7/site-packages:$PYTHONPATH
 ```
-    Airflow Home: 
+Airflow Home: 
 ```bash
         export AIRFLOW_HOME=/var/lib/airflow
 ```
 3. Within the scripts directory, you can find `mkuser.py` file. Execute `mkuser.py` to add Airflow user
 ```bash
- <PATH_TO_PYTHON_INTERPRETER> mkuser.py <Username> <User Email> <Password>
+        <PATH_TO_PYTHON_INTERPRETER> mkuser.py <Username> <User Email> <Password>
 ```
-    For example, this can be like 
+For example, this can be like 
 ```bash
        /opt/cloudera/parcels/AIRFLOW/usr/bin/python2.7 mkuser.py airflowUser airflow@email.com airflowUserPassword
 ```
