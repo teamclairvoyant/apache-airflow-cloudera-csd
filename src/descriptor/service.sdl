@@ -230,18 +230,9 @@
       "label" : "Encrypt S3 Logs",
       "description" : "Use server-side encryption for logs stored in S3.",
       "configName" : "encrypt.s3.logs",
-      "required" : "true",
+      "required" : "false",
       "type" : "boolean",
       "default" : "false"
-    },
-    {
-      "name" : "s3_log_folder",
-      "label" : "s3 log folder",
-      "description" : "S3 log folder",
-      "configName" : "s3.log.folder",
-      "required" : "false",
-      "type" : "string",
-      "default" : ""
     },
     {
       "name" : "executor",
@@ -344,105 +335,6 @@
       "default" : 30
     },
     {
-      "name" : "task_runner",
-      "label" : "Task Runner",
-      "description" : "The class to use for running task instances in a subprocess",
-      "configName" : "task.runner",
-      "required" : "true",
-      "type" : "string",
-      "default" : "BashTaskRunner"
-    },
-    {
-      "name" : "default_impersonation",
-      "label" : "Default Impersonation",
-      "description" : "If set, tasks without a `run_as_user` argument will be run with this user. Can be used to de-elevate a sudo user running Airflow when executing tasks",
-      "configName" : "default.impersonation",
-      "required" : "false",
-      "type" : "string",
-      "default" : ""
-    },
-    {
-      "name" : "security",
-      "label" : "Security",
-      "description" : "What security module to use (for example kerberos)",
-      "configName" : "security",
-      "required" : "false",
-      "type" : "string",
-      "default" : ""
-    },
-    {
-      "name" : "unit_test_mode",
-      "label" : "Unit Test Mode",
-      "description" : "Turn unit test mode on (overwrites many configuration options with test values at runtime)",
-      "configName" : "unit.test.mode",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : "false"
-    },
-    {
-      "name" : "api_client",
-      "label" : "API Client",
-      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver",
-      "configName" : "api.client",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow.api.client.local_client"
-    },
-    {
-      "name" : "endpoint_url",
-      "label" : "Endpoint URL",
-      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver",
-      "configName" : "endpoint.url",
-      "required" : "true",
-      "type" : "string",
-      "default" : "http://localhost:8080"
-    },
-    {
-      "name" : "default_owner",
-      "label" : "Default Owner",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
-      "configName" : "default.owner",
-      "required" : "true",
-      "type" : "string",
-      "default" : "Airflow"
-    },
-    {
-      "name" : "default_cpus",
-      "label" : "Default CPUs",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
-      "configName" : "default.cpus",
-      "required" : "true",
-      "type" : "double",
-      "default" : 1
-    },
-    {
-      "name" : "default_ram",
-      "label" : "Default RAM",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
-      "configName" : "default.ram",
-      "required" : "true",
-      "type" : "double",
-      "default" : 512
-    },
-    {
-      "name" : "default_disk",
-      "label" : "Default Disk",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
-      "configName" : "default.disk",
-      "required" : "true",
-      "type" : "double",
-      "default" : 512
-    },
-    {
-      "name" : "default_gpus",
-      "label" : "Default GPUs",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
-      "configName" : "default.gpus",
-      "required" : "true",
-      "type" : "double",
-      "default" : 0
-    },
-    {
       "name" : "default_owner",
       "label" : "Default Owner",
       "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via 'default_args'",
@@ -479,24 +371,6 @@
       "default" : "8080"
     },
     {
-      "name" : "web_server_ssl_cert",
-      "label" : "Web server ssl cert",
-      "description" : "Paths to the SSL certificate and key for the web server. When both are provided SSL will be enabled. This does not change the web server port.",
-      "configName" : "web.server.ssl.cert",
-      "required" : "false",
-      "type" : "string",
-      "default" : ""    
-    },
-    {
-      "name" : "web_server_ssl_key",
-      "label" : "Web server ssl key",
-      "description" : "Paths to the SSL certificate and key for the web server. When both are provided SSL will be enabled. This does not change the web server port.",
-      "configName" : "web.server.ssl.key",
-      "required" : "true",
-      "type" : "string",
-      "default" : ""    
-    },
-    {
       "name" : "web_server_worker_timeout",
       "label" : "Web Server Worker Timeout",
       "description" : "The time the gunicorn webserver waits before timing out on a worker",
@@ -504,24 +378,6 @@
       "required" : "true",
       "type" : "double",
       "default" : 120
-    },
-    {
-      "name" : "worker_refresh_batch_size",
-      "label" : "Worker Refresh Batch Size",
-      "description" : "Number of workers to refresh at a time. When set to 0, worker refresh is disabled. When nonzero, airflow periodically refreshes webserver workers by bringing up new ones and killing old ones.",
-      "configName" : "worker.refresh.batch.size",
-      "required" : "true",
-      "type" : "double",
-      "default" : 1
-    },
-    {
-      "name" : "worker_refresh_interval",
-      "label" : "Worker Refresh Interval",
-      "description" : "Number of seconds to wait before refreshing a batch of workers.",
-      "configName" : "worker.refresh.interval",
-      "required" : "true",
-      "type" : "double",
-      "default" : 30
     },
     {
       "name" : "workers",
@@ -549,51 +405,6 @@
       "required" : "true",
       "type" : "boolean",
       "default" : "false"
-    },
-    {
-      "name" : "owner_mode",
-      "label" : "Owner Mode",
-      "description" : "Filtering mode. Choices include user (default) and ldapgroup. Ldap group filtering requires using the ldap backend",
-      "configName" : "owner.mode",
-      "required" : "true",
-      "type" : "string",
-      "default" : "user"
-    },
-    {
-      "name" : "dag_orientation",
-      "label" : "Dag Orientation",
-      "description" : "Default DAG orientation. Valid values are: LR (Left->Right), TB (Top->Bottom), RL (Right->Left), BT (Bottom->Top)",
-      "configName" : "dag.orientation",
-      "required" : "true",
-      "type" : "string",
-      "default" : "LR"
-    },
-    {
-      "name" : "demo_mode",
-      "label" : "Demo Mode",
-      "description" : "Puts the webserver in demonstration mode; blurs the names of Operators for privacy.",
-      "configName" : "demo.mode",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : false
-    },
-    {
-      "name" : "log_fetch_timeout_sec",
-      "label" : "Log fetch timeout sec",
-      "description" : "The amount of time (in secs) webserver will wait for initial handshake while fetching logs from other worker machine",
-      "configName" : "log.fetch.timeout.sec",
-      "required" : "true",
-      "type" : "double",
-      "default" : 5
-    },
-    {
-      "name" : "hide_paused_dags_by_default",
-      "label" : "Hide paused dags by default",
-      "description" : "TBy default, the webserver shows paused DAGs. Flip this to hide paused DAGs by default",
-      "configName" : "hide.paused.dags.by.default",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : false
     },
     {
       "name" : "email_backend",
@@ -731,100 +542,6 @@
       "default" : 5
     },
     {
-      "name" : "run_duration",
-      "label" : "Run duration",
-      "description" : "after how much time should the scheduler terminate in seconds -1 indicates to run continuously (see also num_runs)",
-      "configName" : "run.duration",
-      "required" : "true",
-      "type" : "string",
-      "default" : "-1"
-    },
-    {
-      "name" : "min_file_process_interval",
-      "label" : "Min file process interval",
-      "description" : "after how much time a new DAGs should be picked up from the filesystem",
-      "configName" : "min.file.process.interval",
-      "required" : "true",
-      "type" : "double",
-      "default" : 0
-    },
-    {
-      "name" : "dag_dir_list_interval",
-      "label" : "Dag dir list interval",
-      "description" : "",
-      "configName" : "dag.dir.list.interval",
-      "required" : "true",
-      "type" : "double",
-      "default" : 300
-    },
-    {
-      "name" : "print_stats_interval",
-      "label" : "Print stats interval",
-      "description" : "How often should stats be printed to the logs",
-      "configName" : "print.stats.interval",
-      "required" : "true",
-      "type" : "double",
-      "default" : 30
-    },
-    {
-      "name" : "child_process_log_directory",
-      "label" : "Child process log directory",
-      "description" : "",
-      "configName" : "child.process.log.directory",
-      "required" : "true",
-      "type" : "string",
-      "default" : "/var/lib/airflow/logs/scheduler"
-    },
-    {
-      "name" : "scheduler_zombie_task_threshold",
-      "label" : "Scheduler zombie task threshold",
-      "description" : "Local task jobs periodically heartbeat to the DB. If the job has not heartbeat in this many seconds, the scheduler will mark the associated task instance as failed and will re-schedule the task.",
-      "configName" : "scheduler.zombie.task.threshold",
-      "required" : "true",
-      "type" : "double",
-      "default" : 300
-    },
-    {
-      "name" : "catchup_by_default",
-      "label" : "Catchup by default",
-      "description" : "Turn off scheduler catchup by setting this to False. Default behavior is unchanged and Command Line Backfills still work, but the scheduler will not do scheduler catchup if this is False, however it can be set on a per DAG basis in the DAG definition (catchup)",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : true
-    },
-    {
-      "name" : "statsd_on",
-      "label" : "statsd on",
-      "description" : "",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : false
-    },
-    {
-      "name" : "statsd_host",
-      "label" : "statsd_host",
-      "description" : "",
-      "required" : "true",
-      "type" : "string",
-      "default" : "localhost"
-    },    
-    {
-      "name" : "statsd_port",
-      "label" : "statsd port",
-      "description" : "",
-      "required" : "true",
-      "type" : "port",
-      "default" : 8125
-    },    
-    {
-      "name" : "statsd_prefix",
-      "label" : "statsd prefix",
-      "description" : "",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow"
-    },
-    {
       "name" : "max_threads",
       "label" : "Max Threads",
       "description" : "The scheduler can run multiple threads in parallel to schedule dags. This defines how many threads will run. However airflow will never use more threads than the amount of cpu cores available",
@@ -832,46 +549,6 @@
       "required" : "true",
       "type" : "double",
       "default" : 2
-    },    
-    {
-      "name" : "ccache",
-      "label" : "ccache",
-      "description" : "",
-      "required" : "true",
-      "type" : "string",
-      "default" : "/tmp/airflow_krb5_ccach"
-    },    
-    {
-      "name" : "principal",
-      "label" : "principal",
-      "description" : "",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow"
-    },    
-    {
-      "name" : "reinit_frequency",
-      "label" : "reinit frequency",
-      "description" : "",
-      "required" : "true",
-      "type" : "double",
-      "default" : 3600
-    },    
-    {
-      "name" : "kinit_path",
-      "label" : "kinit path",
-      "description" : "",
-      "required" : "true",
-      "type" : "string",
-      "default" : "kinit"
-    },    
-    {
-      "name" : "keytab",
-      "label" : "keytab",
-      "description" : "",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow.keytab"
     }
   ],
   "gateway" : {
@@ -997,7 +674,8 @@
           "required" : "true",
           "type" : "boolean",
           "default" : "false"
-        }{
+        },
+        {
           "name" : "base_url",
           "label" : "Base URL",
           "description" : "The base url of your website as airflow cannot guess what domain or cname you are using. This is used in automated emails that airflow sends to point links to the right web server",
@@ -1014,15 +692,6 @@
           "required" : "true",
           "type" : "string",
           "default" : "0.0.0.0"    
-        },
-        {
-          "name" : "web_server_port",
-          "label" : "Web Server Port",
-          "description" : "The port on which to run the web server",
-          "configName" : "web.server.port",
-          "required" : "true",
-          "type" : "string",
-          "default" : "8080"
         },
         {
           "name" : "web_server_worker_timeout",
