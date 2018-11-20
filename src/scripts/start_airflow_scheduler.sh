@@ -1,1 +1,1 @@
-sudo -Eu airflow bash -c 'exec airflow scheduler'
+sudo -Eu airflow bash -c 'export PATH=${AIRFLOW_DIR}/bin:$PATH; exec airflow scheduler'

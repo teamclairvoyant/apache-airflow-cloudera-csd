@@ -22,7 +22,14 @@
       ```bash
       GRANT ALL PRIVILEGES ON DATABASE <Database name> to <Database username>;
       ```
-   
+   Alternatively, you can use the script from `https://github.com/teamclairvoyant/hadoop-deployment-bash/blob/master/services/create_mysql_dbs-airflow.sh` to download, install and configure the MySQL databse using
+   ```bash
+    sh create_mysql_dbs-airflow.sh --host <host_name> --user <username> --password <password>
+   ```
+   And, `https://github.com/teamclairvoyant/hadoop-deployment-bash/blob/master/services/create_postgresql_dbs-airflow.sh` to download, install and configure PostgreSQL using
+   ```bash
+    sh create_postgresql_dbs-airflow.sh --host <host_name> --user <username> --password <password>
+   ```
 ## Installing the CSD
 1. Download the Jar file from `http://teamclairvoyant.s3-website-us-west-2.amazonaws.com/apache-airflow/cloudera/csd/`
 2. Copy the jar file to `/opt/cloudera/csd` location

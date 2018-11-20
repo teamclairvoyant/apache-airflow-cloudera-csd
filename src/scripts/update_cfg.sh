@@ -22,8 +22,7 @@ fi
 
 # Initializing the Airflow database if not existed
 if [ ! -f ${airflow_home}/airflow.cfg ]; then
-    sudo -Eu airflow bash -c 'export PATH=${AIRFLOW_DIR}/usr/bin:$PATH;
-    export PYTHONPATH=${AIRFLOW_DIR}/usr/lib/python2.7/site-packages:$PYTHONPATH;
+    sudo -Eu airflow bash -c 'export PATH=${AIRFLOW_DIR}/bin:$PATH;
     exec airflow initdb'
 fi
 
@@ -195,14 +194,15 @@ echo "Creating Airflow user..."
 
 if [[ ! -z "$AIRFLOW_USER" ]];
 then 
-    ${AIRFLOW_DIR}/usr/bin/python2.7 ../scripts/mkuser.py $AIRFLOW_USER $AIRFLOW_EMAIL $AIRFLOW_PASS
+    ${AIRFLOW_DIR}/bin/python2.7 ../scripts/mkuser.py $AIRFLOW_USER $AIRFLOW_EMAIL $AIRFLOW_PASS
 fi
 
 
-echo "Creating Airflow Binary under /usr/bin..."
+echo "Updating AIRFLOW_HOME in binaries..."
 # Creating the airflow binary
-echo "export AIRFLOW_HOME=${AIRFLOW_HOME}" > /usr/bin/airflow
-echo "export PYTHONPATH=${PYTHONPATH}" >> /usr/bin/airflow
-echo "export PATH=${AIRFLOW_DIR}/usr/bin:\$PATH" >> /usr/bin/airflow
-echo "${AIRFLOW_DIR}/usr/bin/airflow \$@" >> /usr/bin/airflow
-chmod 755 /usr/bin/airflow
+sed -i "1s+.*+export AIRFLOW_HOME=${AIRFLOW_HOME}\n+" ${AIRFLOW_DIR}/bin/airflow.sh
+
+echo "export AIRFLOW_HOME=${AIRFLOW_HOME}" > /usr/bin/airflow-mkuser
+echo "export PYTHONPATH=${PYTHONPATH}" >> /usr/bin/airflow-mkuser
+echo "export PATH=${AIRFLOW_DIR}/bin:\$PATH" >> /usr/bin/airflow-mkuser
+echo "${AIRFLOW_DIR}/bin/mkuser.sh \$@" >> /usr/bin/airflow-mkuser

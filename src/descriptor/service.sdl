@@ -2,7 +2,7 @@
   "name" : "AIRFLOW",
   "label" : "Airflow",
   "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.",
-  "version" : "1.8.0",
+  "version" : "1.7.1.3",
   "runAs" : { 
     "user" : "root",
     "group" : "root"
@@ -308,6 +308,33 @@
       "default" : "16"
     },
     {
+      "name" : "plugins_folder",
+      "label" : "Plugins Folder",
+      "description" : "Where your Airflow plugins are stored",
+      "configName" : "plugins.folder",
+      "required" : "true",
+      "type" : "string",
+      "default" : "/var/lib/airflow/plugins"
+    },
+    {
+      "name" : "donot_pickle",
+      "label" : "Do not Pickle",
+      "description" : "Whether to disable pickling dags",
+      "configName" : "donot.pickle",
+      "required" : "true",
+      "type" : "boolean",
+      "default" : "false"
+    },
+    {
+      "name" : "dagbag_import_timeout",
+      "label" : "Dagbag Import timeout",
+      "description" : "How long before timing out a python file import while filling the DagBag",
+      "configName" : "dagbag.import.timeout",
+      "required" : "true",
+      "type" : "double",
+      "default" : 30
+    },
+    {
       "name" : "default_owner",
       "label" : "Default Owner",
       "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via 'default_args'",
@@ -317,6 +344,24 @@
       "default" : "airflow"
     },
     {
+      "name" : "base_url",
+      "label" : "Base URL",
+      "description" : "The base url of your website as airflow cannot guess what domain or cname you are using. This is used in automated emails that airflow sends to point links to the right web server",
+      "configName" : "base.url",
+      "required" : "true",
+      "type" : "string",
+      "default" : "http://localhost:8080"    
+    },
+    {
+      "name" : "web_server_host",
+      "label" : "web.server.host",
+      "description" : "The ip specified when starting the web server",
+      "configName" : "webserver.host",
+      "required" : "true",
+      "type" : "string",
+      "default" : "0.0.0.0"    
+    },
+    {
       "name" : "web_server_port",
       "label" : "Web Server Port",
       "description" : "The port on which to run the web server",
@@ -324,6 +369,186 @@
       "required" : "true",
       "type" : "string",
       "default" : "8080"
+    },
+    {
+      "name" : "web_server_worker_timeout",
+      "label" : "Web Server Worker Timeout",
+      "description" : "The time the gunicorn webserver waits before timing out on a worker",
+      "configName" : "web.server.worker.timeout",
+      "required" : "true",
+      "type" : "double",
+      "default" : 120
+    },
+    {
+      "name" : "workers",
+      "label" : "Number of Workers",
+      "description" : "Number of workers to run the Gunicorn web server",
+      "configName" : "workers",
+      "required" : "true",
+      "type" : "double",
+      "default" : 4
+    },
+    {
+      "name" : "woker_class",
+      "label" : "Worker Class",
+      "description" : "The worker class gunicorn should use. Choices include sync (default), eventlet, gevent",
+      "configName" : "worker.class",
+      "required" : "true",
+      "type" : "string",
+      "default" : "sync"
+    },
+    {
+      "name" : "filter_by_owner",
+      "label" : "Filter By Owner",
+      "description" : "Filter the list of dags by owner name (requires authentication to be enabled)",
+      "configName" : "filter.by.owner",
+      "required" : "true",
+      "type" : "boolean",
+      "default" : "false"
+    },
+    {
+      "name" : "email_backend",
+      "label" : "Email Backend",
+      "description" : "Backend for Email",
+      "configName" : "email.backend",
+      "required" : "true",
+      "type" : "string",
+      "default" : "airflow.utils.email.send_email_smtp"
+    },
+    {
+      "name" : "smtp_host",
+      "label" : "Smtp Host",
+      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "configName" : "smtp.host",
+      "required" : "true",
+      "type" : "string",
+      "default" : "localhost"
+    },
+    {
+      "name" : "smtp_starttls",
+      "label" : "Smtp Starttls",
+      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "configName" : "smtp.starttls",
+      "required" : "true",
+      "type" : "boolean",
+      "default" : "true"
+    },
+    {
+      "name" : "smtp_ssl",
+      "label" : "Smtp SSL",
+      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "configName" : "smtp.ssl",
+      "required" : "true",
+      "type" : "boolean",
+      "default" : "false"
+    },
+    {
+      "name" : "smtp_user",
+      "label" : "Smtp User",
+      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "configName" : "smtp.user",
+      "required" : "true",
+      "type" : "string",
+      "default" : "airflow"
+    },
+    {
+      "name" : "smtp_port",
+      "label" : "Smtp Port",
+      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "configName" : "smtp.port",
+      "required" : "true",
+      "type" : "port",
+      "default" : 25
+    },
+    {
+      "name" : "smtp_password",
+      "label" : "Smtp Password",
+      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "configName" : "smtp.password",
+      "required" : "true",
+      "type" : "password",
+      "default" : "airflow"
+    },
+    {
+      "name" : "smtp_mail_from",
+      "label" : "Smtp Mail From",
+      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "configName" : "smtp.mail.from",
+      "required" : "true",
+      "type" : "string",
+      "default" : "airflow@airflow.com"
+    },
+    {
+      "name" : "celery_app_name",
+      "label" : "Celery App Name",
+      "description" : "The app name that will be used by celery",
+      "configName" : "celery.app.name",
+      "required" : "true",
+      "type" : "string",
+      "default" : "airflow.executors.celery_executor"
+    },
+    {
+      "name" : "celery_concurrency",
+      "label" : "Celery Concurrency",
+      "description" : "The concurrency that will be used when starting workers with the airflow worker command. This defines the number of task instances that a worker will take, so size up your workers based on the resources on your worker box and the nature of your tasks",
+      "configName" : "celery.concurrency",
+      "required" : "true",
+      "type" : "double",
+      "default" : 16
+    },
+    {
+      "name" : "worker_log_server_port",
+      "label" : "Worker Log Server Port",
+      "description" : "When you start an airflow worker, airflow starts a tiny web server subprocess to serve the workers local log files to the airflow main web server, who then builds pages and sends them to users. This defines the port on which the logs are served. It needs to be unused, and open visible from the main web server to connect into the workers.",
+      "configName" : "worker.log.server.port",
+      "required" : "true",
+      "type" : "port",
+      "default" : 8793
+    },
+    {
+      "name" : "flower_port",
+      "label" : "Flower Port",
+      "description" : "Celery Flower is a sweet UI for Celery. Airflow has a shortcut to start it `airflow flower`. This defines the port that Celery Flower runs on",
+      "configName" : "flower.port",
+      "required" : "true",
+      "type" : "port",
+      "default" : 5555
+    },
+    {
+      "name" : "default_queue",
+      "label" : "Default Queue",
+      "description" : "Default queue that tasks get assigned to and that worker listen on.",
+      "configName" : "default.queue",
+      "required" : "true",
+      "type" : "string",
+      "default" : "default"
+    },
+    {
+      "name" : "job_heartbeat_sec",
+      "label" : "Job Heartbeat Seconds",
+      "description" : "Task instances listen for external kill signal (when you clear tasks from the CLI or the UI), this defines the frequency at which they should listen (in seconds).",
+      "configName" : "job.heartbeat.sec",
+      "required" : "true",
+      "type" : "double",
+      "default" : 5
+    },
+    {
+      "name" : "scheduler_heartbeat_sec",
+      "label" : "Scheduler Heartbeat Seconds",
+      "description" : "The scheduler constantly tries to trigger new tasks (look at the scheduler section in the docs for more information). This defines how often the scheduler should run (in seconds).",
+      "configName" : "scheduler.heartbeat.sec",
+      "required" : "true",
+      "type" : "double",
+      "default" : 5
+    },
+    {
+      "name" : "max_threads",
+      "label" : "Max Threads",
+      "description" : "The scheduler can run multiple threads in parallel to schedule dags. This defines how many threads will run. However airflow will never use more threads than the amount of cpu cores available",
+      "configName" : "max.threads",
+      "required" : "true",
+      "type" : "double",
+      "default" : 2
     }
   ],
   "gateway" : {
@@ -414,8 +639,8 @@
   "roles" : [
     {
       "name" : "AIRFLOW_WEBSERVER",
-      "label" : "Webserver",
-      "pluralLabel" : "Webservers",
+      "label" : "WebServer",
+      "pluralLabel" : "WebServers",
       "startRunner" : {
          "program" : "scripts/start_airflow_webserver.sh",
          "environmentVariables" : {
@@ -446,6 +671,60 @@
           "label" : "Enable Airflow Authentication",
           "description" : "Enable Airflow Authentication",
           "configName" : "airflow.authenticate",
+          "required" : "true",
+          "type" : "boolean",
+          "default" : "false"
+        },
+        {
+          "name" : "base_url",
+          "label" : "Base URL",
+          "description" : "The base url of your website as airflow cannot guess what domain or cname you are using. This is used in automated emails that airflow sends to point links to the right web server",
+          "configName" : "base.url",
+          "required" : "true",
+          "type" : "string",
+          "default" : "http://localhost:8080"    
+        },
+        {
+          "name" : "web_server_host",
+          "label" : "web.server.host",
+          "description" : "The ip specified when starting the web server",
+          "configName" : "webserver.host",
+          "required" : "true",
+          "type" : "string",
+          "default" : "0.0.0.0"    
+        },
+        {
+          "name" : "web_server_worker_timeout",
+          "label" : "Web Server Worker Timeout",
+          "description" : "The time the gunicorn webserver waits before timing out on a worker",
+          "configName" : "web.server.worker.timeout",
+          "required" : "true",
+          "type" : "double",
+          "default" : 120
+        },
+        {
+          "name" : "workers",
+          "label" : "Number of Workers",
+          "description" : "Number of workers to run the Gunicorn web server",
+          "configName" : "workers",
+          "required" : "true",
+          "type" : "double",
+          "default" : 4
+        },
+        {
+          "name" : "woker_class",
+          "label" : "Worker Class",
+          "description" : "The worker class gunicorn should use. Choices include sync (default), eventlet, gevent",
+          "configName" : "worker.class",
+          "required" : "true",
+          "type" : "string",
+          "default" : "sync"
+        },
+        {
+          "name" : "filter_by_owner",
+          "label" : "Filter By Owner",
+          "description" : "Filter the list of dags by owner name (requires authentication to be enabled)",
+          "configName" : "filter.by.owner",
           "required" : "true",
           "type" : "boolean",
           "default" : "false"
@@ -488,6 +767,80 @@
           "AIRFLOW_HOME" : "${airflow_home}"
          }
       },
+      "parameters" : [
+        {
+          "name" : "job_heartbeat_sec",
+          "label" : "Job Heartbeat Seconds",
+          "description" : "Task instances listen for external kill signal (when you clear tasks from the CLI or the UI), this defines the frequency at which they should listen (in seconds).",
+          "configName" : "job.heartbeat.sec",
+          "required" : "true",
+          "type" : "double",
+          "default" : 5
+        },
+        {
+          "name" : "scheduler_heartbeat_sec",
+          "label" : "Scheduler Heartbeat Seconds",
+          "description" : "The scheduler constantly tries to trigger new tasks (look at the scheduler section in the docs for more information). This defines how often the scheduler should run (in seconds).",
+          "configName" : "scheduler.heartbeat.sec",
+          "required" : "true",
+          "type" : "double",
+          "default" : 5
+        },
+        {
+          "name" : "max_threads",
+          "label" : "Max Threads",
+          "description" : "The scheduler can run multiple threads in parallel to schedule dags. This defines how many threads will run. However airflow will never use more threads than the amount of cpu cores available",
+          "configName" : "max.threads",
+          "required" : "true",
+          "type" : "double",
+          "default" : 2
+        },
+        {
+          "name" : "master",
+          "label" : "Mesos Master",
+          "description" : "Mesos master address which MesosExecutor will connect to.",
+          "configName" : "master",
+          "required" : "true",
+          "type" : "string",
+          "default" : "localhost:5050"
+        },
+        {
+          "name" : "framework_name",
+          "label" : "Framework Name",
+          "description" : "The framework name which Airflow scheduler will register itself as on mesos",
+          "configName" : "framework.name",
+          "required" : "true",
+          "type" : "string",
+          "default" : "Airflow"
+        },
+        {
+          "name" : "task_cpu",
+          "label" : "Task CPU",
+          "description" : "Number of cpu cores required for running one task instance using 'airflow run <dag_id> <task_id> <execution_date> --local -p <pickle_id>' command on a mesos slave",
+          "configName" : "task.cpu",
+          "required" : "true",
+          "type" : "double",
+          "default" : 1
+        },
+        {
+          "name" : "task_memory",
+          "label" : "Task Memory",
+          "description" : "Memory in MB required for running one task instance using 'airflow run <dag_id> <task_id> <execution_date> --local -p <pickle_id>' command on a mesos slave",
+          "configName" : "task.memory",
+          "required" : "true",
+          "type" : "double",
+          "default" : 256
+        },
+        {
+          "name" : "checkpoint",
+          "label" : "Memos Checkpoint",
+          "description" : "Enable framework checkpointing for mesos. See http://mesos.apache.org/documentation/latest/slave-recovery/",
+          "configName" : "checkpoint",
+          "required" : "true",
+          "type" : "boolean",
+          "default" : false
+        }
+      ],
       "commands" : [
         {
          "name" : "airflow_initdb_scheduler_rolecmd",
@@ -588,6 +941,17 @@
           "AIRFLOW_HOME" : "${airflow_home}"
          }
       },
+      "parameters" : [
+        {
+          "name" : "flower_port",
+          "label" : "Flower Port",
+          "description" : "Celery Flower is a sweet UI for Celery. Airflow has a shortcut to start it `airflow flower`. This defines the port that Celery Flower runs on",
+          "configName" : "flower.port",
+          "required" : "true",
+          "type" : "port",
+          "default" : 5555
+        }
+      ],
       "topology": {
         "minInstances" : "0"
       },
