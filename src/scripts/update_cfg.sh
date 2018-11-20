@@ -22,7 +22,7 @@ fi
 
 # Initializing the Airflow database if not existed
 if [ ! -f ${airflow_home}/airflow.cfg ]; then
-    sudo -Eu airflow bash -c 'export PATH=${AIRFLOW_DIR}/bin:$PATH;
+    sudo -Eu airflow bash -c 'export PATH=${AIRFLOW_DIR}/usr/bin:$PATH;
     exec airflow initdb'
 fi
 
@@ -194,7 +194,7 @@ echo "Creating Airflow user..."
 
 if [[ ! -z "$AIRFLOW_USER" ]];
 then 
-    ${AIRFLOW_DIR}/bin/python2.7 ../scripts/mkuser.py $AIRFLOW_USER $AIRFLOW_EMAIL $AIRFLOW_PASS
+    ${AIRFLOW_DIR}/usr/bin/python2.7 ../scripts/mkuser.py $AIRFLOW_USER $AIRFLOW_EMAIL $AIRFLOW_PASS
 fi
 
 

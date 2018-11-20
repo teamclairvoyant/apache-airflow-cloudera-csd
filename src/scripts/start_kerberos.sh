@@ -1,1 +1,1 @@
-sudo -Eu airflow bash -c 'export PATH=${AIRFLOW_DIR}/bin:$PATH; exec airflow kerberos'
+sudo -Eu airflow bash -c 'exec airflow kerberos'
