@@ -1,11 +1,11 @@
 # Airflow CSD
 
-## Current versions of Airflow supported:
+## Current versions of Airflow supported
 
 - Airflow 1.7.1.3
 - Airflow 1.8.0
 
-## Requirements:
+## Requirements
 - Airflow and RabbitMQ parcels needs to be installed. Link to parcel repo: `https://github.com/teamclairvoyant/apache-airflow-parcels`
 - Centos 6 or RHEL 6 or Centos 7 or RHEL 7
 - MySQL or PostgreSQL needs to be installed and setup inorder to store metadata. Here is some of the high level procedure to setup the database. 
