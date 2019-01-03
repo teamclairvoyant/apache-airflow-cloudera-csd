@@ -132,13 +132,6 @@
       "required" : "true"
     },
     {
-      "name" : "security",
-      "label" : "Security",
-      "description" : "What security module to use (for example kerberos)",
-      "type" : "string",
-      "default" : ""
-    },
-    {
       "name" : "keytab",
       "label" : "Keytab",
       "description" : "Location of keytab file",
@@ -396,15 +389,6 @@
       "required" : "true",
       "type" : "string",
       "default" : "http://localhost:8080"
-    },
-    {
-      "name" : "default_owner",
-      "label" : "Default Owner",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
-      "configName" : "default.owner",
-      "required" : "true",
-      "type" : "string",
-      "default" : "Airflow"
     },
     {
       "name" : "default_cpus",
@@ -751,7 +735,7 @@
     {
       "name" : "dag_dir_list_interval",
       "label" : "Dag dir list interval",
-      "description" : "",
+      "description" : "Dag dir list interval",
       "configName" : "dag.dir.list.interval",
       "required" : "true",
       "type" : "double",
@@ -769,7 +753,7 @@
     {
       "name" : "child_process_log_directory",
       "label" : "Child process log directory",
-      "description" : "",
+      "description" : "Child process log directory",
       "configName" : "child.process.log.directory",
       "required" : "true",
       "type" : "string",
@@ -795,7 +779,7 @@
     {
       "name" : "statsd_on",
       "label" : "statsd on",
-      "description" : "",
+      "description" : "Statsd (https://github.com/etsy/statsd) integration settings",
       "required" : "true",
       "type" : "boolean",
       "default" : false
@@ -803,7 +787,7 @@
     {
       "name" : "statsd_host",
       "label" : "statsd_host",
-      "description" : "",
+      "description" : "Statsd (https://github.com/etsy/statsd) integration settings",
       "required" : "true",
       "type" : "string",
       "default" : "localhost"
@@ -811,7 +795,7 @@
     {
       "name" : "statsd_port",
       "label" : "statsd port",
-      "description" : "",
+      "description" : "Statsd (https://github.com/etsy/statsd) integration settings",
       "required" : "true",
       "type" : "port",
       "default" : 8125
@@ -819,7 +803,7 @@
     {
       "name" : "statsd_prefix",
       "label" : "statsd prefix",
-      "description" : "",
+      "description" : "Statsd (https://github.com/etsy/statsd) integration settings",
       "required" : "true",
       "type" : "string",
       "default" : "airflow"
@@ -836,42 +820,10 @@
     {
       "name" : "ccache",
       "label" : "ccache",
-      "description" : "",
+      "description" : "Kerberos ccache location",
       "required" : "true",
       "type" : "string",
       "default" : "/tmp/airflow_krb5_ccach"
-    },    
-    {
-      "name" : "principal",
-      "label" : "principal",
-      "description" : "",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow"
-    },    
-    {
-      "name" : "reinit_frequency",
-      "label" : "reinit frequency",
-      "description" : "",
-      "required" : "true",
-      "type" : "double",
-      "default" : 3600
-    },    
-    {
-      "name" : "kinit_path",
-      "label" : "kinit path",
-      "description" : "",
-      "required" : "true",
-      "type" : "string",
-      "default" : "kinit"
-    },    
-    {
-      "name" : "keytab",
-      "label" : "keytab",
-      "description" : "",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow.keytab"
     }
   ],
   "gateway" : {
@@ -997,7 +949,8 @@
           "required" : "true",
           "type" : "boolean",
           "default" : "false"
-        }{
+        },
+        {
           "name" : "base_url",
           "label" : "Base URL",
           "description" : "The base url of your website as airflow cannot guess what domain or cname you are using. This is used in automated emails that airflow sends to point links to the right web server",
@@ -1014,15 +967,6 @@
           "required" : "true",
           "type" : "string",
           "default" : "0.0.0.0"    
-        },
-        {
-          "name" : "web_server_port",
-          "label" : "Web Server Port",
-          "description" : "The port on which to run the web server",
-          "configName" : "web.server.port",
-          "required" : "true",
-          "type" : "string",
-          "default" : "8080"
         },
         {
           "name" : "web_server_worker_timeout",
