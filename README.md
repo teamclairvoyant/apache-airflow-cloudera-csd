@@ -1,6 +1,6 @@
 # Airflow CSD
 
-## Current versions of Airflow supported
+## Currently supported versions of Airflow CSD
 
 - Airflow 1.7.1.3
 - Airflow 1.8.0
