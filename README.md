@@ -2,8 +2,8 @@
 
 ## Current versions of Airflow supported:
 
-    - Airflow 1.7.1.3
-    - Airflow 1.8.0
+- Airflow 1.7.1.3
+- Airflow 1.8.0
 
 ## Requirements:
 - Airflow and RabbitMQ parcels needs to be installed. Link to parcel repo: `https://github.com/teamclairvoyant/apache-airflow-parcels`
