@@ -1,13 +1,27 @@
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// Copyright Clairvoyant 2018
 {
   "name" : "AIRFLOW",
   "label" : "Airflow",
-  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.",
+  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, ensure that the Airflow and RabbitMQ parcels have been activated.</span>",
   "version" : "1.7.1.3",
   "runAs" : { 
     "user" : "root",
     "group" : "root"
   },
   "parcel" : {
+    "repoUrl" : "https://teamclairvoyant.s3.amazonaws.com/apache-airflow/cloudera/parcels/",
     "requiredTags" : [ "airflow", "rabbitmq" ],
     "sTags" : []
   },
@@ -15,7 +29,7 @@
     {
       "name": "dbType",
       "label": "Database Type",
-      "description": "Type of the database for the Airflow to use",
+      "description": "Type of the database for the Airflow to use.",
       "type": "string_enum",
       "default": "mysql",
       "configurableInWizard": true,
@@ -25,16 +39,34 @@
     {
       "name": "dbHost",
       "label": "Database Host",
-      "description": "Ip Address of the host where the Database has to be installed or already installed",
+      "description": "IP address or hostname of the host where the database has to be installed or already installed.",
       "type": "string",
       "default": "",
       "configurableInWizard": true,
       "required" : "true"
     },
     {
+      "name": "dbPort",
+      "label": "Database port",
+      "description": "Database port to connect to the database.",
+      "type": "string",
+      "default": "3306",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
+      "name": "dbName",
+      "label": "Database Name",
+      "description": "Database to be used by Airflow.",
+      "type": "string",
+      "default": "airflow",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
       "name": "dbUser",
       "label": "Database Username",
-      "description": "Username of the database",
+      "description": "Username of the database.",
       "type": "string",
       "default": "",
       "configurableInWizard": true,
@@ -43,71 +75,62 @@
     {
       "name": "dbPass",
       "label": "Database Password",
-      "description": "Password of the above username to access the database",
+      "description": "Password of the above username to access the database.",
       "type": "password",
       "default": "",
       "configurableInWizard": true,
       "required" : "true"
     },
     {
-      "name": "dbName",
-      "label": "Database Name",
-      "description": "Database to be used by the Airflow",
-      "type": "string",
-      "default": "airflow",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name": "dbPort",
-      "label": "Database port",
-      "description": "Database port to connect to the database",
-      "type": "string",
-      "default": "5432",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
       "name" : "Airflow.authenticate",
       "label" : "Enable Airflow Authentication",
-      "description" : "Enable Airflow Authentication",
+      "description" : "Enable Airflow authentication.",
       "type" : "boolean",
       "default" : "false"
     },
     {
       "name" : "Airflow.username",
       "label" : "Airflow Username (Only to create Airflow User)",
-      "description" : "Username of the Airflow to create",
+      "description" : "Name of the Airflow user to create.",
       "type" : "string",
       "default" : ""
     },
     {
       "name" : "Airflow.email",
       "label" : "Email of the Airflow user",
-      "description" : "Email of the Airflow user",
+      "description" : "Email of the Airflow user.",
       "type" : "string",
       "default" : ""
     },
     {
       "name" : "Airflow.password",
       "label" : "Airflow Password",
-      "description" : "Password of the Airflow",
+      "description" : "Password of the Airflow user.",
       "type" : "password",
       "default" : ""
     },
     {
       "name" : "RabbitMQ.host",
       "label" : "RabbitMQ Host",
-      "description" : "Ip address or Hostname of the node you want to deploy RabbitMQ on",
+      "description" : "IP address or Hostname of the node you want to deploy RabbitMQ on.",
       "type" : "string",
       "default" : "",
       "configurableInWizard": true,
       "required" : "true"
     },
     {
+      "name" : "RabbitMQ.port",
+      "label" : "RabbitMQ Port",
+      "description" : "Port of the RabbitMQ node.",
+      "type" : "string",
+      "default" : "5672",
+      "configurableInWizard": true,
+      "required" : "true"
+    },
+    {
       "name" : "RabbitMQ.username",
       "label" : "RabbitMQ Username",
-      "description" : "Username of the RabbitMQ",
+      "description" : "Username of the RabbitMQ access control.",
       "type" : "string",
       "default" : "rabbitmq",
       "configurableInWizard": true,
@@ -116,46 +139,37 @@
     {
       "name" : "RabbitMQ.password",
       "label" : "RabbitMQ Password",
-      "description" : "Password of the RabbitMQ",
+      "description" : "Password of the RabbitMQ access control.",
       "type" : "password",
       "default" : "",
       "configurableInWizard": true,
       "required" : "true"
     },
     {
-      "name" : "RabbitMQ.port",
-      "label" : "RabbitMQ Port",
-      "description" : "Port of the RabbitMQ node",
-      "type" : "string",
-      "default" : "5672",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
       "name" : "keytab",
       "label" : "Keytab",
-      "description" : "Location of keytab file",
+      "description" : "Location of keytab file.",
       "type" : "string",
       "default" : ""
     },
     {
       "name" : "reinit_frequency",
       "label" : "Reinit Frequency",
-      "description" : "Frequency of tickets",
+      "description" : "Frequency of tickets.",
       "type" : "string",
       "default" : ""
     },
     {
       "name" : "principal",
       "label" : "Principal",
-      "description" : "Kerberos Principal",
+      "description" : "Kerberos Principal.",
       "type" : "string",
       "default" : ""
     },
     {
       "name" : "expose_config",
       "label" : "Expose Config",
-      "description" : "Expose the configuration file in the web server",
+      "description" : "Expose the configuration file in the web server.",
       "configName" : "expose.config",
       "required" : "true",
       "type" : "boolean",
@@ -165,7 +179,7 @@
     {
       "name" : "load_examples",
       "label" : "Load Examples",
-      "description" : "Whether to load the examples that ship with Airflow. It's good to get started, but you probably want to set this to False in a production environment",
+      "description" : "Whether to load the examples that ship with Airflow. It's good to get started, but you probably want to set this to False in a production environment.",
       "type" : "boolean",
       "default" : "false",
       "configurableInWizard": true,
@@ -174,7 +188,7 @@
     {
       "name" : "airflow_home",
       "label" : "Airflow Home",
-      "description" : "The home folder for airflow, default is ~/airflow.",
+      "description" : "The home folder for Airflow.",
       "configName" : "airflow.home",
       "required" : "true",
       "type" : "string",
@@ -184,7 +198,7 @@
     {
       "name" : "dags_folder",
       "label" : "Dags Folder",
-      "description" : "The folder where your airflow pipelines live, most likely a subfolder in a code repository",
+      "description" : "The folder where your Airflow pipelines live, most likely a subfolder in a code repository.",
       "configName" : "dags.folder",
       "required" : "true",
       "type" : "string",
@@ -193,7 +207,7 @@
     {
       "name" : "base_log_folder",
       "label" : "Base Log Folder",
-      "description" : "The folder where airflow should store its log files.",
+      "description" : "The folder where Airflow should store its log files.",
       "configName" : "base.log.folder",
       "required" : "true",
       "type" : "string",
@@ -230,7 +244,7 @@
     {
       "name" : "s3_log_folder",
       "label" : "s3 log folder",
-      "description" : "S3 log folder",
+      "description" : "S3 log folder.",
       "configName" : "s3.log.folder",
       "required" : "false",
       "type" : "string",
@@ -239,7 +253,7 @@
     {
       "name" : "executor",
       "label" : "Executor",
-      "description" : "The executor class that airflow should use. Choices include SequentialExecutor, LocalExecutor, CeleryExecutor",
+      "description" : "The executor class that Airflow should use. Choices include SequentialExecutor, LocalExecutor, CeleryExecutor.",
       "configName" : "executor",
       "required" : "true",
       "type" : "string",
@@ -266,7 +280,7 @@
     {
       "name" : "parallelism",
       "label" : "parallelism",
-      "description" : "The amount of parallelism as a setting to the executor. This defines the max number of task instances that should run simultaneously on this airflow installation.",
+      "description" : "The amount of parallelism as a setting to the executor. This defines the max number of task instances that should run simultaneously on this Airflow installation.",
       "configName" : "parallelism",
       "required" : "true",
       "type" : "string",
@@ -275,7 +289,7 @@
     {
       "name" : "dag_concurrency",
       "label" : "Dag Concurrency",
-      "description" : "The number of task instances allowed to run concurrently by the scheduler",
+      "description" : "The number of task instances allowed to run concurrently by the scheduler.",
       "configName" : "dag.concurrency",
       "required" : "true",
       "type" : "string",
@@ -284,7 +298,7 @@
     {
       "name" : "dags_are_paused_at_creation",
       "label" : "Dags Are Paused At Creation",
-      "description" : "Are DAGs paused by default at creation",
+      "description" : "Are DAGs paused by default at creation.",
       "configName" : "dags.are.paused.at.creation",
       "required" : "true",
       "type" : "boolean",
@@ -294,7 +308,7 @@
     {
       "name" : "non_pooled_task_slot_count",
       "label" : "Non Pooled Task Slot Count",
-      "description" : "When not using pools, tasks are run in the 'default pool', whose size is guided by this config element",
+      "description" : "When not using pools, tasks are run in the 'default pool', whose size is guided by this config element.",
       "configName" : "non.pooled.task.slot.count",
       "required" : "true",
       "type" : "string",
@@ -303,7 +317,7 @@
     {
       "name" : "max_active_runs_per_dag",
       "label" : "Max Active Runs Per Dag",
-      "description" : "The maximum number of active DAG runs per DAG",
+      "description" : "The maximum number of active DAG runs per DAG.",
       "configName" : "max.active.runs.per.dag",
       "required" : "true",
       "type" : "string",
@@ -312,7 +326,7 @@
     {
       "name" : "plugins_folder",
       "label" : "Plugins Folder",
-      "description" : "Where your Airflow plugins are stored",
+      "description" : "Where your Airflow plugins are stored.",
       "configName" : "plugins.folder",
       "required" : "true",
       "type" : "string",
@@ -321,7 +335,7 @@
     {
       "name" : "donot_pickle",
       "label" : "Do not Pickle",
-      "description" : "Whether to disable pickling dags",
+      "description" : "Whether to disable pickling DAGs.",
       "configName" : "donot.pickle",
       "required" : "true",
       "type" : "boolean",
@@ -330,7 +344,7 @@
     {
       "name" : "dagbag_import_timeout",
       "label" : "Dagbag Import timeout",
-      "description" : "How long before timing out a python file import while filling the DagBag",
+      "description" : "How long before timing out a python file import while filling the DagBag.",
       "configName" : "dagbag.import.timeout",
       "required" : "true",
       "type" : "double",
@@ -339,7 +353,7 @@
     {
       "name" : "task_runner",
       "label" : "Task Runner",
-      "description" : "The class to use for running task instances in a subprocess",
+      "description" : "The class to use for running task instances in a subprocess.",
       "configName" : "task.runner",
       "required" : "true",
       "type" : "string",
@@ -348,7 +362,7 @@
     {
       "name" : "default_impersonation",
       "label" : "Default Impersonation",
-      "description" : "If set, tasks without a `run_as_user` argument will be run with this user. Can be used to de-elevate a sudo user running Airflow when executing tasks",
+      "description" : "If set, tasks without a `run_as_user` argument will be run with this user. Can be used to de-elevate a sudo user running Airflow when executing tasks.",
       "configName" : "default.impersonation",
       "required" : "false",
       "type" : "string",
@@ -357,7 +371,7 @@
     {
       "name" : "security",
       "label" : "Security",
-      "description" : "What security module to use (for example kerberos)",
+      "description" : "What security module to use (for example kerberos).",
       "configName" : "security",
       "required" : "false",
       "type" : "string",
@@ -366,7 +380,7 @@
     {
       "name" : "unit_test_mode",
       "label" : "Unit Test Mode",
-      "description" : "Turn unit test mode on (overwrites many configuration options with test values at runtime)",
+      "description" : "Turn unit test mode on (overwrites many configuration options with test values at runtime).",
       "configName" : "unit.test.mode",
       "required" : "true",
       "type" : "boolean",
@@ -375,7 +389,7 @@
     {
       "name" : "api_client",
       "label" : "API Client",
-      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver",
+      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver.",
       "configName" : "api.client",
       "required" : "true",
       "type" : "string",
@@ -384,7 +398,7 @@
     {
       "name" : "endpoint_url",
       "label" : "Endpoint URL",
-      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver",
+      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver.",
       "configName" : "endpoint.url",
       "required" : "true",
       "type" : "string",
@@ -393,7 +407,7 @@
     {
       "name" : "default_cpus",
       "label" : "Default CPUs",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
+      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`.",
       "configName" : "default.cpus",
       "required" : "true",
       "type" : "double",
@@ -402,7 +416,7 @@
     {
       "name" : "default_ram",
       "label" : "Default RAM",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
+      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`.",
       "configName" : "default.ram",
       "required" : "true",
       "type" : "double",
@@ -411,7 +425,7 @@
     {
       "name" : "default_disk",
       "label" : "Default Disk",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
+      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`.",
       "configName" : "default.disk",
       "required" : "true",
       "type" : "double",
@@ -420,7 +434,7 @@
     {
       "name" : "default_gpus",
       "label" : "Default GPUs",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`",
+      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`.",
       "configName" : "default.gpus",
       "required" : "true",
       "type" : "double",
@@ -429,7 +443,7 @@
     {
       "name" : "default_owner",
       "label" : "Default Owner",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via 'default_args'",
+      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via 'default_args'.",
       "configName" : "default.owner",
       "required" : "true",
       "type" : "string",
@@ -438,7 +452,7 @@
     {
       "name" : "base_url",
       "label" : "Base URL",
-      "description" : "The base url of your website as airflow cannot guess what domain or cname you are using. This is used in automated emails that airflow sends to point links to the right web server",
+      "description" : "The base URL of your website as Airflow cannot guess what DNS name you are using. This is used in automated emails that Airflow sends to point links to the right web server.",
       "configName" : "base.url",
       "required" : "true",
       "type" : "string",
@@ -447,7 +461,7 @@
     {
       "name" : "web_server_host",
       "label" : "web.server.host",
-      "description" : "The ip specified when starting the web server",
+      "description" : "The IP specified when starting the web server.",
       "configName" : "webserver.host",
       "required" : "true",
       "type" : "string",
@@ -456,7 +470,7 @@
     {
       "name" : "web_server_port",
       "label" : "Web Server Port",
-      "description" : "The port on which to run the web server",
+      "description" : "The port on which to run the web server.",
       "configName" : "web.server.port",
       "required" : "true",
       "type" : "string",
@@ -483,7 +497,7 @@
     {
       "name" : "web_server_worker_timeout",
       "label" : "Web Server Worker Timeout",
-      "description" : "The time the gunicorn webserver waits before timing out on a worker",
+      "description" : "The time the gunicorn webserver waits before timing out on a worker.",
       "configName" : "web.server.worker.timeout",
       "required" : "true",
       "type" : "double",
@@ -492,7 +506,7 @@
     {
       "name" : "worker_refresh_batch_size",
       "label" : "Worker Refresh Batch Size",
-      "description" : "Number of workers to refresh at a time. When set to 0, worker refresh is disabled. When nonzero, airflow periodically refreshes webserver workers by bringing up new ones and killing old ones.",
+      "description" : "Number of workers to refresh at a time. When set to 0, worker refresh is disabled. When nonzero, Airflow periodically refreshes webserver workers by bringing up new ones and killing old ones.",
       "configName" : "worker.refresh.batch.size",
       "required" : "true",
       "type" : "double",
@@ -510,7 +524,7 @@
     {
       "name" : "workers",
       "label" : "Number of Workers",
-      "description" : "Number of workers to run the Gunicorn web server",
+      "description" : "Number of workers to run the Gunicorn web server.",
       "configName" : "workers",
       "required" : "true",
       "type" : "double",
@@ -519,7 +533,7 @@
     {
       "name" : "woker_class",
       "label" : "Worker Class",
-      "description" : "The worker class gunicorn should use. Choices include sync (default), eventlet, gevent",
+      "description" : "The worker class gunicorn should use. Choices include sync (default), eventlet, gevent.",
       "configName" : "worker.class",
       "required" : "true",
       "type" : "string",
@@ -528,7 +542,7 @@
     {
       "name" : "filter_by_owner",
       "label" : "Filter By Owner",
-      "description" : "Filter the list of dags by owner name (requires authentication to be enabled)",
+      "description" : "Filter the list of DAGs by owner name (requires authentication to be enabled).",
       "configName" : "filter.by.owner",
       "required" : "true",
       "type" : "boolean",
@@ -537,7 +551,7 @@
     {
       "name" : "owner_mode",
       "label" : "Owner Mode",
-      "description" : "Filtering mode. Choices include user (default) and ldapgroup. Ldap group filtering requires using the ldap backend",
+      "description" : "Filtering mode. Choices include user (default) and ldapgroup. Ldap group filtering requires using the ldap backend.",
       "configName" : "owner.mode",
       "required" : "true",
       "type" : "string",
@@ -546,7 +560,7 @@
     {
       "name" : "dag_orientation",
       "label" : "Dag Orientation",
-      "description" : "Default DAG orientation. Valid values are: LR (Left->Right), TB (Top->Bottom), RL (Right->Left), BT (Bottom->Top)",
+      "description" : "Default DAG orientation. Valid values are: LR (Left->Right), TB (Top->Bottom), RL (Right->Left), BT (Bottom->Top).",
       "configName" : "dag.orientation",
       "required" : "true",
       "type" : "string",
@@ -564,7 +578,7 @@
     {
       "name" : "log_fetch_timeout_sec",
       "label" : "Log fetch timeout sec",
-      "description" : "The amount of time (in secs) webserver will wait for initial handshake while fetching logs from other worker machine",
+      "description" : "The amount of time (in secs) webserver will wait for initial handshake while fetching logs from other worker machine.",
       "configName" : "log.fetch.timeout.sec",
       "required" : "true",
       "type" : "double",
@@ -572,8 +586,8 @@
     },
     {
       "name" : "hide_paused_dags_by_default",
-      "label" : "Hide paused dags by default",
-      "description" : "TBy default, the webserver shows paused DAGs. Flip this to hide paused DAGs by default",
+      "label" : "Hide paused DAGs by default",
+      "description" : "TBy default, the webserver shows paused DAGs. Flip this to hide paused DAGs by default.",
       "configName" : "hide.paused.dags.by.default",
       "required" : "true",
       "type" : "boolean",
@@ -582,7 +596,7 @@
     {
       "name" : "email_backend",
       "label" : "Email Backend",
-      "description" : "Backend for Email",
+      "description" : "Backend for Email.",
       "configName" : "email.backend",
       "required" : "true",
       "type" : "string",
@@ -590,17 +604,26 @@
     },
     {
       "name" : "smtp_host",
-      "label" : "Smtp Host",
-      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "label" : "SMTP Host",
+      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
       "configName" : "smtp.host",
       "required" : "true",
       "type" : "string",
       "default" : "localhost"
     },
     {
+      "name" : "smtp_port",
+      "label" : "SMTP Port",
+      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
+      "configName" : "smtp.port",
+      "required" : "true",
+      "type" : "port",
+      "default" : 25
+    },
+    {
       "name" : "smtp_starttls",
-      "label" : "Smtp Starttls",
-      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "label" : "SMTP STARTTLS",
+      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
       "configName" : "smtp.starttls",
       "required" : "true",
       "type" : "boolean",
@@ -608,8 +631,8 @@
     },
     {
       "name" : "smtp_ssl",
-      "label" : "Smtp SSL",
-      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "label" : "SMTP SSL",
+      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
       "configName" : "smtp.ssl",
       "required" : "true",
       "type" : "boolean",
@@ -617,26 +640,17 @@
     },
     {
       "name" : "smtp_user",
-      "label" : "Smtp User",
-      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "label" : "SMTP User",
+      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
       "configName" : "smtp.user",
       "required" : "true",
       "type" : "string",
       "default" : "airflow"
     },
     {
-      "name" : "smtp_port",
-      "label" : "Smtp Port",
-      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
-      "configName" : "smtp.port",
-      "required" : "true",
-      "type" : "port",
-      "default" : 25
-    },
-    {
       "name" : "smtp_password",
-      "label" : "Smtp Password",
-      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "label" : "SMTP Password",
+      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
       "configName" : "smtp.password",
       "required" : "true",
       "type" : "password",
@@ -644,8 +658,8 @@
     },
     {
       "name" : "smtp_mail_from",
-      "label" : "Smtp Mail From",
-      "description" : "If you want airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an smtp server here",
+      "label" : "SMTP Mail From",
+      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
       "configName" : "smtp.mail.from",
       "required" : "true",
       "type" : "string",
@@ -654,7 +668,7 @@
     {
       "name" : "celery_app_name",
       "label" : "Celery App Name",
-      "description" : "The app name that will be used by celery",
+      "description" : "The app name that will be used by celery.",
       "configName" : "celery.app.name",
       "required" : "true",
       "type" : "string",
@@ -663,7 +677,7 @@
     {
       "name" : "celery_concurrency",
       "label" : "Celery Concurrency",
-      "description" : "The concurrency that will be used when starting workers with the airflow worker command. This defines the number of task instances that a worker will take, so size up your workers based on the resources on your worker box and the nature of your tasks",
+      "description" : "The concurrency that will be used when starting workers with the Airflow worker command. This defines the number of task instances that a worker will take, so size up your workers based on the resources on your worker box and the nature of your tasks.",
       "configName" : "celery.concurrency",
       "required" : "true",
       "type" : "double",
@@ -672,7 +686,7 @@
     {
       "name" : "worker_log_server_port",
       "label" : "Worker Log Server Port",
-      "description" : "When you start an airflow worker, airflow starts a tiny web server subprocess to serve the workers local log files to the airflow main web server, who then builds pages and sends them to users. This defines the port on which the logs are served. It needs to be unused, and open visible from the main web server to connect into the workers.",
+      "description" : "When you start an Airflow worker, Airflow starts a tiny web server subprocess to serve the workers local log files to the Airflow main web server, who then builds pages and sends them to users. This defines the port on which the logs are served. It needs to be unused, and open visible from the main web server to connect into the workers.",
       "configName" : "worker.log.server.port",
       "required" : "true",
       "type" : "port",
@@ -681,7 +695,7 @@
     {
       "name" : "flower_port",
       "label" : "Flower Port",
-      "description" : "Celery Flower is a sweet UI for Celery. Airflow has a shortcut to start it `airflow flower`. This defines the port that Celery Flower runs on",
+      "description" : "Celery Flower is a sweet UI for Celery. Airflow has a shortcut to start it `airflow flower`. This defines the port that Celery Flower runs on.",
       "configName" : "flower.port",
       "required" : "true",
       "type" : "port",
@@ -717,7 +731,7 @@
     {
       "name" : "run_duration",
       "label" : "Run duration",
-      "description" : "after how much time should the scheduler terminate in seconds -1 indicates to run continuously (see also num_runs)",
+      "description" : "After how much time should the scheduler terminate in seconds -1 indicates to run continuously (see also num_runs).",
       "configName" : "run.duration",
       "required" : "true",
       "type" : "string",
@@ -726,7 +740,7 @@
     {
       "name" : "min_file_process_interval",
       "label" : "Min file process interval",
-      "description" : "after how much time a new DAGs should be picked up from the filesystem",
+      "description" : "After how much time a new DAGs should be picked up from the filesystem.",
       "configName" : "min.file.process.interval",
       "required" : "true",
       "type" : "double",
@@ -735,7 +749,7 @@
     {
       "name" : "dag_dir_list_interval",
       "label" : "Dag dir list interval",
-      "description" : "Dag dir list interval",
+      "description" : "DAG dirirectory listing interval.",
       "configName" : "dag.dir.list.interval",
       "required" : "true",
       "type" : "double",
@@ -744,7 +758,7 @@
     {
       "name" : "print_stats_interval",
       "label" : "Print stats interval",
-      "description" : "How often should stats be printed to the logs",
+      "description" : "How often should stats be printed to the logs.",
       "configName" : "print.stats.interval",
       "required" : "true",
       "type" : "double",
@@ -753,7 +767,7 @@
     {
       "name" : "child_process_log_directory",
       "label" : "Child process log directory",
-      "description" : "Child process log directory",
+      "description" : "Child process log directory.",
       "configName" : "child.process.log.directory",
       "required" : "true",
       "type" : "string",
@@ -771,7 +785,7 @@
     {
       "name" : "catchup_by_default",
       "label" : "Catchup by default",
-      "description" : "Turn off scheduler catchup by setting this to False. Default behavior is unchanged and Command Line Backfills still work, but the scheduler will not do scheduler catchup if this is False, however it can be set on a per DAG basis in the DAG definition (catchup)",
+      "description" : "Turn off scheduler catchup by setting this to False. Default behavior is unchanged and Command Line Backfills still work, but the scheduler will not do scheduler catchup if this is False, however it can be set on a per DAG basis in the DAG definition (catchup).",
       "required" : "true",
       "type" : "boolean",
       "default" : true
@@ -779,7 +793,7 @@
     {
       "name" : "statsd_on",
       "label" : "statsd on",
-      "description" : "Statsd (https://github.com/etsy/statsd) integration settings",
+      "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
       "required" : "true",
       "type" : "boolean",
       "default" : false
@@ -787,7 +801,7 @@
     {
       "name" : "statsd_host",
       "label" : "statsd_host",
-      "description" : "Statsd (https://github.com/etsy/statsd) integration settings",
+      "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
       "required" : "true",
       "type" : "string",
       "default" : "localhost"
@@ -795,7 +809,7 @@
     {
       "name" : "statsd_port",
       "label" : "statsd port",
-      "description" : "Statsd (https://github.com/etsy/statsd) integration settings",
+      "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
       "required" : "true",
       "type" : "port",
       "default" : 8125
@@ -803,7 +817,7 @@
     {
       "name" : "statsd_prefix",
       "label" : "statsd prefix",
-      "description" : "Statsd (https://github.com/etsy/statsd) integration settings",
+      "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
       "required" : "true",
       "type" : "string",
       "default" : "airflow"
@@ -811,7 +825,7 @@
     {
       "name" : "max_threads",
       "label" : "Max Threads",
-      "description" : "The scheduler can run multiple threads in parallel to schedule dags. This defines how many threads will run. However airflow will never use more threads than the amount of cpu cores available",
+      "description" : "The scheduler can run multiple threads in parallel to schedule DAGs. This defines how many threads will run. However Airflow will never use more threads than the amount of CPU cores available.",
       "configName" : "max.threads",
       "required" : "true",
       "type" : "double",
@@ -820,7 +834,7 @@
     {
       "name" : "ccache",
       "label" : "ccache",
-      "description" : "Kerberos ccache location",
+      "description" : "Kerberos ccache location.",
       "required" : "true",
       "type" : "string",
       "default" : "/tmp/airflow_krb5_ccach"
@@ -890,7 +904,7 @@
     {
       "name": "INSTALL_AIRFLOW_INITDB_SERVCMD",
       "label": "Initialize Airflow DB",
-      "description": "Initializes the Airflow DB",
+      "description": "Initializes the Airflow DB.",
       "roleName": "AIRFLOW_SCHEDULER",
       "roleCommand": "airflow_initdb_scheduler_rolecmd",
       "runMode": "single"
@@ -898,7 +912,7 @@
     {
       "name": "INSTALL_AIRFLOW_RESETDB_SERVCMD",
       "label": "Resets Airflow DB",
-      "description": "Resets the Airflow DB",
+      "description": "Resets the Airflow DB.",
       "roleName": "AIRFLOW_SCHEDULER",
       "roleCommand": "airflow_resetdb_scheduler_rolecmd",
       "runMode": "single"
@@ -926,7 +940,7 @@
         {
           "name" : "web_server_port",
           "label" : "Web Server Port",
-          "description" : "The port on which to run the web server",
+          "description" : "The port on which to run the web server.",
           "configName" : "web.server.port",
           "required" : "true",
           "type" : "port",
@@ -935,7 +949,7 @@
         {
           "name" : "expose_config",
           "label" : "Expose Config",
-          "description" : "Expose the configuration file in the web server",
+          "description" : "Expose the configuration file in the web server.",
           "configName" : "expose.config",
           "required" : "true",
           "type" : "boolean",
@@ -944,7 +958,7 @@
         {
           "name" : "Airflow.authenticate",
           "label" : "Enable Airflow Authentication",
-          "description" : "Enable Airflow Authentication",
+          "description" : "Enable Airflow Authentication.",
           "configName" : "airflow.authenticate",
           "required" : "true",
           "type" : "boolean",
@@ -953,7 +967,7 @@
         {
           "name" : "base_url",
           "label" : "Base URL",
-          "description" : "The base url of your website as airflow cannot guess what domain or cname you are using. This is used in automated emails that airflow sends to point links to the right web server",
+          "description" : "The base URL of your website as Airflow cannot guess what DNS name you are using. This is used in automated emails that Airflow sends to point links to the right web server.",
           "configName" : "base.url",
           "required" : "true",
           "type" : "string",
@@ -962,7 +976,7 @@
         {
           "name" : "web_server_host",
           "label" : "web.server.host",
-          "description" : "The ip specified when starting the web server",
+          "description" : "The IP specified when starting the web server.",
           "configName" : "webserver.host",
           "required" : "true",
           "type" : "string",
@@ -971,7 +985,7 @@
         {
           "name" : "web_server_worker_timeout",
           "label" : "Web Server Worker Timeout",
-          "description" : "The time the gunicorn webserver waits before timing out on a worker",
+          "description" : "The time the gunicorn webserver waits before timing out on a worker.",
           "configName" : "web.server.worker.timeout",
           "required" : "true",
           "type" : "double",
@@ -980,7 +994,7 @@
         {
           "name" : "workers",
           "label" : "Number of Workers",
-          "description" : "Number of workers to run the Gunicorn web server",
+          "description" : "Number of workers to run the Gunicorn web server.",
           "configName" : "workers",
           "required" : "true",
           "type" : "double",
@@ -989,7 +1003,7 @@
         {
           "name" : "woker_class",
           "label" : "Worker Class",
-          "description" : "The worker class gunicorn should use. Choices include sync (default), eventlet, gevent",
+          "description" : "The worker class gunicorn should use. Choices include sync (default), eventlet, gevent.",
           "configName" : "worker.class",
           "required" : "true",
           "type" : "string",
@@ -998,7 +1012,7 @@
         {
           "name" : "filter_by_owner",
           "label" : "Filter By Owner",
-          "description" : "Filter the list of dags by owner name (requires authentication to be enabled)",
+          "description" : "Filter the list of DAGs by owner name (requires authentication to be enabled).",
           "configName" : "filter.by.owner",
           "required" : "true",
           "type" : "boolean",
@@ -1064,7 +1078,7 @@
         {
           "name" : "max_threads",
           "label" : "Max Threads",
-          "description" : "The scheduler can run multiple threads in parallel to schedule dags. This defines how many threads will run. However airflow will never use more threads than the amount of cpu cores available",
+          "description" : "The scheduler can run multiple threads in parallel to schedule DAGs. This defines how many threads will run. However Airflow will never use more threads than the amount of CPU cores available.",
           "configName" : "max.threads",
           "required" : "true",
           "type" : "double",
@@ -1082,7 +1096,7 @@
         {
           "name" : "framework_name",
           "label" : "Framework Name",
-          "description" : "The framework name which Airflow scheduler will register itself as on mesos",
+          "description" : "The framework name which Airflow scheduler will register itself as on Mesos.",
           "configName" : "framework.name",
           "required" : "true",
           "type" : "string",
@@ -1091,7 +1105,7 @@
         {
           "name" : "task_cpu",
           "label" : "Task CPU",
-          "description" : "Number of cpu cores required for running one task instance using 'airflow run <dag_id> <task_id> <execution_date> --local -p <pickle_id>' command on a mesos slave",
+          "description" : "Number of CPU cores required for running one task instance using 'airflow run <dag_id> <task_id> <execution_date> --local -p <pickle_id>' command on a Mesos slave.",
           "configName" : "task.cpu",
           "required" : "true",
           "type" : "double",
@@ -1100,7 +1114,7 @@
         {
           "name" : "task_memory",
           "label" : "Task Memory",
-          "description" : "Memory in MB required for running one task instance using 'airflow run <dag_id> <task_id> <execution_date> --local -p <pickle_id>' command on a mesos slave",
+          "description" : "Memory in MB required for running one task instance using 'airflow run <dag_id> <task_id> <execution_date> --local -p <pickle_id>' command on a Mesos slave.",
           "configName" : "task.memory",
           "required" : "true",
           "type" : "double",
@@ -1109,7 +1123,7 @@
         {
           "name" : "checkpoint",
           "label" : "Memos Checkpoint",
-          "description" : "Enable framework checkpointing for mesos. See http://mesos.apache.org/documentation/latest/slave-recovery/",
+          "description" : "Enable framework checkpointing for Mesos. See http://mesos.apache.org/documentation/latest/slave-recovery/.",
           "configName" : "checkpoint",
           "required" : "true",
           "type" : "boolean",
@@ -1120,7 +1134,7 @@
         {
          "name" : "airflow_initdb_scheduler_rolecmd",
          "label" : "Intialize Airflow DB",
-         "description" : "This command will initialize the Airflow Database",
+         "description" : "This command will initialize the Airflow Database.",
          "expectedExitCodes" : [0],
          "requiredRoleState" : "stopped",
          "commandRunner" : {
@@ -1133,7 +1147,7 @@
         {
          "name" : "airflow_resetdb_scheduler_rolecmd",
          "label" : "Reset Airflow DB",
-         "description" : "This command will reset the Airflow Database",
+         "description" : "This command will reset the Airflow Database.",
          "expectedExitCodes" : [0],
          "requiredRoleState" : "stopped",
          "commandRunner" : {
@@ -1220,7 +1234,7 @@
         {
           "name" : "flower_port",
           "label" : "Flower Port",
-          "description" : "Celery Flower is a sweet UI for Celery. Airflow has a shortcut to start it `airflow flower`. This defines the port that Celery Flower runs on",
+          "description" : "Celery Flower is a UI for Celery. This defines the port that Celery Flower runs on.",
           "configName" : "flower.port",
           "required" : "true",
           "type" : "port",
