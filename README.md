@@ -16,7 +16,7 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 - RHEL 6 & 7
 
 ## Installing the CSD
-1. Download the Jar file.  [Airflow CSD](https://teamclairvoyant.s3.amazonaws.com/apache-airflow/cloudera/csd/AIRFLOW-1.8.0.jar)
+1. Download the Jar file.  [Airflow CSD](http://archive.clairvoyantsoft.com/airflow/csd/)
 2. Copy the jar file to the `/opt/cloudera/csd` location on the Cloudera Manager server.
 3. Restart the Cloudera Manager Server service. `service cloudera-scm-server restart`
 

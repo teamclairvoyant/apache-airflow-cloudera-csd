@@ -21,7 +21,7 @@
     "group" : "root"
   },
   "parcel" : {
-    "repoUrl" : "https://teamclairvoyant.s3.amazonaws.com/apache-airflow/cloudera/parcels/",
+    "repoUrl" : "http://archive.clairvoyantsoft.com/airflow/parcels/latest/",
     "requiredTags" : [ "airflow", "rabbitmq" ],
     "sTags" : []
   },
