@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/cloudera/parcels/AIRFLOW/bin/python
 # https://airflow.incubator.apache.org/security.html
 
 import sys, logging, argparse
@@ -39,6 +39,5 @@ if (not is_user_exists(username)):
     session.close()
 else:
     logging.warning("Airflow User "+username+" already exists")
-
 
 exit()
