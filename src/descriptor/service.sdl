@@ -1229,7 +1229,7 @@
       "label" : "Kerberos (Optional)",
       "pluralLabel" : "Kerberos",
       "startRunner" : {
-        "program" : "scripts/start_kerberos.sh"
+        "program" : "scripts/start_airflow_kerberos.sh"
       },
       "topology" : {
         "minInstances" : "0"
