@@ -5,7 +5,7 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 ## Requirements
 - A supported operating system.
 - MySQL or PostgreSQL database in which to store Airflow metadata.
-- [Airflow](https://github.com/teamclairvoyant/apache-airflow-parcels) and [RabbitMQ](https://github.com/teamclairvoyant/rabbitmq-cloudera-parcel) parcels need to be installed.
+- The [Airflow](https://github.com/teamclairvoyant/apache-airflow-parcels) parcel needs to be installed.
 
 ### Currently Supported Versions of Airflow
 - Airflow 1.7.1.3
@@ -57,24 +57,21 @@ create_postgresql_dbs-airflow.sh --host <host_name> --user <username> --password
 ```
 
 ## Roles
-There are seven roles defined in the CSD.
+There are six roles defined in the CSD.
 1. Airflow Webserver
 2. Airflow Scheduler
 3. Airflow Worker
-4. RabbitMQ
-5. Airflow Flower
-6. Kerberos
-7. Gateway
+4. Airflow Flower
+5. Kerberos
+6. Gateway
 
 Airflow Webserver: Airflow Webserver role is used to start the Airflow Web UI. Webserver role can be deployed on more than instances. However, they will be the same and can be used for backup purposes.
 
 Airflow Scheduler: Airflow Scheduler role is used to schedule the Airflow jobs. This is limited to one instance to reduce the risk of duplicate jobs.
 
-Airflow Worker: Airflow Worker role picks jobs from RabbitMQ and executed them on the nodes. Multiple instances can be deployed.
+Airflow Worker: Airflow Worker role picks jobs from RabbitMQ and executes them on the nodes. Multiple instances can be deployed.
 
-RabbitMQ: RabbitMQ role facilitates the use of RabbitMQ as the messaging broker. Currently the number of roles is limited to 1.
-
-Airflow Flower: Airflow Flower is used to monitor  celery clusters. Multiple instances are supported
+Airflow Flower: Airflow Flower is used to monitor Celery clusters. Multiple instances are supported
 
 Kerberos: Kerberos is used to enable Kerberos protocol for the Airflow. It internally executes `airflow kerberos`. An external Kerberos Distribution Center must be setup. Multiple instances can be setup for load balancing purposes.
 
@@ -143,15 +140,12 @@ jar -cvf AIRFLOW-1.0.0.jar -C src/ .
 ```
 
 ## Limitations:
-1. Number of RabbitMQ instances is limited to 1.
-2. The IP address of the RabbitMQ instance has to be manually entered during installation configuration.
-3. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
-4. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
+1. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
+2. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
 
 ## Future work:
-1. RabbitMQ needs to installed in Cluster Mode.
-2. Test Database connection.
-3. Add the support for more Airflow user authentication methods.
+1. Test Database connection.
+2. Add the support for more Airflow user authentication methods.
 
 ## Known Errors:
 

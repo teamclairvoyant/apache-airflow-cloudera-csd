@@ -14,7 +14,7 @@
 {
   "name" : "AIRFLOW",
   "label" : "Airflow",
-  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, ensure that the Airflow and RabbitMQ parcels have been activated.</span>",
+  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, ensure that the Airflow parcel has been activated.</span>",
   "version" : "1.7.1.3",
   "runAs" : { 
     "user" : "root",
@@ -22,7 +22,7 @@
   },
   "parcel" : {
     "repoUrl" : "http://archive.clairvoyantsoft.com/airflow/parcels/latest/",
-    "requiredTags" : [ "airflow", "rabbitmq" ],
+    "requiredTags" : [ "airflow" ],
     "sTags" : []
   },
   "parameters" : [
@@ -112,11 +112,11 @@
     {
       "name" : "RabbitMQ.host",
       "label" : "RabbitMQ Host",
-      "description" : "IP address or Hostname of the node you want to deploy RabbitMQ on.",
+      "description" : "IP address or Hostname of the node running RabbitMQ.",
       "type" : "string",
       "default" : "",
-      "configurableInWizard": true,
-      "required" : "true"
+      "configurableInWizard": false,
+      "required" : "false"
     },
     {
       "name" : "RabbitMQ.port",
@@ -124,17 +124,17 @@
       "description" : "Port of the RabbitMQ node.",
       "type" : "string",
       "default" : "5672",
-      "configurableInWizard": true,
-      "required" : "true"
+      "configurableInWizard": false,
+      "required" : "false"
     },
     {
       "name" : "RabbitMQ.username",
       "label" : "RabbitMQ Username",
       "description" : "Username of the RabbitMQ access control.",
       "type" : "string",
-      "default" : "rabbitmq",
-      "configurableInWizard": true,
-      "required" : "true"
+      "default" : "",
+      "configurableInWizard": false,
+      "required" : "false"
     },
     {
       "name" : "RabbitMQ.password",
@@ -142,8 +142,8 @@
       "description" : "Password of the RabbitMQ access control.",
       "type" : "password",
       "default" : "",
-      "configurableInWizard": true,
-      "required" : "true"
+      "configurableInWizard": false,
+      "required" : "false"
     },
     {
       "name" : "keytab",
@@ -899,7 +899,7 @@
   },
   "inExpressWizard" : true,
   "icon" : "images/airflow.png",
-  "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER", "RABBITMQ"],
+  "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER"],
   "commands": [
     {
       "name": "INSTALL_AIRFLOW_INITDB_SERVCMD",
@@ -1183,34 +1183,6 @@
          "runner" : {
              "program" : "scripts/stop_airflow_worker.sh"
         }
-      },
-      "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
-         "configName" : "log.dir",
-         "modifiable" : true,
-         "loggingType" : "log4j"
-      }
-    },
-    {
-      "name" : "RABBITMQ",
-      "label" : "RabbitMQ",
-      "pluralLabel" : "RabbitMQ",
-      "startRunner" : {
-         "program" : "scripts/start_rabbitmq.sh"
-      },
-      "stopRunner" : {
-         "runner" : {
-             "program" : "scripts/stop_rabbitmq.sh"
-        }
-      },
-      "topology" : { 
-          "maxInstances" : 1 
-      },
-      "externalLink" : {
-        "name" : "rabbitmq_ui",
-        "label" : "RabbitMQ WebUI",
-        "url" : "http://${host}:15672"
       },
       "logging" : {
          "dir" : "./logs",
