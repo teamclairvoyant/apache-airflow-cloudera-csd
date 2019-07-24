@@ -15,7 +15,7 @@
   "name" : "AIRFLOW",
   "label" : "Airflow",
   "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, ensure that the Airflow parcel has been activated.</span>",
-  "version" : "1.7.1.3",
+  "version" : "{{ version }}",
   "runAs" : { 
     "user" : "root",
     "group" : "root"
@@ -27,13 +27,41 @@
   },
   "parameters" : [
     {
+      "name" : "airflow_home",
+      "label" : "Airflow Home",
+      "description" : "The home folder for Airflow.",
+      "configName" : "airflow.home",
+      "required" : "true",
+      "type" : "string",
+      "default" : "/var/lib/airflow",
+      "configurableInWizard": true
+    },
+    {
+      "name" : "dags_folder",
+      "label" : "Dags Folder",
+      "description" : "The folder where your Airflow pipelines live, most likely a subfolder in a code repository.",
+      "configName" : "dags.folder",
+      "required" : "true",
+      "type" : "string",
+      "default" : "${airflow_home}/dags"
+    },
+    {
+      "name" : "plugins_folder",
+      "label" : "Plugins Folder",
+      "description" : "Where your Airflow plugins are stored.",
+      "configName" : "plugins.folder",
+      "required" : "true",
+      "type" : "string",
+      "default" : "${airflow_home}/plugins"
+    },
+    {
       "name": "dbType",
       "label": "Database Type",
       "description": "Type of the database for the Airflow to use.",
       "type": "string_enum",
-      "default": "mysql",
+      "default": "MySQL",
       "configurableInWizard": true,
-      "validValues" : [ "postgresql", "mysql"],
+      "validValues" : [ "PostgreSQL", "MySQL"],
       "required" : "true"
     },
     {
@@ -49,7 +77,7 @@
       "name": "dbPort",
       "label": "Database port",
       "description": "Database port to connect to the database.",
-      "type": "string",
+      "type": "port",
       "default": "3306",
       "configurableInWizard": true,
       "required" : "true"
@@ -110,12 +138,21 @@
       "default" : ""
     },
     {
+      "name" : "executor",
+      "label" : "Executor",
+      "description" : "The executor class that Airflow should use. Choices include SequentialExecutor, LocalExecutor, CeleryExecutor.",
+      "configName" : "executor",
+      "required" : "true",
+      "type" : "string_enum",
+      "validValues" : [ "SequentialExecutor", "LocalExecutor", "CeleryExecutor" ],
+      "default" : "LocalExecutor"
+    },
+    {
       "name" : "RabbitMQ.host",
       "label" : "RabbitMQ Host",
       "description" : "IP address or Hostname of the node running RabbitMQ.",
       "type" : "string",
       "default" : "",
-      "configurableInWizard": false,
       "required" : "false"
     },
     {
@@ -124,7 +161,6 @@
       "description" : "Port of the RabbitMQ node.",
       "type" : "string",
       "default" : "5672",
-      "configurableInWizard": false,
       "required" : "false"
     },
     {
@@ -133,7 +169,6 @@
       "description" : "Username of the RabbitMQ access control.",
       "type" : "string",
       "default" : "",
-      "configurableInWizard": false,
       "required" : "false"
     },
     {
@@ -142,7 +177,6 @@
       "description" : "Password of the RabbitMQ access control.",
       "type" : "password",
       "default" : "",
-      "configurableInWizard": false,
       "required" : "false"
     },
     {
@@ -173,36 +207,15 @@
       "configName" : "expose.config",
       "required" : "true",
       "type" : "boolean",
-      "default" : "false",
-      "configurableInWizard": true
+      "default" : "false"
     },
     {
       "name" : "load_examples",
       "label" : "Load Examples",
       "description" : "Whether to load the examples that ship with Airflow. It's good to get started, but you probably want to set this to False in a production environment.",
+      "required" : "true",
       "type" : "boolean",
-      "default" : "false",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name" : "airflow_home",
-      "label" : "Airflow Home",
-      "description" : "The home folder for Airflow.",
-      "configName" : "airflow.home",
-      "required" : "true",
-      "type" : "string",
-      "default" : "/var/lib/airflow",
-      "configurableInWizard": true
-    },
-    {
-      "name" : "dags_folder",
-      "label" : "Dags Folder",
-      "description" : "The folder where your Airflow pipelines live, most likely a subfolder in a code repository.",
-      "configName" : "dags.folder",
-      "required" : "true",
-      "type" : "string",
-      "default" : "/var/lib/airflow/dags"
+      "default" : "false"
     },
     {
       "name" : "base_log_folder",
@@ -211,8 +224,7 @@
       "configName" : "base.log.folder",
       "required" : "true",
       "type" : "string",
-      "default" : "/var/log/airflow",
-      "configurableInWizard": true
+      "default" : "/var/log/airflow"
     },
     {
       "name" : "remote_base_log_folder",
@@ -251,15 +263,6 @@
       "default" : ""
     },
     {
-      "name" : "executor",
-      "label" : "Executor",
-      "description" : "The executor class that Airflow should use. Choices include SequentialExecutor, LocalExecutor, CeleryExecutor.",
-      "configName" : "executor",
-      "required" : "true",
-      "type" : "string",
-      "default" : "CeleryExecutor"
-    },
-    {
       "name" : "sql_alchemy_pool_size",
       "label" : "SQL Alchemy Pool Size",
       "description" : "The SqlAlchemy pool size is the maximum number of database connections in the pool.",
@@ -284,7 +287,7 @@
       "configName" : "parallelism",
       "required" : "true",
       "type" : "string",
-      "default" : "32"
+      "default" : "8"
     },
     {
       "name" : "dag_concurrency",
@@ -293,7 +296,7 @@
       "configName" : "dag.concurrency",
       "required" : "true",
       "type" : "string",
-      "default" : "16"
+      "default" : "4"
     },
     {
       "name" : "dags_are_paused_at_creation",
@@ -303,7 +306,6 @@
       "required" : "true",
       "type" : "boolean",
       "default" : "true",
-      "configurableInWizard": true
     },
     {
       "name" : "non_pooled_task_slot_count",
@@ -322,15 +324,6 @@
       "required" : "true",
       "type" : "string",
       "default" : "16"
-    },
-    {
-      "name" : "plugins_folder",
-      "label" : "Plugins Folder",
-      "description" : "Where your Airflow plugins are stored.",
-      "configName" : "plugins.folder",
-      "required" : "true",
-      "type" : "string",
-      "default" : "/var/lib/airflow/plugins"
     },
     {
       "name" : "donot_pickle",
@@ -456,7 +449,7 @@
       "configName" : "base.url",
       "required" : "true",
       "type" : "string",
-      "default" : "http://localhost:8080"    
+      "default" : "http://localhost:8080"
     },
     {
       "name" : "web_server_host",
@@ -473,8 +466,8 @@
       "description" : "The port on which to run the web server.",
       "configName" : "web.server.port",
       "required" : "true",
-      "type" : "string",
-      "default" : "8080"
+      "type" : "port",
+      "default" : 8080
     },
     {
       "name" : "web_server_ssl_cert",
@@ -663,7 +656,7 @@
       "configName" : "smtp.mail.from",
       "required" : "true",
       "type" : "string",
-      "default" : "airflow@airflow.com"
+      "default" : "airflow@localhost"
     },
     {
       "name" : "celery_app_name",
@@ -837,17 +830,18 @@
       "description" : "Kerberos ccache location.",
       "required" : "true",
       "type" : "string",
-      "default" : "/tmp/airflow_krb5_ccach"
+      "default" : "/tmp/airflow_krb5_ccache"
     }
   ],
   "gateway" : {
     "alternatives" : {
-      "name" : "airflow",
+      "name" : "airflow-conf",
       "priority" : 50,
-      "linkRoot" : "/tmp/airflowTemp/"
+      "linkRoot" : "/etc/airflow"
     },
     "scriptRunner" : {
-      "program" : "scripts/update_cfg.sh",
+      "program" : "scripts/control.sh",
+      "args" : [ "client" ],
       "environmentVariables" : {
         "dbType" : "${dbType}",
         "dbHost" : "${dbHost}",
@@ -889,15 +883,21 @@
       }
     },
     "configWriter" : {
+      "auxConfigGenerators" : [
+        {
+          "filename" : "airflow-env.sh",
+          "sourceFilename" : "aux/airflow-env.sh"
+        }
+      ],
       "generators" : [
         {
-          "filename" : "airflow/airflowTemp.cfg",
+          "filename" : "airflow.properties",
           "configFormat" : "properties"
         }
       ]
     }
   },
-  "inExpressWizard" : true,
+  "inExpressWizard" : false,
   "icon" : "images/airflow.png",
   "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER"],
   "commands": [
@@ -1028,17 +1028,18 @@
       "externalLink" : {
         "name" : "webserver_web_ui",
         "label" : "Airflow WebUI",
-        "url" : "http://${host}:${web_server_port}"
+        "url" : "http://${host}:${web_server_port}",
+        "secureUrl" : "https://${host}:${web_server_port}"
       },
       "topology" : { 
           "minInstances" : 1 
       },
       "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
+         "dir" : "/var/log/airflow",
+         "filename" : "airflow-WEBSERVER-${host}.log",
          "configName" : "log.dir",
          "modifiable" : true,
-         "loggingType" : "log4j"
+         "loggingType" : "other"
       },
       "stopRunner" : {
          "runner" : {
@@ -1053,8 +1054,13 @@
       "startRunner" : {
          "program" : "scripts/start_airflow_scheduler.sh",
          "environmentVariables" : {
-          "AIRFLOW_HOME" : "${airflow_home}"
+           "AIRFLOW_HOME" : "${airflow_home}"
          }
+      },
+      "stopRunner" : {
+        "runner" : {
+          "program" : "scripts/stop_airflow_scheduler.sh"
+        }
       },
       "parameters" : [
         {
@@ -1162,11 +1168,11 @@
           "maxInstances" : 1 
       },
       "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
+         "dir" : "/var/log/airflow",
+         "filename" : "airflow-SCHEDULER-${host}.log",
          "configName" : "log.dir",
          "modifiable" : true,
-         "loggingType" : "log4j"
+         "loggingType" : "other"
       }
     },
     {
@@ -1185,11 +1191,11 @@
         }
       },
       "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
+         "dir" : "/var/log/airflow",
+         "filename" : "airflow-WORKER-${host}.log",
          "configName" : "log.dir",
          "modifiable" : true,
-         "loggingType" : "log4j"
+         "loggingType" : "other"
       }
     },
     {
@@ -1217,11 +1223,11 @@
         "minInstances" : "0"
       },
       "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
+         "dir" : "/var/log/airflow",
+         "filename" : "airflow-FLOWER-${host}.log",
          "configName" : "log.dir",
          "modifiable" : true,
-         "loggingType" : "log4j"
+         "loggingType" : "other"
       }
     },
     {
