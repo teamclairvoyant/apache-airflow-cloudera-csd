@@ -5,15 +5,14 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 ## Requirements
 - A supported operating system.
 - MySQL or PostgreSQL database in which to store Airflow metadata.
-- The [Airflow](https://github.com/teamclairvoyant/apache-airflow-parcels) parcel needs to be installed.
 
 ### Currently Supported Versions of Airflow
-- Airflow 1.7.1.3
-- Airflow 1.8.0
+- Airflow 1.10
 
 ### Currently Supported Operating Systems
-- CentOS 6 & 7
-- RHEL 6 & 7
+- CentOS/RHEL 6 & 7
+- Debian 8
+- Ubuntu 14.04, 16.04, & 18.04
 
 ## Installing the CSD
 1. Download the Jar file.  [Airflow CSD](http://archive.clairvoyantsoft.com/airflow/csd/)
@@ -158,7 +157,8 @@ Upon many deployments, you may face an error called 'Markup file already exists'
 Occasionally, we experienced some delay in DAG execution. We are working to fix this.
 
 ## Resources:
-1. https://github.com/cloudera/cm_ext/wiki/The-Structure-of-a-CSD
-2. https://github.com/cloudera/cm_ext/wiki/Service-Descriptor-Language-Reference
-3. https://github.com/cloudera/cm_csds
+1. https://github.com/teamclairvoyant/apache-airflow-parcels
+2. https://github.com/cloudera/cm_ext/wiki/The-Structure-of-a-CSD
+3. https://github.com/cloudera/cm_ext/wiki/Service-Descriptor-Language-Reference
+4. https://github.com/cloudera/cm_csds
 

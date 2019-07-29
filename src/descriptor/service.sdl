@@ -10,7 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Copyright Clairvoyant 2018
+// Copyright 2018 Clairvoyant, LLC.
 {
   "name" : "AIRFLOW",
   "label" : "Airflow",
@@ -60,7 +60,7 @@
       "description": "Type of database used for Airflow.",
       "configName" : "DB_TYPE",
       "type": "string_enum",
-      "validValues" : [ "MySQL", "PostgreSQL" ],
+      "validValues" : [ "MySQL", "PostgreSQL", "SQLite3" ],
       "default": "MySQL",
       "required" : true,
       "configurableInWizard": true
@@ -72,8 +72,7 @@
       "configName" : "DB_HOST",
       "type": "string",
       "default": "",
-      "configurableInWizard": true,
-      "required" : true
+      "configurableInWizard": true
     },
     {
       "name": "database_port",
@@ -82,8 +81,7 @@
       "configName" : "DB_PORT",
       "type": "port",
       "default": "3306",
-      "configurableInWizard": true,
-      "required" : true
+      "configurableInWizard": true
     },
     {
       "name": "database_name",
@@ -92,8 +90,7 @@
       "configName" : "DB_NAME",
       "type": "string",
       "default": "airflow",
-      "configurableInWizard": true,
-      "required" : true
+      "configurableInWizard": true
     },
     {
       "name": "database_username",
@@ -102,8 +99,7 @@
       "configName" : "DB_USER",
       "type": "string",
       "default": "airflow",
-      "configurableInWizard": true,
-      "required" : true
+      "configurableInWizard": true
     },
     {
       "name": "database_password",
@@ -112,8 +108,7 @@
       "configName" : "DB_PASS",
       "type": "password",
       "default": "",
-      "configurableInWizard": true,
-      "required" : true
+      "configurableInWizard": true
     },
     {
       "name" : "executor",
@@ -122,38 +117,46 @@
       "configName" : "core:executor",
       "type" : "string_enum",
       "validValues" : [ "SequentialExecutor", "LocalExecutor", "CeleryExecutor" ],
-      "default" : "LocalExecutor",
-      "required" : true
+      "default" : "LocalExecutor"
     },
     {
-      "name" : "rabbitmq_host",
-      "label" : "RabbitMQ Host",
-      "description" : "Name of host where RabbitMQ is running. Only used with the CeleryExecutor.",
-      "configName" : "RABBITMQ_HOST",
+      "name" : "celery_broker",
+      "label" : "Celery Broker",
+      "description" : "Which message transport to use as a Celery broker.",
+      "configName" : "CELERY_BROKER",
+      "type" : "string_enum",
+      "validValues" : [ "RabbitMQ", "Redis", "AmazonSQS" ],
+      "default" : "RabbitMQ"
+    },
+    {
+      "name" : "celery_broker_host",
+      "label" : "Celery Broker Host",
+      "description" : "Name of host where the Celery Broker is running. Only used with core:executor=CeleryExecutor and CELERY_BROKER=RabbitMQ.",
+      "configName" : "CELERY_BROKER_HOST",
       "type" : "string",
       "default" : ""
     },
     {
-      "name" : "rabbitmq_port",
-      "label" : "RabbitMQ Port",
-      "description" : "Port on the host where RabbitMQ is running. Only used with the CeleryExecutor.",
-      "configName" : "RABBITMQ_PORT",
-      "type" : "string",
-      "default" : "5672"
-    },
-    {
-      "name" : "rabbitmq_username",
-      "label" : "RabbitMQ Username",
-      "description": "The username to use to log into RabbitMQ access control. Only used with the CeleryExecutor.",
-      "configName" : "RABBITMQ_USER",
+      "name" : "celery_broker_port",
+      "label" : "Celery Broker Port",
+      "description" : "Port on the host where the Celery Broker is running. RabbitMQ is 5672 and Redis is 6379. Only used with core:executor=CeleryExecutor and CELERY_BROKER=RabbitMQ.",
+      "configName" : "CELERY_BROKER_PORT",
       "type" : "string",
       "default" : ""
     },
     {
-      "name" : "rabbitmq_password",
-      "label" : "RabbitMQ Password",
-      "description" : "Password for RabbitMQ access control. Only used with the CeleryExecutor.",
-      "configName" : "RABBITMQ_PASS",
+      "name" : "celery_broker_username",
+      "label" : "Celery Broker Username",
+      "description": "Username used to authenticate with the Celery Broker. Only used core:executor=CeleryExecutor and CELERY_BROKER=RabbitMQ.",
+      "configName" : "CELERY_BROKER_USER",
+      "type" : "string",
+      "default" : ""
+    },
+    {
+      "name" : "celery_broker_password",
+      "label" : "Celery Broker Password",
+      "description" : "Password used to authenticate with the Celery Broker. Only used with core:executor=CeleryExecutor and CELERY_BROKER=RabbitMQ.",
+      "configName" : "CELERY_BROKER_PASS",
       "type" : "password",
       "default" : ""
     },
@@ -304,7 +307,9 @@
       "label" : "Task Runner",
       "description" : "The class to use for running task instances in a subprocess.",
       "configName" : "core:task_runner",
-      "type" : "string",
+//      "type" : "string",
+      "type" : "string_enum",
+      "validValues" : [ "StandardTaskRunner", "BashTaskRunner", "CgroupTaskRunner" ],
       "default" : "BashTaskRunner"
     },
     {
@@ -315,6 +320,7 @@
       "type" : "string",
       "default" : ""
     },
+// TODO
     {
       "name" : "security",
       "label" : "Security",
@@ -406,7 +412,7 @@
     {
       "name" : "smtp_port",
       "label" : "SMTP Port",
-      "description" : "NONE",
+      "description" : "Port on host where the SMTP server is running.",
       "configName" : "smtp:smtp_port",
       "type" : "port",
       "default" : 25
@@ -414,7 +420,7 @@
     {
       "name" : "smtp_mail_from",
       "label" : "SMTP Mail From",
-      "description" : "NONE",
+      "description" : "Emails will appear to come from this address.",
       "configName" : "smtp:smtp_mail_from",
       "type" : "string",
       "default" : "airflow@localhost"
@@ -430,7 +436,7 @@
     {
       "name" : "smtp_ssl",
       "label" : "SMTP SSL",
-      "description" : "Force a TLS/SSL connection to the MSA.",
+      "description" : "Force a TLS/SSL connection to the SMTP server.",
       "configName" : "smtp:smtp_ssl",
       "type" : "boolean",
       "default" : false
@@ -449,14 +455,24 @@
       "description" : "Password for SMTP auth.",
       "configName" : "smtp:smtp_password",
       "type" : "password",
-      "default" : ""
+      "default" : "",
+// TODO
+      "sensitive" : false
+    },
+    {
+      "name" : "secret_key",
+      "label" : "Secret Key",
+      "description" : "Secret key used to run your flask app.",
+      "configName" : "webserver:secret_key",
+      "type" : "string",
+      "initType" : "randomBase64"
     },
     {
       "name" : "fernet_key",
       "label" : "Fernet Key",
       "description" : "Secret key to save connection passwords in the db.",
       "configName" : "core:fernet_key",
-      "type" : "password",
+      "type" : "string",
       "initType" : "randomBase64"
     }
   ],
@@ -468,21 +484,26 @@
     },
     "scriptRunner" : {
       "program" : "scripts/control.sh",
-      "args" : [ "client" ],
-      "environmentVariables" : {
-        "AIRFLOW_HOME" : "${airflow_home}"
-      }
+      "args" : [ "client" ]
     },
     "configWriter" : {
       "auxConfigGenerators" : [
         {
-          "filename" : "airflow-env.sh",
+          "filename" : "airflow-conf/airflow-env.sh",
           "sourceFilename" : "aux/airflow-env.sh"
+        },
+        {
+          "filename" : "airflow-conf/airflow.cfg",
+          "sourceFilename" : "aux/airflow.cfg"
+        },
+        {
+          "filename" : "airflow-conf/unittests.cfg",
+          "sourceFilename" : "aux/unittests.cfg"
         }
       ],
       "generators" : [
         {
-          "filename" : "airflow.properties",
+          "filename" : "airflow-conf/airflow.properties",
           "configFormat" : "properties"
         }
       ]
@@ -490,7 +511,7 @@
   },
   "inExpressWizard" : false,
   "icon" : "images/airflow.png",
-  "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER"],
+  "rolesWithExternalLinks" : [ "AIRFLOW_WEBSERVER", "AIRFLOW_FLOWER" ],
   "commands": [
     {
       "name": "INSTALL_AIRFLOW_INITDB_SERVCMD",
@@ -501,11 +522,11 @@
       "runMode": "single"
     },
     {
-      "name": "INSTALL_AIRFLOW_RESETDB_SERVCMD",
-      "label": "Resets Airflow DB",
-      "description": "Resets the Airflow DB.",
+      "name": "INSTALL_AIRFLOW_UPGRADEDB_SERVCMD",
+      "label": "Upgrade Airflow DB",
+      "description": "Upgrades the Airflow DB.",
       "roleName": "AIRFLOW_SCHEDULER",
-      "roleCommand": "airflow_resetdb_scheduler_rolecmd",
+      "roleCommand": "airflow_upgradedb_scheduler_rolecmd",
       "runMode": "single"
     }
   ],
@@ -522,15 +543,32 @@
       "label" : "WebServer",
       "pluralLabel" : "WebServers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_webserver.sh",
-         "environmentVariables" : {
-          "AIRFLOW_HOME" : "${airflow_home}"
-         }
+        "program" : "scripts/control.sh",
+        "args" : [ "start_webserver" ]
+//        "args" : [ "start_webserver", "-l ${log_dir}/airflow-WEBSERVER-${host}.log" ]
+      },
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
       },
       "parameters" : [
         {
           "name" : "authenticate",
-          "label" : "Enable Airflow Authentication",
+          "label" : "Enable Airflow Webserver Authentication",
           "description" : "Enable Airflow authentication.",
           "configName" : "webserver:authenticate",
           "type" : "boolean",
@@ -614,7 +652,8 @@
           "description" : "Number of seconds the webserver waits before killing gunicorn master that doesn't respond.",
           "configName" : "webserver:web_server_master_timeout",
           "type" : "long",
-          "default" : 120
+          "default" : 120,
+          "unit" : "seconds"
         },
         {
           "name" : "web_server_worker_timeout",
@@ -622,7 +661,8 @@
           "description" : "The time the gunicorn webserver waits before timing out on a worker.",
           "configName" : "webserver:web_server_worker_timeout",
           "type" : "long",
-          "default" : 120
+          "default" : 120,
+          "unit" : "seconds"
         },
         {
           "name" : "worker_refresh_batch_size",
@@ -719,12 +759,6 @@
           "default" : false
         }
       ],
-//      "generators" : [
-//          {
-//            "filename" : "sample_xml_file.xml",
-//            "configFormat" : "hadoop_xml"
-//          }
-//      ],
       "externalLink" : {
         "name" : "webserver_web_ui",
         "label" : "Airflow WebUI",
@@ -737,13 +771,12 @@
       "logging" : {
          "dir" : "/var/log/airflow",
          "filename" : "airflow-WEBSERVER-${host}.log",
-         "configName" : "log.dir",
          "modifiable" : true,
          "loggingType" : "other"
       },
       "stopRunner" : {
-         "runner" : {
-             "program" : "scripts/stop_airflow_webserver.sh"
+        "runner" : {
+          "program" : "scripts/stop_airflow_webserver.sh"
         }
       }
     },
@@ -752,15 +785,31 @@
       "label" : "Scheduler",
       "pluralLabel" : "Schedulers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_scheduler.sh",
-         "environmentVariables" : {
-           "AIRFLOW_HOME" : "${airflow_home}"
-         }
+        "program" : "scripts/control.sh",
+        "args" : [ "start_scheduler" ]
       },
       "stopRunner" : {
         "runner" : {
           "program" : "scripts/stop_airflow_scheduler.sh"
         }
+      },
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
       },
       "parameters" : [
         {
@@ -891,23 +940,19 @@
          "expectedExitCodes" : [0],
          "requiredRoleState" : "stopped",
          "commandRunner" : {
-           "program" : "scripts/airflow_initdb.sh",
-           "environmentVariables" : {
-            "AIRFLOW_HOME" : "${airflow_home}"
-           }
-         }
+            "program" : "scripts/control.sh",
+            "args" : [ "initdb" ]
+          }
         },
         {
-         "name" : "airflow_resetdb_scheduler_rolecmd",
-         "label" : "Reset Airflow DB",
-         "description" : "This command will reset the Airflow Database.",
+         "name" : "airflow_upgradedb_scheduler_rolecmd",
+         "label" : "Upgrade Airflow DB",
+         "description" : "This command will upgrade the Airflow Database.",
          "expectedExitCodes" : [0],
          "requiredRoleState" : "stopped",
          "commandRunner" : {
-             "program" : "scripts/airflow_resetdb.sh",
-             "environmentVariables" : {
-              "AIRFLOW_HOME" : "${airflow_home}"
-             }
+            "program" : "scripts/control.sh",
+            "args" : [ "upgradedb" ]
            }
          }
       ],
@@ -917,7 +962,6 @@
       "logging" : {
          "dir" : "/var/log/airflow",
          "filename" : "airflow-SCHEDULER-${host}.log",
-         "configName" : "log.dir",
          "modifiable" : true,
          "loggingType" : "other"
       }
@@ -927,15 +971,31 @@
       "label" : "Worker",
       "pluralLabel" : "Workers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_worker.sh",
-         "environmentVariables" : {
-          "AIRFLOW_HOME" : "${airflow_home}"
-         }
+        "program" : "scripts/control.sh",
+        "args" : [ "start_worker" ]
       },
       "stopRunner" : {
-         "runner" : {
-             "program" : "scripts/stop_airflow_worker.sh"
+        "runner" : {
+          "program" : "scripts/stop_airflow_worker.sh"
         }
+      },
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
       },
       "parameters" : [
 //        {
@@ -974,20 +1034,40 @@
       "logging" : {
          "dir" : "/var/log/airflow",
          "filename" : "airflow-WORKER-${host}.log",
-         "configName" : "log.dir",
          "modifiable" : true,
          "loggingType" : "other"
       }
     },
     {
       "name" : "AIRFLOW_FLOWER",
-      "label" : "Flower",
-      "pluralLabel" : "Flowers",
+      "label" : "Flower Webserver",
+      "pluralLabel" : "Flower Webservers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_flower.sh",
-         "environmentVariables" : {
-          "AIRFLOW_HOME" : "${airflow_home}"
-         }
+        "program" : "scripts/control.sh",
+        "args" : [ "start_flower" ]
+      },
+      "stopRunner" : {
+        "runner" : {
+          "program" : "scripts/stop_airflow_flower.sh"
+        }
+      },
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
       },
       "parameters" : [
         {
@@ -1000,7 +1080,7 @@
         },
         {
           "name" : "flower_url_prefix",
-          "label" : "Flower Port",
+          "label" : "Flower URL Prefix",
           "description" : "Celery Flower is a UI for Celery. This defines the URL prefix. Example: flower_url_prefix = /flower",
           "configName" : "celery:flower_url_prefix",
           "type" : "string",
@@ -1025,7 +1105,7 @@
       ],
       "externalLink" : {
         "name" : "flower_web_ui",
-        "label" : "Airflow Flower WebUI",
+        "label" : "Flower WebUI",
         "url" : "http://${host}:${flower_port}",
         "secureUrl" : "https://${host}:${flower_port}"
       },
@@ -1035,7 +1115,6 @@
       "logging" : {
          "dir" : "/var/log/airflow",
          "filename" : "airflow-FLOWER-${host}.log",
-         "configName" : "log.dir",
          "modifiable" : true,
          "loggingType" : "other"
       }
@@ -1045,7 +1124,26 @@
       "label" : "Kerberos",
       "pluralLabel" : "Kerberos",
       "startRunner" : {
-        "program" : "scripts/start_airflow_kerberos.sh"
+        "program" : "scripts/control.sh",
+        "args" : [ "start_kerberos" ]
+      },
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
       },
       "parameters" : [
         {
@@ -1062,7 +1160,7 @@
           "description" : "Location of keytab file.",
           "configName" : "kerberos:keytab",
           "type" : "string",
-          "default" : "airflow.keytab"
+          "default" : "/var/lib/airflow/airflow.keytab"
         },
         {
           "name" : "reinit_frequency",
