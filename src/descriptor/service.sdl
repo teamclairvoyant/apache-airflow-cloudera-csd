@@ -21,7 +21,7 @@
     "group" : "root"
   },
   "parcel" : {
-    "repoUrl" : "http://archive.clairvoyantsoft.com/airflow/parcels/{{ version }}/",
+    "repoUrl" : "http://archive.clairvoyantsoft.com/airflow/parcels/{{ parcel_version }}/",
     "requiredTags" : [ "airflow" ],
     "sTags" : []
   },
@@ -307,7 +307,6 @@
       "label" : "Task Runner",
       "description" : "The class to use for running task instances in a subprocess.",
       "configName" : "core:task_runner",
-//      "type" : "string",
       "type" : "string_enum",
       "validValues" : [ "StandardTaskRunner", "BashTaskRunner", "CgroupTaskRunner" ],
       "default" : "BashTaskRunner"
@@ -320,12 +319,12 @@
       "type" : "string",
       "default" : ""
     },
-// TODO
     {
       "name" : "security",
       "label" : "Security",
       "description" : "What security module to use (for example kerberos).",
       "configName" : "core:security",
+// TODO: string_enum?
       "type" : "string",
       "default" : ""
     },
@@ -456,7 +455,7 @@
       "configName" : "smtp:smtp_password",
       "type" : "password",
       "default" : "",
-// TODO
+// TODO: remove
       "sensitive" : false
     },
     {
@@ -464,16 +463,17 @@
       "label" : "Secret Key",
       "description" : "Secret key used to run your flask app.",
       "configName" : "webserver:secret_key",
+// TODO: password
       "type" : "string",
       "initType" : "randomBase64"
     },
     {
       "name" : "fernet_key",
       "label" : "Fernet Key",
-      "description" : "Secret key to save connection passwords in the db.",
+      "description" : "Secret key used to encrypt connection passwords in the database. Generate via: /opt/cloudera/parcels/AIRFLOW/bin/python -c 'from cryptography.fernet import Fernet;key=Fernet.generate_key().decode();print key'",
       "configName" : "core:fernet_key",
-      "type" : "string",
-      "initType" : "randomBase64"
+      "type" : "password",
+      "default" : ""
     }
   ],
   "gateway" : {
@@ -545,6 +545,7 @@
       "startRunner" : {
         "program" : "scripts/control.sh",
         "args" : [ "start_webserver" ]
+// TODO
 //        "args" : [ "start_webserver", "-l ${log_dir}/airflow-WEBSERVER-${host}.log" ]
       },
       "configWriter" : {
@@ -774,6 +775,7 @@
          "modifiable" : true,
          "loggingType" : "other"
       },
+// TODO
       "stopRunner" : {
         "runner" : {
           "program" : "scripts/stop_airflow_webserver.sh"
@@ -788,6 +790,7 @@
         "program" : "scripts/control.sh",
         "args" : [ "start_scheduler" ]
       },
+// TODO
       "stopRunner" : {
         "runner" : {
           "program" : "scripts/stop_airflow_scheduler.sh"
@@ -974,6 +977,7 @@
         "program" : "scripts/control.sh",
         "args" : [ "start_worker" ]
       },
+// TODO
       "stopRunner" : {
         "runner" : {
           "program" : "scripts/stop_airflow_worker.sh"
@@ -1046,6 +1050,7 @@
         "program" : "scripts/control.sh",
         "args" : [ "start_flower" ]
       },
+// TODO
       "stopRunner" : {
         "runner" : {
           "program" : "scripts/stop_airflow_flower.sh"
