@@ -47,7 +47,7 @@ function deploy_client_config {
       if [ "$VAL" == "false" ]; then VAL=False; fi
       crudini --set ${DIR}/airflow.cfg "$SECTION" "$KEY" "$VAL"
     else
-      echo "- $SECTION"
+      #echo "- $SECTION"
       if [ -n "$SECTION" ]; then
         eval $SECTION
       fi
@@ -91,7 +91,7 @@ function deploy_client_config {
 function update_daemon_config {
   local DIR=$1
   export AIRFLOW_CONFIG=${DIR}/airflow.cfg
-  log "AIRFLOW_CONFIG: $AIRFLOW_CONFIG"
+  log "** AIRFLOW_CONFIG: $AIRFLOW_CONFIG"
   deploy_client_config ${DIR}
 
   # Append our AIRFLOW_CONFIG at the end to ensure that it's there
@@ -100,6 +100,7 @@ function update_daemon_config {
   chgrp airflow ${DIR}/airflow.cfg ${DIR}/airflow-env.sh
 }
 
+log "*** AIRFLOW_DIR: $AIRFLOW_DIR"
 log "*** AIRFLOW_HOME: $AIRFLOW_HOME"
 log "*** AIRFLOW_CONFIG: $AIRFLOW_CONFIG"
 log "*** PYTHONHOME: $PYTHONHOME"
@@ -116,43 +117,43 @@ case $CMD in
   start_flower)
     update_daemon_config ${CONF_DIR}
     log "Starting Airflow flower..."
-    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec airflow-cm.sh flower $OPTS"
+    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec ${AIRFLOW_DIR}/bin/airflow-cm.sh flower $OPTS"
     ;;
 
   start_kerberos)
     update_daemon_config ${CONF_DIR}
     log "Starting Airflow kerberos..."
-    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec airflow-cm.sh kerberos $OPTS"
+    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec ${AIRFLOW_DIR}/bin/airflow-cm.sh kerberos $OPTS"
     ;;
 
   start_scheduler)
     update_daemon_config ${CONF_DIR}
     log "Starting Airflow scheduler..."
-    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec airflow-cm.sh scheduler $OPTS"
+    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec ${AIRFLOW_DIR}/bin/airflow-cm.sh scheduler $OPTS"
     ;;
 
   start_webserver)
     update_daemon_config ${CONF_DIR}
     log "Starting Airflow webserver..."
-    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec airflow-cm.sh webserver $OPTS"
+    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec ${AIRFLOW_DIR}/bin/airflow-cm.sh webserver $OPTS"
     ;;
 
   start_worker)
     update_daemon_config ${CONF_DIR}
     log "Starting Airflow worker..."
-    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec airflow-cm.sh worker $OPTS"
+    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec ${AIRFLOW_DIR}/bin/airflow-cm.sh worker $OPTS"
     ;;
 
   initdb)
     update_daemon_config ${CONF_DIR}
     log "Initializing the Airflow database..."
-    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec airflow-cm.sh initdb"
+    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec ${AIRFLOW_DIR}/bin/airflow-cm.sh initdb"
     ;;
 
   upgradedb)
     update_daemon_config ${CONF_DIR}
     log "Upgrading the Airflow database..."
-    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec airflow-cm.sh upgradedb"
+    su -s /bin/bash - airflow -c "CONF_DIR=$CONF_DIR exec ${AIRFLOW_DIR}/bin/airflow-cm.sh upgradedb"
     ;;
 
   *)
