@@ -485,7 +485,10 @@
     },
     "scriptRunner" : {
       "program" : "scripts/control.sh",
-      "args" : [ "client" ]
+      "args" : [ "client" ],
+      "environmentVariables" : {
+        "AIRFLOW_CONFIG" : "/etc/airflow/conf/airflow.cfg"
+      }
     },
     "configWriter" : {
       "auxConfigGenerators" : [

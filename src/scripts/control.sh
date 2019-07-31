@@ -92,6 +92,8 @@ function deploy_client_config {
 
   # Append our AIRFLOW_HOME at the end to ensure that it's there
   echo -e "\nexport AIRFLOW_HOME=$AIRFLOW_HOME" >> ${DIR}/airflow-env.sh
+  # Append our AIRFLOW_CONFIG at the end to ensure that it's there
+  echo -e "\nexport AIRFLOW_CONFIG=$AIRFLOW_CONFIG" >> ${DIR}/airflow-env.sh
 }
 
 function update_daemon_config {
@@ -99,10 +101,6 @@ function update_daemon_config {
   export AIRFLOW_CONFIG=${DIR}/airflow.cfg
   log "** AIRFLOW_CONFIG: $AIRFLOW_CONFIG"
   deploy_client_config ${DIR}
-
-  # Append our AIRFLOW_CONFIG at the end to ensure that it's there
-  echo -e "\nexport AIRFLOW_CONFIG=$AIRFLOW_CONFIG" >> ${DIR}/airflow-env.sh
-
   chgrp airflow ${DIR}/airflow.cfg ${DIR}/airflow-env.sh
 }
 
