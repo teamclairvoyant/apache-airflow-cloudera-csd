@@ -487,7 +487,9 @@
       "program" : "scripts/control.sh",
       "args" : [ "client" ],
       "environmentVariables" : {
-        "AIRFLOW_CONFIG" : "/etc/airflow/conf/airflow.cfg"
+        "AIRFLOW_CONFIG" : "/etc/airflow/conf/airflow.cfg",
+        "DB_PASS" : "${database_password}",
+        "CELERY_BROKER_PASS" : "${celery_broker_password}"
       }
     },
     "configWriter" : {
