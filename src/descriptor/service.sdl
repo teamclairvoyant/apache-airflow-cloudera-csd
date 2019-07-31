@@ -319,30 +319,42 @@
       "type" : "string",
       "default" : ""
     },
-    {
-      "name" : "security",
-      "label" : "Security",
-      "description" : "What security module to use (for example kerberos).",
-      "configName" : "core:security",
-// TODO: string_enum?
-      "type" : "string",
-      "default" : ""
-    },
+// TODO: kerberos
+//    {
+//      "name" : "security",
+//      "label" : "Security",
+//      "description" : "What security module to use (for example kerberos).",
+//      "configName" : "core:security",
+//      "type" : "string_enum",
+//      "validValues": [ "", "kerberos" ],
+//      "default" : ""
+//    },
     {
       "name" : "api_client",
       "label" : "API Client",
-      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver.",
+      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the API running on the webserver.",
       "configName" : "cli:api_client",
-      "type" : "string",
+      "type" : "string_enum",
+      "validValues" : [ "airflow.api.client.local_client", "airflow.api.client.json_client" ],
       "default" : "airflow.api.client.local_client"
     },
     {
       "name" : "endpoint_url",
       "label" : "Endpoint URL",
-      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver.",
+      "description" : "URL of the API running on the webserver.",
       "configName" : "cli:endpoint_url",
       "type" : "string",
+// TODO: update localhost
       "default" : "http://localhost:8080"
+    },
+    {
+      "name" : "auth_backend",
+      "label" : "Enable Airflow API Authentication",
+      "description" : "Airflow authentication backend type.",
+      "configName" : "api:auth_backend",
+      "type" : "string_enum",
+      "validValues" : [ "airflow.api.auth.backend.default", "airflow.api.auth.backend.deny_all", "airflow.api.auth.backend.kerberos_auth", "airflow.contrib.auth.backends.password_auth" ],
+      "default" : "airflow.api.auth.backend.default"
     },
     {
       "name" : "default_owner",
@@ -454,18 +466,7 @@
       "description" : "Password for SMTP auth.",
       "configName" : "smtp:smtp_password",
       "type" : "password",
-      "default" : "",
-// TODO: remove
-      "sensitive" : false
-    },
-    {
-      "name" : "secret_key",
-      "label" : "Secret Key",
-      "description" : "Secret key used to run your flask app.",
-      "configName" : "webserver:secret_key",
-// TODO: password
-      "type" : "string",
-      "initType" : "randomBase64"
+      "default" : ""
     },
     {
       "name" : "fernet_key",
@@ -575,30 +576,16 @@
           "type" : "boolean",
           "default" : false
         },
-//        {
-//          "name" : "airflow_username",
-//          "label" : "Airflow Username (Only to create Airflow User)",
-//          "description" : "Name of the Airflow user to create.",
-//          "configName" : "AIRFLOW_USER",
-//          "type" : "string",
-//          "default" : ""
-//        },
-//        {
-//          "name" : "airflow_password",
-//          "label" : "Airflow Password",
-//          "description" : "Password of the Airflow user.",
-//          "configName" : "AIRFLOW_PASS",
-//          "type" : "password",
-//          "default" : ""
-//        },
-//        {
-//          "name" : "airflow_email",
-//          "label" : "Email of the Airflow user",
-//          "description" : "Email of the Airflow user.",
-//          "configName" : "AIRFLOW_EMAIL",
-//          "type" : "string",
-//          "default" : ""
-//        },
+        {
+          "name" : "auth_backend",
+          "label" : "Enable Airflow Webserver Authentication",
+          "description" : "Airflow authentication backend type.",
+          "configName" : "webserver:auth_backend",
+          "type" : "string_enum",
+          "validValues" : [ "airflow.contrib.auth.backends.password_auth" ],
+//          "validValues" : [ "airflow.contrib.auth.backends.password_auth", "airflow.contrib.auth.backends.ldap_auth" ],
+          "default" : "airflow.contrib.auth.backends.password_auth"
+        },
         {
           "name" : "expose_config",
           "label" : "Expose Config",
@@ -613,6 +600,7 @@
           "description" : "The base URL of your website as Airflow cannot guess what DNS name you are using. This is used in automated emails that Airflow sends to point links to the right web server.",
           "configName" : "webserver:base_url",
           "type" : "string",
+// TODO: update localhost
           "default" : "http://localhost:8080"
         },
         {
@@ -758,6 +746,14 @@
           "configName" : "webserver:hide_paused_dags_by_default",
           "type" : "boolean",
           "default" : false
+        },
+        {
+          "name" : "secret_key",
+          "label" : "Secret Key",
+          "description" : "Secret key used to run your flask app.",
+          "configName" : "webserver:secret_key",
+          "type" : "password",
+          "initType" : "randomBase64"
         }
       ],
       "externalLink" : {
@@ -1101,7 +1097,7 @@
         },
         {
           "name" : "flower_basic_auth",
-          "label" : "Flower Port",
+          "label" : "Flower Basic Auth",
           "description" : "Securing Flower with basic authentication. Accepts user:password pairs separated by a comma. Example: flower_basic_auth = user1:password1,user2:password2",
           "configName" : "celery:flower_basic_auth",
           "type" : "string",
