@@ -36,12 +36,18 @@ function deploy_client_config {
   local KV
   local KEY
   local VAL
-  while read -r line; do
-    SECTION=$(echo "$line" | awk -F: '{print $1}')
-    KV=$(echo "$line" | awk -F: '{print $2}')
+  while read -r LINE; do
+    # We either have strings like 'cli:endpoint_url=http://localhost:8080'
+    # which specify INI formated config items or
+    # 'AIRFLOW_HOME=/var/lib/airflow' which specify items not meant for the INI
+    # file.  We need to grab the INI section 'cli:' and the rest will be the
+    # key=value pair (endpoint_url=http://localhost:8080).  Non-INI values will
+    # not have the section value.
+    SECTION=$(echo "$LINE" | awk -F: '{print $1}')
+    KV=$(echo "$LINE" | sed -e "s|${SECTION}:||")
     KEY=$(echo "$KV" | awk -F= '{print $1}')
     VAL=$(echo "$KV" | awk -F= '{print $2}')
-    if [ -n "$KV" ]; then
+    if [ "$SECTION" != "$KV" ]; then
       # Pythonize the boolean values.
       if [ "$VAL" == "true" ];  then VAL=True;  fi
       if [ "$VAL" == "false" ]; then VAL=False; fi
