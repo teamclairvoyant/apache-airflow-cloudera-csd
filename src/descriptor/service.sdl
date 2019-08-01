@@ -764,13 +764,13 @@
         "secureUrl" : "https://${host}:${web_server_port}"
       },
       "topology" : {
-          "minInstances" : 1
+        "minInstances" : 1
       },
       "logging" : {
-         "dir" : "/var/log/airflow",
-         "filename" : "airflow-WEBSERVER-${host}.log",
-         "modifiable" : true,
-         "loggingType" : "other"
+        "dir" : "/var/log/airflow",
+        "filename" : "airflow-WEBSERVER-${host}.log",
+        "modifiable" : true,
+        "loggingType" : "other"
       },
 // TODO
       "stopRunner" : {
@@ -934,36 +934,36 @@
       ],
       "commands" : [
         {
-         "name" : "airflow_initdb_scheduler_rolecmd",
-         "label" : "Intialize Airflow DB",
-         "description" : "This command will initialize the Airflow Database.",
-         "expectedExitCodes" : [0],
-         "requiredRoleState" : "stopped",
-         "commandRunner" : {
+          "name" : "airflow_initdb_scheduler_rolecmd",
+          "label" : "Intialize Airflow DB",
+          "description" : "This command will initialize the Airflow Database.",
+          "expectedExitCodes" : [0],
+          "requiredRoleState" : "stopped",
+          "commandRunner" : {
             "program" : "scripts/control.sh",
             "args" : [ "initdb" ]
           }
         },
         {
-         "name" : "airflow_upgradedb_scheduler_rolecmd",
-         "label" : "Upgrade Airflow DB",
-         "description" : "This command will upgrade the Airflow Database.",
-         "expectedExitCodes" : [0],
-         "requiredRoleState" : "stopped",
-         "commandRunner" : {
+          "name" : "airflow_upgradedb_scheduler_rolecmd",
+          "label" : "Upgrade Airflow DB",
+          "description" : "This command will upgrade the Airflow Database.",
+          "expectedExitCodes" : [0],
+          "requiredRoleState" : "stopped",
+          "commandRunner" : {
             "program" : "scripts/control.sh",
             "args" : [ "upgradedb" ]
-           }
+          }
          }
       ],
       "topology" : {
-          "maxInstances" : 1
+        "maxInstances" : 1
       },
       "logging" : {
-         "dir" : "/var/log/airflow",
-         "filename" : "airflow-SCHEDULER-${host}.log",
-         "modifiable" : true,
-         "loggingType" : "other"
+        "dir" : "/var/log/airflow",
+        "filename" : "airflow-SCHEDULER-${host}.log",
+        "modifiable" : true,
+        "loggingType" : "other"
       }
     },
     {
@@ -1033,10 +1033,10 @@
         }
       ],
       "logging" : {
-         "dir" : "/var/log/airflow",
-         "filename" : "airflow-WORKER-${host}.log",
-         "modifiable" : true,
-         "loggingType" : "other"
+        "dir" : "/var/log/airflow",
+        "filename" : "airflow-WORKER-${host}.log",
+        "modifiable" : true,
+        "loggingType" : "other"
       }
     },
     {
@@ -1115,10 +1115,10 @@
         "minInstances" : "0"
       },
       "logging" : {
-         "dir" : "/var/log/airflow",
-         "filename" : "airflow-FLOWER-${host}.log",
-         "modifiable" : true,
-         "loggingType" : "other"
+        "dir" : "/var/log/airflow",
+        "filename" : "airflow-FLOWER-${host}.log",
+        "modifiable" : true,
+        "loggingType" : "other"
       }
     },
     {
