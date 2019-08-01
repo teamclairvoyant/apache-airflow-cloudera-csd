@@ -22,7 +22,7 @@
   },
   "parcel" : {
     "repoUrl" : "https://teamclairvoyant.s3.amazonaws.com/apache-airflow/cloudera/parcels/",
-    "requiredTags" : [ "airflow", "rabbitmq" ],
+    "requiredTags" : [ "airflow" ],
     "sTags" : []
   },
   "parameters" : [
@@ -110,38 +110,11 @@
       "default" : ""
     },
     {
-      "name" : "RabbitMQ.host",
-      "label" : "RabbitMQ Host",
-      "description" : "IP address or Hostname of the node you want to deploy RabbitMQ on.",
+      "name" : "broker_url",
+      "label" : "Broker URL",
+      "description" : "Broker URL value for Celery ",
       "type" : "string",
-      "default" : "",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name" : "RabbitMQ.port",
-      "label" : "RabbitMQ Port",
-      "description" : "Port of the RabbitMQ node.",
-      "type" : "string",
-      "default" : "5672",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name" : "RabbitMQ.username",
-      "label" : "RabbitMQ Username",
-      "description" : "Username of the RabbitMQ access control.",
-      "type" : "string",
-      "default" : "rabbitmq",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name" : "RabbitMQ.password",
-      "label" : "RabbitMQ Password",
-      "description" : "Password of the RabbitMQ access control.",
-      "type" : "password",
-      "default" : "",
+      "default" : "sqla+mysql://username:password@host:3306/dbname",  
       "configurableInWizard": true,
       "required" : "true"
     },
@@ -855,6 +828,7 @@
         "dbName" : "${dbName}",
         "dbPort" : "${dbPort}",
         "dbPass" : "${dbPass}",
+        "broker_url": "${broker_url}",
         "authenticate" : "${Airflow.authenticate}",
         "AIRFLOW_USER" : "${Airflow.username}",
         "AIRFLOW_PASS" : "${Airflow.password}",
@@ -899,7 +873,7 @@
   },
   "inExpressWizard" : true,
   "icon" : "images/airflow.png",
-  "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER", "RABBITMQ"],
+  "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER"],
   "commands": [
     {
       "name": "INSTALL_AIRFLOW_INITDB_SERVCMD",
@@ -1183,34 +1157,6 @@
          "runner" : {
              "program" : "scripts/stop_airflow_worker.sh"
         }
-      },
-      "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
-         "configName" : "log.dir",
-         "modifiable" : true,
-         "loggingType" : "log4j"
-      }
-    },
-    {
-      "name" : "RABBITMQ",
-      "label" : "RabbitMQ",
-      "pluralLabel" : "RabbitMQ",
-      "startRunner" : {
-         "program" : "scripts/start_rabbitmq.sh"
-      },
-      "stopRunner" : {
-         "runner" : {
-             "program" : "scripts/stop_rabbitmq.sh"
-        }
-      },
-      "topology" : { 
-          "maxInstances" : 1 
-      },
-      "externalLink" : {
-        "name" : "rabbitmq_ui",
-        "label" : "RabbitMQ WebUI",
-        "url" : "http://${host}:15672"
       },
       "logging" : {
          "dir" : "./logs",
