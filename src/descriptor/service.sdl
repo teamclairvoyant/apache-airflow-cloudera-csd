@@ -177,20 +177,26 @@
       "default" : "/var/log/airflow"
     },
 //    {
+//      "name" : "remote_logging",
+//      "label" : "Enable Remote Logging",
+//      "description" : "Airflow can store logs remotely in AWS S3, Google Cloud Storage or Elastic Search. Users must supply an Airflow connection id that provides access to the storage location. If remote_logging is set to true, see UPDATING.md for additional configuration requirements.",
+//      "configName" : "core:remote_logging",
+//      "type" : "boolean",
+//      "default" : "false"
+//    },
+//    {
 //      "name" : "remote_base_log_folder",
 //      "label" : "Remote Base Log Folder",
-//      "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
-//      "configName" : "remote.base.log.folder",
-//      "required" : "false",
+//      "description" : "Airflow can store logs remotely in AWS S3, Google Cloud Storage or Elastic Search. Users must supply an Airflow connection id that provides access to the storage location. If remote_logging is set to true, see UPDATING.md for additional configuration requirements.",
+//      "configName" : "core:remote_base_log_folder",
 //      "type" : "string",
 //      "default" : ""
 //    },
 //    {
 //      "name" : "remote_log_conn_id",
-//      "label" : "Remote Log Conn Id",
-//      "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
-//      "configName" : "remote.log.conn.id",
-//      "required" : "false",
+//      "label" : "Remote Log Connection ID",
+//      "description" : "The Airflow connection id that provides access to the storage location.",
+//      "configName" : "core:remote_log_conn_id",
 //      "type" : "string",
 //      "default" : ""
 //    },
@@ -198,19 +204,9 @@
 //      "name" : "encrypt_s3_logs",
 //      "label" : "Encrypt S3 Logs",
 //      "description" : "Use server-side encryption for logs stored in S3.",
-//      "configName" : "encrypt.s3.logs",
-//      "required" : "true",
+//      "configName" : "core:encrypt_s3_logs",
 //      "type" : "boolean",
 //      "default" : "false"
-//    },
-//    {
-//      "name" : "s3_log_folder",
-//      "label" : "s3 log folder",
-//      "description" : "S3 log folder.",
-//      "configName" : "s3.log.folder",
-//      "required" : "false",
-//      "type" : "string",
-//      "default" : ""
 //    },
     {
       "name" : "sql_alchemy_pool_enabled",
