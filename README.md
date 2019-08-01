@@ -56,25 +56,26 @@ create_postgresql_dbs-airflow.sh --host <host_name> --user <username> --password
 ```
 
 ## Roles
-There are six roles defined in the CSD.
-1. Airflow Webserver
-2. Airflow Scheduler
-3. Airflow Worker
-4. Airflow Flower
+There are six roles available for deployment:
+
+1. Webserver
+2. Scheduler
+3. Worker
+4. Flower Webserver
 5. Kerberos
 6. Gateway
 
-Airflow Webserver: Airflow Webserver role is used to start the Airflow Web UI. Webserver role can be deployed on more than instances. However, they will be the same and can be used for backup purposes.
+Webserver: Airflow Webserver role runs the Airflow Web UI. Webserver role can be deployed on more than instances. However, they will be the same and can be used for backup purposes.
 
-Airflow Scheduler: Airflow Scheduler role is used to schedule the Airflow jobs. This is limited to one instance to reduce the risk of duplicate jobs.
+Scheduler: Airflow Scheduler role is used to schedule the Airflow jobs. This is limited to one instance to reduce the risk of duplicate jobs.
 
-Airflow Worker: Airflow Worker role picks jobs from RabbitMQ and executes them on the nodes. Multiple instances can be deployed.
+Worker: Airflow Worker role picks jobs from the Scheduler and executes them. Multiple instances can be deployed.
 
-Airflow Flower: Airflow Flower is used to monitor Celery clusters. Multiple instances are supported
+Flower Webserver: Flower Webserver role is used to monitor Celery clusters. Celery allows for the expansion of Worker  Only one instance is needed.
 
-Kerberos: Kerberos is used to enable Kerberos protocol for the Airflow. It internally executes `airflow kerberos`. An external Kerberos Distribution Center must be setup. Multiple instances can be setup for load balancing purposes.
+Kerberos: Airflow Kerberos role is used to enable Kerberos protocol for the other Airflow roles and for DAGs. This role should exist on each host with an Airflow Worker role.
 
-Gateway: The purpose of the gateway role is to write the configurations from the configurations tab into the airflow.cfg file. This is done through the update_cfg.sh file which is executed from the scriptRunner within the gateway role.
+Gateway: The purpose of the gateway role is to make the configuration available to CLI clients.
 
 ## Using the Airflow binary:
 Here are some of the examples of Airflow commands:
@@ -99,32 +100,24 @@ The DAG file has to be copied to `dags_folder` directory within all the nodes. I
 In order to enable authentication for the Airflow Web UI check the "Enable Airflow Authentication" option. You can create Airflow users using one of two options below.
 
 ### Creating Airflow Users using UI:
-1. Navigate to Airflow CSD. In the configurations page, enter the Airflow Username, Airflow Email, Airflow Password you want to create.
-2. Deploy the client configurations to create the Airflow user.
+One way to add Airflow users to the database is using the `airflow-mkuser` script.  Users can be added as follows:
+
+1. Navigate to Airflow WebUI.
+2. In the Admin dropdown choose Users.
+3. Choose Create and enter the username, email, and password you want to create.
 
 Note: Although the last created user shows up in the Airflow configurations, you can still use the previously created users.
 
-### Using mkuser.sh
-Another way to add Airflow users is using the `mkuser.sh` script.  Users can be added as follows:
-1. Navigate to the current working directory of the CSD under `/var/run/cloudera-scm-agent/process`
-2. Export PYTHONPATH and AIRFLOW_HOME environment variables. By default these are:
+### Using airflow-mkuser
+Another way to add Airflow users to the database is using the `airflow-mkuser` script.  Users can be added as follows:
 
-   PYTHONPATH:
-   ```bash
-   export PYTHONPATH=/opt/cloudera/parcels/AIRFLOW/usr/lib/python2.7/site-packages:$PYTHONPATH
-   ```
-   Airflow Home:
-   ```bash
-   export AIRFLOW_HOME=/var/lib/airflow
-   ```
-3. Within the scripts directory, you can find the `mkuser.py` file. Execute `mkuser.py` to add a user to Airflow:
-   ```bash
-   /opt/cloudera/parcels/AIRFLOW/bin/python2.7 mkuser.py <Username> <UserEmail> <Password>
-   ```
-   For example, this can be like
-   ```bash
-   /opt/cloudera/parcels/AIRFLOW/usr/bin/python2.7 mkuser.py airflowUser airflow@email.com airflowUserPassword
-   ```
+```bash
+airflow-mkuser <username> <email> <password>
+```
+For example, this can be like:
+```bash
+airflow-mkuser admin admin@localdomain password123
+```
 
 ## Building the CSD
 ```bash
