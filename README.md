@@ -123,12 +123,7 @@ airflow-mkuser admin admin@localdomain password123
 ```bash
 git clone https://github.com/teamclairvoyant/apache-airflow-cloudera-csd
 cd apache-airflow-cloudera-csd
-mvn clean package
-```
-or
-```bash
-java -jar target/validator.jar -s src/descriptor/service.sdl
-jar -cvf AIRFLOW-1.0.0.jar -C src/ .
+make dist
 ```
 
 ## Limitations:
