@@ -18,7 +18,7 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 ## Installing the CSD
 1. Download the Jar file.  [Airflow CSD](https://teamclairvoyant.s3.amazonaws.com/apache-airflow/cloudera/csd/AIRFLOW-1.8.0.jar)
 2. Copy the jar file to the `/opt/cloudera/csd` location on the Cloudera Manager server.
-3. Restart the Cloudera Manager Server service. `service cloiudera-scm-server restart`
+3. Restart the Cloudera Manager Server service. `service cloudera-scm-server restart`
 
 ## Requirements
 1. A database needs to be created.
