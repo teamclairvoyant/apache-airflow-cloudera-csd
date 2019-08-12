@@ -15,14 +15,14 @@
   "name" : "AIRFLOW",
   "label" : "Airflow",
   "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, ensure that the Airflow and RabbitMQ parcels have been activated.</span>",
-  "version" : "1.7.1.3",
+  "version" : "1.9.0",
   "runAs" : { 
     "user" : "root",
     "group" : "root"
   },
   "parcel" : {
     "repoUrl" : "https://teamclairvoyant.s3.amazonaws.com/apache-airflow/cloudera/parcels/",
-    "requiredTags" : [ "airflow" ],
+    "requiredTags" : [ "airflow"],
     "sTags" : []
   },
   "parameters" : [
@@ -114,7 +114,7 @@
       "label" : "Broker URL",
       "description" : "Broker URL value for Celery ",
       "type" : "string",
-      "default" : "sqla+mysql://username:password@host:3306/dbname",  
+      "default" : "sqla+mysql://username:password@host:3306/dbname",	
       "configurableInWizard": true,
       "required" : "true"
     },
@@ -815,7 +815,7 @@
   ],
   "gateway" : {
     "alternatives" : {
-      "name" : "airflow",
+      "name" : "airflow_conf",
       "priority" : 50,
       "linkRoot" : "/tmp/airflowTemp/"
     },
@@ -828,15 +828,11 @@
         "dbName" : "${dbName}",
         "dbPort" : "${dbPort}",
         "dbPass" : "${dbPass}",
-        "broker_url": "${broker_url}",
+	"broker_url": "${broker_url}",
         "authenticate" : "${Airflow.authenticate}",
         "AIRFLOW_USER" : "${Airflow.username}",
         "AIRFLOW_PASS" : "${Airflow.password}",
         "AIRFLOW_EMAIL" : "${Airflow.email}",
-        "RABBITMQ_HOST" : "${RabbitMQ.host}",
-        "RABBITMQ_USER" : "${RabbitMQ.username}",
-        "RABBITMQ_PASS" : "${RabbitMQ.password}",
-        "RABBITMQ_PORT" : "${RabbitMQ.port}",
         "airflow_home" : "${airflow_home}",
         "AIRFLOW_HOME" : "${airflow_home}",
         "dags_folder" : "${dags_folder}",
@@ -865,7 +861,7 @@
     "configWriter" : {
       "generators" : [
         {
-          "filename" : "airflow/airflowTemp.cfg",
+          "filename" : "airflow_conf/airflowTemp.cfg",
           "configFormat" : "properties"
         }
       ]
@@ -1030,6 +1026,11 @@
           "AIRFLOW_HOME" : "${airflow_home}"
          }
       },
+      "stopRunner" : {
+         "runner" : {
+             "program" : "scripts/stop_airflow_scheduler.sh"
+        }
+      },
       "parameters" : [
         {
           "name" : "job_heartbeat_sec",
@@ -1166,7 +1167,7 @@
          "loggingType" : "log4j"
       }
     },
-    {
+      {
       "name" : "AIRFLOW_FLOWER",
       "label" : "Flower (Optional)",
       "pluralLabel" : "Flowers",

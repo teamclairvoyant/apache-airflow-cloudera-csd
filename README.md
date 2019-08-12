@@ -5,20 +5,21 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 ## Requirements
 - A supported operating system.
 - MySQL or PostgreSQL database in which to store Airflow metadata.
-- [Airflow](https://github.com/teamclairvoyant/apache-airflow-parcels) and [RabbitMQ](https://github.com/teamclairvoyant/rabbitmq-cloudera-parcel) parcels need to be installed.
+- [Airflow](https://github.com/teamclairvoyant/apache-airflow-parcels)
 
 ### Currently Supported Versions of Airflow
 - Airflow 1.7.1.3
 - Airflow 1.8.0
+- Airflow 1.9.0
 
 ### Currently Supported Operating Systems
 - CentOS 6 & 7
 - RHEL 6 & 7
 
 ## Installing the CSD
-1. Download the Jar file.  [Airflow CSD](https://teamclairvoyant.s3.amazonaws.com/apache-airflow/cloudera/csd/AIRFLOW-1.8.0.jar)
+1. Download the Jar file.  [Airflow CSD](http://archive.clairvoyantsoft.com/airflow/parcels/latest/AIRFLOW-<Airflow Version>.jar)
 2. Copy the jar file to the `/opt/cloudera/csd` location on the Cloudera Manager server.
-3. Restart the Cloudera Manager Server service. `service cloiudera-scm-server restart`
+3. Restart the Cloudera Manager Server service. `service cloudera-scm-server restart`
 
 ## Requirements
 1. A database needs to be created.
@@ -61,18 +62,15 @@ There are seven roles defined in the CSD.
 1. Airflow Webserver
 2. Airflow Scheduler
 3. Airflow Worker
-4. RabbitMQ
-5. Airflow Flower
-6. Kerberos
-7. Gateway
+4. Airflow Flower
+5. Kerberos
+6. Gateway
 
 Airflow Webserver: Airflow Webserver role is used to start the Airflow Web UI. Webserver role can be deployed on more than instances. However, they will be the same and can be used for backup purposes.
 
 Airflow Scheduler: Airflow Scheduler role is used to schedule the Airflow jobs. This is limited to one instance to reduce the risk of duplicate jobs.
 
 Airflow Worker: Airflow Worker role picks jobs from RabbitMQ and executed them on the nodes. Multiple instances can be deployed.
-
-RabbitMQ: RabbitMQ role facilitates the use of RabbitMQ as the messaging broker. Currently the number of roles is limited to 1.
 
 Airflow Flower: Airflow Flower is used to monitor  celery clusters. Multiple instances are supported
 
@@ -149,7 +147,7 @@ jar -cvf AIRFLOW-1.0.0.jar -C src/ .
 4. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
 
 ## Future work:
-1. RabbitMQ needs to installed in Cluster Mode.
+1. Build RabbitMQ parcel.
 2. Test Database connection.
 3. Add the support for more Airflow user authentication methods.
 

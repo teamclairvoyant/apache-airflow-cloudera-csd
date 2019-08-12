@@ -32,6 +32,8 @@ if [ "$dbType" == "mysql" ]; then
 elif [ "$dbType" == "postgresql" ]; then
     sql_alchemy_conn="postgresql+psycopg2://${dbUser}:${dbPass}@${dbHost}:${dbPort}/${dbName}"
 fi
+
+echo $sql_alchemy_conn
    
 # Updating airflow.cfg
 
@@ -94,4 +96,4 @@ echo "export PATH=${AIRFLOW_DIR}/bin:\$PATH" >> /usr/bin/airflow-mkuser
 echo "${AIRFLOW_DIR}/bin/mkuser.sh \$@" >> /usr/bin/airflow-mkuser
 
 
-echo "Airflow configurations updated." 
+echo "update.cfg script ends" 
