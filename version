@@ -1,2 +1,3 @@
 #!/bin/bash
+# Prints out the CSD version that is built by the Makefile.
 printf 2.2.0

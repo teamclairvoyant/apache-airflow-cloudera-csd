@@ -125,6 +125,7 @@ git clone https://github.com/teamclairvoyant/apache-airflow-cloudera-csd
 cd apache-airflow-cloudera-csd
 make dist
 ```
+Update the `version` file before running `make dist` if creating a new release.
 
 ## Limitations:
 1. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
