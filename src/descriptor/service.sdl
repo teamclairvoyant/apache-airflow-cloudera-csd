@@ -10,896 +10,510 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-// Copyright Clairvoyant 2018
+// Copyright 2018 Clairvoyant, LLC.
 {
   "name" : "AIRFLOW",
   "label" : "Airflow",
-  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, ensure that the Airflow and RabbitMQ parcels have been activated.</span>",
-  "version" : "1.7.1.3",
-  "runAs" : { 
+  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, ensure that the Airflow parcel has been activated.</span>",
+  "version" : "{{ version }}",
+  "runAs" : {
     "user" : "root",
     "group" : "root"
   },
   "parcel" : {
-    "repoUrl" : "https://teamclairvoyant.s3.amazonaws.com/apache-airflow/cloudera/parcels/",
-    "requiredTags" : [ "airflow", "rabbitmq" ],
+    "repoUrl" : "http://archive.clairvoyantsoft.com/airflow/parcels/{{ parcel_version }}/",
+    "requiredTags" : [ "airflow" ],
     "sTags" : []
   },
   "parameters" : [
     {
-      "name": "dbType",
-      "label": "Database Type",
-      "description": "Type of the database for the Airflow to use.",
-      "type": "string_enum",
-      "default": "mysql",
-      "configurableInWizard": true,
-      "validValues" : [ "postgresql", "mysql"],
-      "required" : "true"
-    },
-    {
-      "name": "dbHost",
-      "label": "Database Host",
-      "description": "IP address or hostname of the host where the database has to be installed or already installed.",
-      "type": "string",
-      "default": "",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name": "dbPort",
-      "label": "Database port",
-      "description": "Database port to connect to the database.",
-      "type": "string",
-      "default": "3306",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name": "dbName",
-      "label": "Database Name",
-      "description": "Database to be used by Airflow.",
-      "type": "string",
-      "default": "airflow",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name": "dbUser",
-      "label": "Database Username",
-      "description": "Username of the database.",
-      "type": "string",
-      "default": "",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name": "dbPass",
-      "label": "Database Password",
-      "description": "Password of the above username to access the database.",
-      "type": "password",
-      "default": "",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name" : "Airflow.authenticate",
-      "label" : "Enable Airflow Authentication",
-      "description" : "Enable Airflow authentication.",
-      "type" : "boolean",
-      "default" : "false"
-    },
-    {
-      "name" : "Airflow.username",
-      "label" : "Airflow Username (Only to create Airflow User)",
-      "description" : "Name of the Airflow user to create.",
-      "type" : "string",
-      "default" : ""
-    },
-    {
-      "name" : "Airflow.email",
-      "label" : "Email of the Airflow user",
-      "description" : "Email of the Airflow user.",
-      "type" : "string",
-      "default" : ""
-    },
-    {
-      "name" : "Airflow.password",
-      "label" : "Airflow Password",
-      "description" : "Password of the Airflow user.",
-      "type" : "password",
-      "default" : ""
-    },
-    {
-      "name" : "RabbitMQ.host",
-      "label" : "RabbitMQ Host",
-      "description" : "IP address or Hostname of the node you want to deploy RabbitMQ on.",
-      "type" : "string",
-      "default" : "",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name" : "RabbitMQ.port",
-      "label" : "RabbitMQ Port",
-      "description" : "Port of the RabbitMQ node.",
-      "type" : "string",
-      "default" : "5672",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name" : "RabbitMQ.username",
-      "label" : "RabbitMQ Username",
-      "description" : "Username of the RabbitMQ access control.",
-      "type" : "string",
-      "default" : "rabbitmq",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name" : "RabbitMQ.password",
-      "label" : "RabbitMQ Password",
-      "description" : "Password of the RabbitMQ access control.",
-      "type" : "password",
-      "default" : "",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
-      "name" : "keytab",
-      "label" : "Keytab",
-      "description" : "Location of keytab file.",
-      "type" : "string",
-      "default" : ""
-    },
-    {
-      "name" : "reinit_frequency",
-      "label" : "Reinit Frequency",
-      "description" : "Frequency of tickets.",
-      "type" : "string",
-      "default" : ""
-    },
-    {
-      "name" : "principal",
-      "label" : "Principal",
-      "description" : "Kerberos Principal.",
-      "type" : "string",
-      "default" : ""
-    },
-    {
-      "name" : "expose_config",
-      "label" : "Expose Config",
-      "description" : "Expose the configuration file in the web server.",
-      "configName" : "expose.config",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : "false",
-      "configurableInWizard": true
-    },
-    {
-      "name" : "load_examples",
-      "label" : "Load Examples",
-      "description" : "Whether to load the examples that ship with Airflow. It's good to get started, but you probably want to set this to False in a production environment.",
-      "type" : "boolean",
-      "default" : "false",
-      "configurableInWizard": true,
-      "required" : "true"
-    },
-    {
       "name" : "airflow_home",
       "label" : "Airflow Home",
-      "description" : "The home folder for Airflow.",
-      "configName" : "airflow.home",
-      "required" : "true",
+      "description" : "The home directory for Airflow.",
+      "configName" : "AIRFLOW_HOME",
       "type" : "string",
       "default" : "/var/lib/airflow",
+      "required" : true,
       "configurableInWizard": true
     },
     {
       "name" : "dags_folder",
       "label" : "Dags Folder",
-      "description" : "The folder where your Airflow pipelines live, most likely a subfolder in a code repository.",
-      "configName" : "dags.folder",
-      "required" : "true",
+      "description" : "The directory where your Airflow pipelines live, most likely a subfolder in a code repository.",
+      "configName" : "core:dags_folder",
       "type" : "string",
-      "default" : "/var/lib/airflow/dags"
+      "default" : "/var/lib/airflow/dags",
+      "required" : true
     },
     {
-      "name" : "base_log_folder",
-      "label" : "Base Log Folder",
-      "description" : "The folder where Airflow should store its log files.",
-      "configName" : "base.log.folder",
-      "required" : "true",
+      "name" : "plugins_folder",
+      "label" : "Plugins Folder",
+      "description" : "The directory where your Airflow plugins are stored.",
+      "configName" : "core:plugins_folder",
       "type" : "string",
-      "default" : "/var/log/airflow",
+      "default" : "/var/lib/airflow/plugins",
+      "required" : true
+    },
+    {
+      "name": "database_type",
+      "label": "Database Type",
+      "description": "Type of database used for Airflow.",
+      "configName" : "DB_TYPE",
+      "type": "string_enum",
+      "validValues" : [ "MySQL", "PostgreSQL", "SQLite3" ],
+      "default": "MySQL",
+      "required" : true,
       "configurableInWizard": true
     },
     {
-      "name" : "remote_base_log_folder",
-      "label" : "Remote Base Log Folder",
-      "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
-      "configName" : "remote.base.log.folder",
-      "required" : "false",
-      "type" : "string",
-      "default" : ""
+      "name": "database_host",
+      "label": "Airflow Database Host",
+      "description": "Name of host where the Airflow database is running. Not necessary for SQLite3.",
+      "configName" : "DB_HOST",
+      "type": "string",
+      "default": "",
+      "configurableInWizard": true
     },
     {
-      "name" : "remote_log_conn_id",
-      "label" : "Remote Log Conn Id",
-      "description" : "Airflow can store logs remotely in AWS S3 or Google Cloud Storage. Users must supply a remote location RL (starting with either 's3://...' or 'gs://...') and an Airflow connection id that provides access to the storage location.",
-      "configName" : "remote.log.conn.id",
-      "required" : "false",
-      "type" : "string",
-      "default" : ""
+      "name": "database_port",
+      "label": "Database port",
+      "description": "Port on host where the Airflow database is running. Not necessary for SQLite3.",
+      "configName" : "DB_PORT",
+      "type": "port",
+      "default": "3306",
+      "configurableInWizard": true
     },
     {
-      "name" : "encrypt_s3_logs",
-      "label" : "Encrypt S3 Logs",
-      "description" : "Use server-side encryption for logs stored in S3.",
-      "configName" : "encrypt.s3.logs",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : "false"
+      "name": "database_name",
+      "label": "Database Name",
+      "description": "Name of the Airflow database.",
+      "configName" : "DB_NAME",
+      "type": "string",
+      "default": "airflow",
+      "configurableInWizard": true
     },
     {
-      "name" : "s3_log_folder",
-      "label" : "s3 log folder",
-      "description" : "S3 log folder.",
-      "configName" : "s3.log.folder",
-      "required" : "false",
-      "type" : "string",
-      "default" : ""
+      "name": "database_username",
+      "label": "Database Username",
+      "description": "The username to use to log into the Airflow database. Not necessary for SQLite3.",
+      "configName" : "DB_USER",
+      "type": "string",
+      "default": "airflow",
+      "configurableInWizard": true
+    },
+    {
+      "name": "database_password",
+      "label": "Database Password",
+      "description": "Password for Airflow database. Not necessary for SQLite3.",
+      "configName" : "DB_PASS",
+      "type": "password",
+      "default": "",
+      "configurableInWizard": true
     },
     {
       "name" : "executor",
       "label" : "Executor",
       "description" : "The executor class that Airflow should use. Choices include SequentialExecutor, LocalExecutor, CeleryExecutor.",
-      "configName" : "executor",
-      "required" : "true",
+      "configName" : "core:executor",
+      "type" : "string_enum",
+      "validValues" : [ "SequentialExecutor", "LocalExecutor", "CeleryExecutor" ],
+      "default" : "LocalExecutor"
+    },
+    {
+      "name" : "celery_broker",
+      "label" : "Celery Broker",
+      "description" : "Which message transport to use as a Celery broker.",
+      "configName" : "CELERY_BROKER",
+      "type" : "string_enum",
+      "validValues" : [ "RabbitMQ", "Redis", "AmazonSQS" ],
+      "default" : "RabbitMQ"
+    },
+    {
+      "name" : "celery_broker_host",
+      "label" : "Celery Broker Host",
+      "description" : "Name of host where the Celery Broker is running. Only used with core:executor=CeleryExecutor and CELERY_BROKER=RabbitMQ.",
+      "configName" : "CELERY_BROKER_HOST",
       "type" : "string",
-      "default" : "CeleryExecutor"
+      "default" : ""
+    },
+    {
+      "name" : "celery_broker_port",
+      "label" : "Celery Broker Port",
+      "description" : "Port on the host where the Celery Broker is running. RabbitMQ is 5672 and Redis is 6379. Only used with core:executor=CeleryExecutor and CELERY_BROKER=RabbitMQ.",
+      "configName" : "CELERY_BROKER_PORT",
+      "type" : "string",
+      "default" : ""
+    },
+    {
+      "name" : "celery_broker_username",
+      "label" : "Celery Broker Username",
+      "description": "Username used to authenticate with the Celery Broker. Only used core:executor=CeleryExecutor and CELERY_BROKER=RabbitMQ.",
+      "configName" : "CELERY_BROKER_USER",
+      "type" : "string",
+      "default" : ""
+    },
+    {
+      "name" : "celery_broker_password",
+      "label" : "Celery Broker Password",
+      "description" : "Password used to authenticate with the Celery Broker. Only used with core:executor=CeleryExecutor and CELERY_BROKER=RabbitMQ.",
+      "configName" : "CELERY_BROKER_PASS",
+      "type" : "password",
+      "default" : ""
+    },
+    {
+      "name" : "load_examples",
+      "label" : "Load Examples",
+      "description" : "Whether to load the examples that ship with Airflow. It's good to get started, but you probably want to set this to False in a production environment.",
+      "configName" : "core:load_examples",
+      "type" : "boolean",
+      "default" : "false"
+    },
+    {
+      "name" : "base_log_folder",
+      "label" : "Base Log Folder",
+      "description" : "The folder where Airflow should store its log files.",
+      "configName" : "core:base_log_folder",
+      "type" : "string",
+      "default" : "/var/log/airflow"
+    },
+//    {
+//      "name" : "remote_logging",
+//      "label" : "Enable Remote Logging",
+//      "description" : "Airflow can store logs remotely in AWS S3, Google Cloud Storage or Elastic Search. Users must supply an Airflow connection id that provides access to the storage location. If remote_logging is set to true, see UPDATING.md for additional configuration requirements.",
+//      "configName" : "core:remote_logging",
+//      "type" : "boolean",
+//      "default" : "false"
+//    },
+//    {
+//      "name" : "remote_base_log_folder",
+//      "label" : "Remote Base Log Folder",
+//      "description" : "Airflow can store logs remotely in AWS S3, Google Cloud Storage or Elastic Search. Users must supply an Airflow connection id that provides access to the storage location. If remote_logging is set to true, see UPDATING.md for additional configuration requirements.",
+//      "configName" : "core:remote_base_log_folder",
+//      "type" : "string",
+//      "default" : ""
+//    },
+//    {
+//      "name" : "remote_log_conn_id",
+//      "label" : "Remote Log Connection ID",
+//      "description" : "The Airflow connection id that provides access to the storage location.",
+//      "configName" : "core:remote_log_conn_id",
+//      "type" : "string",
+//      "default" : ""
+//    },
+//    {
+//      "name" : "encrypt_s3_logs",
+//      "label" : "Encrypt S3 Logs",
+//      "description" : "Use server-side encryption for logs stored in S3.",
+//      "configName" : "core:encrypt_s3_logs",
+//      "type" : "boolean",
+//      "default" : "false"
+//    },
+    {
+      "name" : "sql_alchemy_pool_enabled",
+      "label" : "SQL Alchemy Pool Enabled",
+      "description" : "If SqlAlchemy should pool database connections.",
+      "configName" : "core:sql_alchemy_pool_enabled",
+      "type" : "boolean",
+      "default" : true
     },
     {
       "name" : "sql_alchemy_pool_size",
       "label" : "SQL Alchemy Pool Size",
       "description" : "The SqlAlchemy pool size is the maximum number of database connections in the pool.",
-      "configName" : "sql.alchemy.pool.size",
-      "required" : "true",
-      "type" : "string",
-      "default" : "5"
+      "configName" : "core:sql_alchemy_pool_size",
+      "type" : "long",
+      "default" : 5
     },
     {
       "name" : "sql_alchemy_pool_recycle",
       "label" : "SQL Alchemy Pool Recycle",
       "description" : "The SqlAlchemy pool recycle is the number of seconds a connection can be idle in the pool before it is invalidated. This config does not apply to sqlite.",
-      "configName" : "sql.alchemy.pool.recycle",
-      "required" : "true",
-      "type" : "string",
-      "default" : "3600"
+      "configName" : "core:sql_alchemy_pool_recycle",
+      "type" : "long",
+      "default" : 1800,
+      "unit" : "seconds"
+    },
+    {
+      "name" : "sql_alchemy_reconnect_timeout",
+      "label" : "SQL Alchemy Pool Recycle",
+      "description" : "How many seconds to retry re-establishing a DB connection after disconnects. Setting this to 0 disables retries.",
+      "configName" : "core:sql_alchemy_reconnect_timeout",
+      "type" : "long",
+      "default" : 300,
+      "unit" : "seconds"
     },
     {
       "name" : "parallelism",
       "label" : "parallelism",
       "description" : "The amount of parallelism as a setting to the executor. This defines the max number of task instances that should run simultaneously on this Airflow installation.",
-      "configName" : "parallelism",
-      "required" : "true",
-      "type" : "string",
-      "default" : "32"
+      "configName" : "core:parallelism",
+      "type" : "long",
+      "default" : 8
     },
     {
       "name" : "dag_concurrency",
       "label" : "Dag Concurrency",
       "description" : "The number of task instances allowed to run concurrently by the scheduler.",
-      "configName" : "dag.concurrency",
-      "required" : "true",
-      "type" : "string",
-      "default" : "16"
+      "configName" : "core:dag_concurrency",
+      "type" : "long",
+      "default" : 4
     },
     {
       "name" : "dags_are_paused_at_creation",
       "label" : "Dags Are Paused At Creation",
-      "description" : "Are DAGs paused by default at creation.",
-      "configName" : "dags.are.paused.at.creation",
-      "required" : "true",
+      "description" : "Are DAGs paused by default at creation time?",
+      "configName" : "core:dags_are_paused_at_creation",
       "type" : "boolean",
-      "default" : "true",
-      "configurableInWizard": true
+      "default" : true
     },
     {
       "name" : "non_pooled_task_slot_count",
       "label" : "Non Pooled Task Slot Count",
       "description" : "When not using pools, tasks are run in the 'default pool', whose size is guided by this config element.",
-      "configName" : "non.pooled.task.slot.count",
-      "required" : "true",
-      "type" : "string",
-      "default" : "128"
+      "configName" : "core:non_pooled_task_slot_count",
+      "type" : "long",
+      "default" : 128
     },
     {
       "name" : "max_active_runs_per_dag",
       "label" : "Max Active Runs Per Dag",
       "description" : "The maximum number of active DAG runs per DAG.",
-      "configName" : "max.active.runs.per.dag",
-      "required" : "true",
-      "type" : "string",
-      "default" : "16"
-    },
-    {
-      "name" : "plugins_folder",
-      "label" : "Plugins Folder",
-      "description" : "Where your Airflow plugins are stored.",
-      "configName" : "plugins.folder",
-      "required" : "true",
-      "type" : "string",
-      "default" : "/var/lib/airflow/plugins"
+      "configName" : "core:max_active_runs_per_dag",
+      "type" : "long",
+      "default" : 16
     },
     {
       "name" : "donot_pickle",
       "label" : "Do not Pickle",
       "description" : "Whether to disable pickling DAGs.",
-      "configName" : "donot.pickle",
-      "required" : "true",
+      "configName" : "core:donot_pickle",
       "type" : "boolean",
-      "default" : "false"
+      "default" : false
     },
     {
       "name" : "dagbag_import_timeout",
       "label" : "Dagbag Import timeout",
       "description" : "How long before timing out a python file import while filling the DagBag.",
-      "configName" : "dagbag.import.timeout",
-      "required" : "true",
-      "type" : "double",
+      "configName" : "core:dagbag_import_timeout",
+      "type" : "long",
       "default" : 30
     },
     {
       "name" : "task_runner",
       "label" : "Task Runner",
       "description" : "The class to use for running task instances in a subprocess.",
-      "configName" : "task.runner",
-      "required" : "true",
-      "type" : "string",
+      "configName" : "core:task_runner",
+      "type" : "string_enum",
+      "validValues" : [ "StandardTaskRunner", "BashTaskRunner", "CgroupTaskRunner" ],
       "default" : "BashTaskRunner"
     },
     {
       "name" : "default_impersonation",
       "label" : "Default Impersonation",
       "description" : "If set, tasks without a `run_as_user` argument will be run with this user. Can be used to de-elevate a sudo user running Airflow when executing tasks.",
-      "configName" : "default.impersonation",
-      "required" : "false",
+      "configName" : "core:default_impersonation",
       "type" : "string",
       "default" : ""
     },
-    {
-      "name" : "security",
-      "label" : "Security",
-      "description" : "What security module to use (for example kerberos).",
-      "configName" : "security",
-      "required" : "false",
-      "type" : "string",
-      "default" : ""
-    },
-    {
-      "name" : "unit_test_mode",
-      "label" : "Unit Test Mode",
-      "description" : "Turn unit test mode on (overwrites many configuration options with test values at runtime).",
-      "configName" : "unit.test.mode",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : "false"
-    },
+// TODO: kerberos
+//    {
+//      "name" : "security",
+//      "label" : "Security",
+//      "description" : "What security module to use (for example kerberos).",
+//      "configName" : "core:security",
+//      "type" : "string_enum",
+//      "validValues": [ "", "kerberos" ],
+//      "default" : ""
+//    },
     {
       "name" : "api_client",
       "label" : "API Client",
-      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver.",
-      "configName" : "api.client",
-      "required" : "true",
-      "type" : "string",
+      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the API running on the webserver.",
+      "configName" : "cli:api_client",
+      "type" : "string_enum",
+      "validValues" : [ "airflow.api.client.local_client", "airflow.api.client.json_client" ],
       "default" : "airflow.api.client.local_client"
     },
     {
       "name" : "endpoint_url",
       "label" : "Endpoint URL",
-      "description" : "In what way should the cli access the API. The LocalClient will use the database directly, while the json_client will use the api running on the webserver.",
-      "configName" : "endpoint.url",
-      "required" : "true",
+      "description" : "URL of the API running on the webserver.",
+      "configName" : "cli:endpoint_url",
       "type" : "string",
+// TODO: update localhost
       "default" : "http://localhost:8080"
+    },
+    {
+      "name" : "auth_backend",
+      "label" : "Enable Airflow API Authentication",
+      "description" : "Airflow authentication backend type.",
+      "configName" : "api:auth_backend",
+      "type" : "string_enum",
+      "validValues" : [ "airflow.api.auth.backend.default", "airflow.api.auth.backend.deny_all", "airflow.api.auth.backend.kerberos_auth", "airflow.contrib.auth.backends.password_auth" ],
+      "default" : "airflow.api.auth.backend.default"
+    },
+    {
+      "name" : "default_owner",
+      "label" : "Default Owner",
+      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via 'default_args'.",
+      "configName" : "operators:default_owner",
+      "type" : "string",
+      "default" : "Airflow"
     },
     {
       "name" : "default_cpus",
       "label" : "Default CPUs",
       "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`.",
-      "configName" : "default.cpus",
-      "required" : "true",
-      "type" : "double",
+      "configName" : "operators:default_cpus",
+      "type" : "long",
       "default" : 1
     },
     {
       "name" : "default_ram",
       "label" : "Default RAM",
       "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`.",
-      "configName" : "default.ram",
-      "required" : "true",
-      "type" : "double",
+      "configName" : "operators:default_ram",
+      "type" : "long",
       "default" : 512
     },
     {
       "name" : "default_disk",
       "label" : "Default Disk",
       "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`.",
-      "configName" : "default.disk",
-      "required" : "true",
-      "type" : "double",
+      "configName" : "operators:default_disk",
+      "type" : "long",
       "default" : 512
     },
     {
       "name" : "default_gpus",
       "label" : "Default GPUs",
       "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via `default_args`.",
-      "configName" : "default.gpus",
-      "required" : "true",
-      "type" : "double",
+      "configName" : "operators:default_gpus",
+      "type" : "long",
       "default" : 0
     },
     {
-      "name" : "default_owner",
-      "label" : "Default Owner",
-      "description" : "The default owner assigned to each new operator, unless provided explicitly or passed via 'default_args'.",
-      "configName" : "default.owner",
-      "required" : "true",
+      "name" : "default_hive_mapred_queue",
+      "label" : "Default Hive MapReduce Queue",
+      "description" : "The default YARN/MapReduce queue for HiveOperator tasks.",
+      "configName" : "hive:default_hive_mapred_queue",
       "type" : "string",
-      "default" : "airflow"
+      "default" : ""
     },
-    {
-      "name" : "base_url",
-      "label" : "Base URL",
-      "description" : "The base URL of your website as Airflow cannot guess what DNS name you are using. This is used in automated emails that Airflow sends to point links to the right web server.",
-      "configName" : "base.url",
-      "required" : "true",
-      "type" : "string",
-      "default" : "http://localhost:8080"    
-    },
-    {
-      "name" : "web_server_host",
-      "label" : "web.server.host",
-      "description" : "The IP specified when starting the web server.",
-      "configName" : "webserver.host",
-      "required" : "true",
-      "type" : "string",
-      "default" : "0.0.0.0"    
-    },
-    {
-      "name" : "web_server_port",
-      "label" : "Web Server Port",
-      "description" : "The port on which to run the web server.",
-      "configName" : "web.server.port",
-      "required" : "true",
-      "type" : "string",
-      "default" : "8080"
-    },
-    {
-      "name" : "web_server_ssl_cert",
-      "label" : "Web server ssl cert",
-      "description" : "Paths to the SSL certificate and key for the web server. When both are provided SSL will be enabled. This does not change the web server port.",
-      "configName" : "web.server.ssl.cert",
-      "required" : "false",
-      "type" : "string",
-      "default" : ""    
-    },
-    {
-      "name" : "web_server_ssl_key",
-      "label" : "Web server ssl key",
-      "description" : "Paths to the SSL certificate and key for the web server. When both are provided SSL will be enabled. This does not change the web server port.",
-      "configName" : "web.server.ssl.key",
-      "required" : "true",
-      "type" : "string",
-      "default" : ""    
-    },
-    {
-      "name" : "web_server_worker_timeout",
-      "label" : "Web Server Worker Timeout",
-      "description" : "The time the gunicorn webserver waits before timing out on a worker.",
-      "configName" : "web.server.worker.timeout",
-      "required" : "true",
-      "type" : "double",
-      "default" : 120
-    },
-    {
-      "name" : "worker_refresh_batch_size",
-      "label" : "Worker Refresh Batch Size",
-      "description" : "Number of workers to refresh at a time. When set to 0, worker refresh is disabled. When nonzero, Airflow periodically refreshes webserver workers by bringing up new ones and killing old ones.",
-      "configName" : "worker.refresh.batch.size",
-      "required" : "true",
-      "type" : "double",
-      "default" : 1
-    },
-    {
-      "name" : "worker_refresh_interval",
-      "label" : "Worker Refresh Interval",
-      "description" : "Number of seconds to wait before refreshing a batch of workers.",
-      "configName" : "worker.refresh.interval",
-      "required" : "true",
-      "type" : "double",
-      "default" : 30
-    },
-    {
-      "name" : "workers",
-      "label" : "Number of Workers",
-      "description" : "Number of workers to run the Gunicorn web server.",
-      "configName" : "workers",
-      "required" : "true",
-      "type" : "double",
-      "default" : 4
-    },
-    {
-      "name" : "woker_class",
-      "label" : "Worker Class",
-      "description" : "The worker class gunicorn should use. Choices include sync (default), eventlet, gevent.",
-      "configName" : "worker.class",
-      "required" : "true",
-      "type" : "string",
-      "default" : "sync"
-    },
-    {
-      "name" : "filter_by_owner",
-      "label" : "Filter By Owner",
-      "description" : "Filter the list of DAGs by owner name (requires authentication to be enabled).",
-      "configName" : "filter.by.owner",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : "false"
-    },
-    {
-      "name" : "owner_mode",
-      "label" : "Owner Mode",
-      "description" : "Filtering mode. Choices include user (default) and ldapgroup. Ldap group filtering requires using the ldap backend.",
-      "configName" : "owner.mode",
-      "required" : "true",
-      "type" : "string",
-      "default" : "user"
-    },
-    {
-      "name" : "dag_orientation",
-      "label" : "Dag Orientation",
-      "description" : "Default DAG orientation. Valid values are: LR (Left->Right), TB (Top->Bottom), RL (Right->Left), BT (Bottom->Top).",
-      "configName" : "dag.orientation",
-      "required" : "true",
-      "type" : "string",
-      "default" : "LR"
-    },
-    {
-      "name" : "demo_mode",
-      "label" : "Demo Mode",
-      "description" : "Puts the webserver in demonstration mode; blurs the names of Operators for privacy.",
-      "configName" : "demo.mode",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : false
-    },
-    {
-      "name" : "log_fetch_timeout_sec",
-      "label" : "Log fetch timeout sec",
-      "description" : "The amount of time (in secs) webserver will wait for initial handshake while fetching logs from other worker machine.",
-      "configName" : "log.fetch.timeout.sec",
-      "required" : "true",
-      "type" : "double",
-      "default" : 5
-    },
-    {
-      "name" : "hide_paused_dags_by_default",
-      "label" : "Hide paused DAGs by default",
-      "description" : "TBy default, the webserver shows paused DAGs. Flip this to hide paused DAGs by default.",
-      "configName" : "hide.paused.dags.by.default",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : false
-    },
-    {
-      "name" : "email_backend",
-      "label" : "Email Backend",
-      "description" : "Backend for Email.",
-      "configName" : "email.backend",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow.utils.email.send_email_smtp"
-    },
+//    {
+//      "name" : "email_backend",
+//      "label" : "Email Backend",
+//      "description" : "Backend class for Email.",
+//      "configName" : "email:email_backend",
+//      "type" : "string",
+//      "default" : "airflow.utils.email.send_email_smtp"
+//    },
     {
       "name" : "smtp_host",
       "label" : "SMTP Host",
       "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
-      "configName" : "smtp.host",
-      "required" : "true",
+      "configName" : "smtp:smtp_host",
       "type" : "string",
       "default" : "localhost"
     },
     {
       "name" : "smtp_port",
       "label" : "SMTP Port",
-      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
-      "configName" : "smtp.port",
-      "required" : "true",
+      "description" : "Port on host where the SMTP server is running.",
+      "configName" : "smtp:smtp_port",
       "type" : "port",
       "default" : 25
     },
     {
-      "name" : "smtp_starttls",
-      "label" : "SMTP STARTTLS",
-      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
-      "configName" : "smtp.starttls",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : "true"
-    },
-    {
-      "name" : "smtp_ssl",
-      "label" : "SMTP SSL",
-      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
-      "configName" : "smtp.ssl",
-      "required" : "true",
-      "type" : "boolean",
-      "default" : "false"
-    },
-    {
-      "name" : "smtp_user",
-      "label" : "SMTP User",
-      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
-      "configName" : "smtp.user",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow"
-    },
-    {
-      "name" : "smtp_password",
-      "label" : "SMTP Password",
-      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
-      "configName" : "smtp.password",
-      "required" : "true",
-      "type" : "password",
-      "default" : "airflow"
-    },
-    {
       "name" : "smtp_mail_from",
       "label" : "SMTP Mail From",
-      "description" : "If you want Airflow to send emails on retries, failure, and you want to use the airflow.utils.email.send_email_smtp function, you have to configure an SMTP server here.",
-      "configName" : "smtp.mail.from",
-      "required" : "true",
+      "description" : "Emails will appear to come from this address.",
+      "configName" : "smtp:smtp_mail_from",
       "type" : "string",
-      "default" : "airflow@airflow.com"
+      "default" : "airflow@localhost"
     },
     {
-      "name" : "celery_app_name",
-      "label" : "Celery App Name",
-      "description" : "The app name that will be used by celery.",
-      "configName" : "celery.app.name",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow.executors.celery_executor"
-    },
-    {
-      "name" : "celery_concurrency",
-      "label" : "Celery Concurrency",
-      "description" : "The concurrency that will be used when starting workers with the Airflow worker command. This defines the number of task instances that a worker will take, so size up your workers based on the resources on your worker box and the nature of your tasks.",
-      "configName" : "celery.concurrency",
-      "required" : "true",
-      "type" : "double",
-      "default" : 16
-    },
-    {
-      "name" : "worker_log_server_port",
-      "label" : "Worker Log Server Port",
-      "description" : "When you start an Airflow worker, Airflow starts a tiny web server subprocess to serve the workers local log files to the Airflow main web server, who then builds pages and sends them to users. This defines the port on which the logs are served. It needs to be unused, and open visible from the main web server to connect into the workers.",
-      "configName" : "worker.log.server.port",
-      "required" : "true",
-      "type" : "port",
-      "default" : 8793
-    },
-    {
-      "name" : "flower_port",
-      "label" : "Flower Port",
-      "description" : "Celery Flower is a sweet UI for Celery. Airflow has a shortcut to start it `airflow flower`. This defines the port that Celery Flower runs on.",
-      "configName" : "flower.port",
-      "required" : "true",
-      "type" : "port",
-      "default" : 5555
-    },
-    {
-      "name" : "default_queue",
-      "label" : "Default Queue",
-      "description" : "Default queue that tasks get assigned to and that worker listen on.",
-      "configName" : "default.queue",
-      "required" : "true",
-      "type" : "string",
-      "default" : "default"
-    },
-    {
-      "name" : "job_heartbeat_sec",
-      "label" : "Job Heartbeat Seconds",
-      "description" : "Task instances listen for external kill signal (when you clear tasks from the CLI or the UI), this defines the frequency at which they should listen (in seconds).",
-      "configName" : "job.heartbeat.sec",
-      "required" : "true",
-      "type" : "double",
-      "default" : 5
-    },
-    {
-      "name" : "scheduler_heartbeat_sec",
-      "label" : "Scheduler Heartbeat Seconds",
-      "description" : "The scheduler constantly tries to trigger new tasks (look at the scheduler section in the docs for more information). This defines how often the scheduler should run (in seconds).",
-      "configName" : "scheduler.heartbeat.sec",
-      "required" : "true",
-      "type" : "double",
-      "default" : 5
-    },
-    {
-      "name" : "run_duration",
-      "label" : "Run duration",
-      "description" : "After how much time should the scheduler terminate in seconds -1 indicates to run continuously (see also num_runs).",
-      "configName" : "run.duration",
-      "required" : "true",
-      "type" : "string",
-      "default" : "-1"
-    },
-    {
-      "name" : "min_file_process_interval",
-      "label" : "Min file process interval",
-      "description" : "After how much time a new DAGs should be picked up from the filesystem.",
-      "configName" : "min.file.process.interval",
-      "required" : "true",
-      "type" : "double",
-      "default" : 0
-    },
-    {
-      "name" : "dag_dir_list_interval",
-      "label" : "Dag dir list interval",
-      "description" : "DAG dirirectory listing interval.",
-      "configName" : "dag.dir.list.interval",
-      "required" : "true",
-      "type" : "double",
-      "default" : 300
-    },
-    {
-      "name" : "print_stats_interval",
-      "label" : "Print stats interval",
-      "description" : "How often should stats be printed to the logs.",
-      "configName" : "print.stats.interval",
-      "required" : "true",
-      "type" : "double",
-      "default" : 30
-    },
-    {
-      "name" : "child_process_log_directory",
-      "label" : "Child process log directory",
-      "description" : "Child process log directory.",
-      "configName" : "child.process.log.directory",
-      "required" : "true",
-      "type" : "string",
-      "default" : "/var/lib/airflow/logs/scheduler"
-    },
-    {
-      "name" : "scheduler_zombie_task_threshold",
-      "label" : "Scheduler zombie task threshold",
-      "description" : "Local task jobs periodically heartbeat to the DB. If the job has not heartbeat in this many seconds, the scheduler will mark the associated task instance as failed and will re-schedule the task.",
-      "configName" : "scheduler.zombie.task.threshold",
-      "required" : "true",
-      "type" : "double",
-      "default" : 300
-    },
-    {
-      "name" : "catchup_by_default",
-      "label" : "Catchup by default",
-      "description" : "Turn off scheduler catchup by setting this to False. Default behavior is unchanged and Command Line Backfills still work, but the scheduler will not do scheduler catchup if this is False, however it can be set on a per DAG basis in the DAG definition (catchup).",
-      "required" : "true",
+      "name" : "smtp_starttls",
+      "label" : "SMTP STARTTLS",
+      "description" : "Use STARTTLS.",
+      "configName" : "smtp:smtp_starttls",
       "type" : "boolean",
       "default" : true
     },
     {
-      "name" : "statsd_on",
-      "label" : "statsd on",
-      "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
-      "required" : "true",
+      "name" : "smtp_ssl",
+      "label" : "SMTP SSL",
+      "description" : "Force a TLS/SSL connection to the SMTP server.",
+      "configName" : "smtp:smtp_ssl",
       "type" : "boolean",
       "default" : false
     },
     {
-      "name" : "statsd_host",
-      "label" : "statsd_host",
-      "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
-      "required" : "true",
+      "name" : "smtp_user",
+      "label" : "SMTP User",
+      "description" : "Username for SMTP auth.",
+      "configName" : "smtp:smtp_user",
       "type" : "string",
-      "default" : "localhost"
-    },    
-    {
-      "name" : "statsd_port",
-      "label" : "statsd port",
-      "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
-      "required" : "true",
-      "type" : "port",
-      "default" : 8125
-    },    
-    {
-      "name" : "statsd_prefix",
-      "label" : "statsd prefix",
-      "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
-      "required" : "true",
-      "type" : "string",
-      "default" : "airflow"
+      "default" : ""
     },
     {
-      "name" : "max_threads",
-      "label" : "Max Threads",
-      "description" : "The scheduler can run multiple threads in parallel to schedule DAGs. This defines how many threads will run. However Airflow will never use more threads than the amount of CPU cores available.",
-      "configName" : "max.threads",
-      "required" : "true",
-      "type" : "double",
-      "default" : 2
-    },    
+      "name" : "smtp_password",
+      "label" : "SMTP Password",
+      "description" : "Password for SMTP auth.",
+      "configName" : "smtp:smtp_password",
+      "type" : "password",
+      "default" : ""
+    },
     {
-      "name" : "ccache",
-      "label" : "ccache",
-      "description" : "Kerberos ccache location.",
-      "required" : "true",
-      "type" : "string",
-      "default" : "/tmp/airflow_krb5_ccach"
+      "name" : "fernet_key",
+      "label" : "Fernet Key",
+      "description" : "Secret key used to encrypt connection passwords in the database. Generate via: /opt/cloudera/parcels/AIRFLOW/bin/python -c 'from cryptography.fernet import Fernet;key=Fernet.generate_key().decode();print key'",
+      "configName" : "core:fernet_key",
+      "type" : "password",
+      "default" : ""
     }
   ],
   "gateway" : {
     "alternatives" : {
-      "name" : "airflow",
+      "name" : "airflow-conf",
       "priority" : 50,
-      "linkRoot" : "/tmp/airflowTemp/"
+      "linkRoot" : "/etc/airflow"
     },
     "scriptRunner" : {
-      "program" : "scripts/update_cfg.sh",
+      "program" : "scripts/control.sh",
+      "args" : [ "client" ],
       "environmentVariables" : {
-        "dbType" : "${dbType}",
-        "dbHost" : "${dbHost}",
-        "dbUser" : "${dbUser}",
-        "dbName" : "${dbName}",
-        "dbPort" : "${dbPort}",
-        "dbPass" : "${dbPass}",
-        "authenticate" : "${Airflow.authenticate}",
-        "AIRFLOW_USER" : "${Airflow.username}",
-        "AIRFLOW_PASS" : "${Airflow.password}",
-        "AIRFLOW_EMAIL" : "${Airflow.email}",
-        "RABBITMQ_HOST" : "${RabbitMQ.host}",
-        "RABBITMQ_USER" : "${RabbitMQ.username}",
-        "RABBITMQ_PASS" : "${RabbitMQ.password}",
-        "RABBITMQ_PORT" : "${RabbitMQ.port}",
-        "airflow_home" : "${airflow_home}",
-        "AIRFLOW_HOME" : "${airflow_home}",
-        "dags_folder" : "${dags_folder}",
-        "base_log_folder" : "${base_log_folder}",
-        "remote_base_log_folder" : "${remote_base_log_folder}",
-        "remote_log_conn_id" : "${remote_log_conn_id}",
-        "encrypt_s3_logs" : "${encrypt_s3_logs}",
-        "executor" : "${executor}",
-        "sql_alchemy_pool_size" : "${sql_alchemy_pool_size}",
-        "sql_alchemy_pool_recycle" : "${sql_alchemy_pool_recycle}",
-        "parallelism" : "${parallelism}",
-        "dag_concurrency" : "${dag_concurrency}",
-        "dags_are_paused_at_creation" : "${dags_are_paused_at_creation}",
-        "non_pooled_task_slot_count" :  "${non_pooled_task_slot_count}",
-        "max_active_runs_per_dag" : "${max_active_runs_per_dag}",
-        "default_owner" : "${default_owner}",
-        "web_server_port" : "${web_server_port}",
-        "security" : "${security}",
-        "keytab" : "${keytab}",
-        "reinit_frequency" : "${reinit_frequency}",
-        "principal" : "${principal}",
-        "expose_config" : "${expose_config}",
-        "load_examples" : "${load_examples}"
+        "AIRFLOW_CONFIG" : "/etc/airflow/conf/airflow.cfg",
+        "DB_PASS" : "${database_password}",
+        "CELERY_BROKER_PASS" : "${celery_broker_password}"
       }
     },
     "configWriter" : {
+      "auxConfigGenerators" : [
+        {
+          "filename" : "airflow-conf/airflow-env.sh",
+          "sourceFilename" : "aux/airflow-env.sh"
+        },
+        {
+          "filename" : "airflow-conf/airflow.cfg",
+          "sourceFilename" : "aux/airflow.cfg"
+        },
+        {
+          "filename" : "airflow-conf/unittests.cfg",
+          "sourceFilename" : "aux/unittests.cfg"
+        }
+      ],
       "generators" : [
         {
-          "filename" : "airflow/airflowTemp.cfg",
+          "filename" : "airflow-conf/airflow.properties",
           "configFormat" : "properties"
         }
       ]
     }
   },
-  "inExpressWizard" : true,
+  "inExpressWizard" : false,
   "icon" : "images/airflow.png",
-  "rolesWithExternalLinks" : ["AIRFLOW_WEBSERVER", "RABBITMQ"],
+  "rolesWithExternalLinks" : [ "AIRFLOW_WEBSERVER", "AIRFLOW_FLOWER" ],
   "commands": [
     {
       "name": "INSTALL_AIRFLOW_INITDB_SERVCMD",
@@ -910,11 +524,11 @@
       "runMode": "single"
     },
     {
-      "name": "INSTALL_AIRFLOW_RESETDB_SERVCMD",
-      "label": "Resets Airflow DB",
-      "description": "Resets the Airflow DB.",
+      "name": "INSTALL_AIRFLOW_UPGRADEDB_SERVCMD",
+      "label": "Upgrade Airflow DB",
+      "description": "Upgrades the Airflow DB.",
       "roleName": "AIRFLOW_SCHEDULER",
-      "roleCommand": "airflow_resetdb_scheduler_rolecmd",
+      "roleCommand": "airflow_upgradedb_scheduler_rolecmd",
       "runMode": "single"
     }
   ],
@@ -931,118 +545,237 @@
       "label" : "WebServer",
       "pluralLabel" : "WebServers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_webserver.sh",
-         "environmentVariables" : {
-          "AIRFLOW_HOME" : "${airflow_home}"
-         }
+        "program" : "scripts/control.sh",
+        "args" : [ "start_webserver" ]
+// TODO
+//        "args" : [ "start_webserver", "-l ${log_dir}/airflow-WEBSERVER-${host}.log" ]
+      },
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
       },
       "parameters" : [
         {
-          "name" : "web_server_port",
-          "label" : "Web Server Port",
-          "description" : "The port on which to run the web server.",
-          "configName" : "web.server.port",
-          "required" : "true",
-          "type" : "port",
-          "default" : 8080
+          "name" : "authenticate",
+          "label" : "Enable Airflow Webserver Authentication",
+          "description" : "Enable Airflow authentication.",
+          "configName" : "webserver:authenticate",
+          "type" : "boolean",
+          "default" : false
+        },
+        {
+          "name" : "auth_backend",
+          "label" : "Enable Airflow Webserver Authentication",
+          "description" : "Airflow authentication backend type.",
+          "configName" : "webserver:auth_backend",
+          "type" : "string_enum",
+          "validValues" : [ "airflow.contrib.auth.backends.password_auth" ],
+//          "validValues" : [ "airflow.contrib.auth.backends.password_auth", "airflow.contrib.auth.backends.ldap_auth" ],
+          "default" : "airflow.contrib.auth.backends.password_auth"
         },
         {
           "name" : "expose_config",
           "label" : "Expose Config",
           "description" : "Expose the configuration file in the web server.",
-          "configName" : "expose.config",
-          "required" : "true",
+          "configName" : "webserver:expose_config",
           "type" : "boolean",
-          "default" : "false"
-        },
-        {
-          "name" : "Airflow.authenticate",
-          "label" : "Enable Airflow Authentication",
-          "description" : "Enable Airflow Authentication.",
-          "configName" : "airflow.authenticate",
-          "required" : "true",
-          "type" : "boolean",
-          "default" : "false"
+          "default" : false
         },
         {
           "name" : "base_url",
-          "label" : "Base URL",
+          "label" : "Webserver Base URL",
           "description" : "The base URL of your website as Airflow cannot guess what DNS name you are using. This is used in automated emails that Airflow sends to point links to the right web server.",
-          "configName" : "base.url",
-          "required" : "true",
+          "configName" : "webserver:base_url",
           "type" : "string",
-          "default" : "http://localhost:8080"    
+// TODO: update localhost
+          "default" : "http://localhost:8080"
         },
         {
           "name" : "web_server_host",
-          "label" : "web.server.host",
+          "label" : "Webserver Address",
           "description" : "The IP specified when starting the web server.",
-          "configName" : "webserver.host",
-          "required" : "true",
+          "configName" : "webserver:web_server_host",
           "type" : "string",
-          "default" : "0.0.0.0"    
+          "default" : "0.0.0.0"
+        },
+        {
+          "name" : "web_server_port",
+          "label" : "Web Server Port",
+          "description" : "The port on which to run the web server.",
+          "configName" : "webserver:web_server_port",
+          "type" : "port",
+          "default" : 8080
+        },
+        {
+          "name" : "web_server_ssl_cert",
+          "label" : "Webserver SSL/TLS Cert",
+          "description" : "Path to the PEM formatted SSL certificate for the web server. When both cert and key are provided, SSL will be enabled. This does not change the web server port.",
+          "configName" : "webserver:web_server_ssl_cert",
+          "type" : "string",
+          "default" : ""
+        },
+        {
+          "name" : "web_server_ssl_key",
+          "label" : "Webserver SSL/TLS Key",
+          "description" : "Path to the PEM formatted unencrypted SSL key for the web server. When both cewrt and key are provided, SSL will be enabled. This does not change the web server port.",
+          "configName" : "webserver:web_server_ssl_key",
+          "type" : "string",
+          "default" : ""
+        },
+        {
+          "name" : "web_server_master_timeout",
+          "label" : "Web Server Master Timeout",
+          "description" : "Number of seconds the webserver waits before killing gunicorn master that doesn't respond.",
+          "configName" : "webserver:web_server_master_timeout",
+          "type" : "long",
+          "default" : 120,
+          "unit" : "seconds"
         },
         {
           "name" : "web_server_worker_timeout",
           "label" : "Web Server Worker Timeout",
           "description" : "The time the gunicorn webserver waits before timing out on a worker.",
-          "configName" : "web.server.worker.timeout",
-          "required" : "true",
-          "type" : "double",
-          "default" : 120
+          "configName" : "webserver:web_server_worker_timeout",
+          "type" : "long",
+          "default" : 120,
+          "unit" : "seconds"
+        },
+        {
+          "name" : "worker_refresh_batch_size",
+          "label" : "Worker Refresh Batch Size",
+          "description" : "Number of workers to refresh at a time. When set to 0, worker refresh is disabled. When nonzero, Airflow periodically refreshes webserver workers by bringing up new ones and killing old ones.",
+          "configName" : "webserver:worker_refresh_batch_size",
+          "type" : "long",
+          "default" : 1
+        },
+        {
+          "name" : "worker_refresh_interval",
+          "label" : "Worker Refresh Interval",
+          "description" : "Number of seconds to wait before refreshing a batch of workers.",
+          "configName" : "webserver:worker_refresh_interval",
+          "type" : "long",
+          "default" : 30,
+          "unit" : "seconds"
         },
         {
           "name" : "workers",
           "label" : "Number of Workers",
           "description" : "Number of workers to run the Gunicorn web server.",
-          "configName" : "workers",
-          "required" : "true",
-          "type" : "double",
+          "configName" : "webserver:workers",
+          "type" : "long",
           "default" : 4
         },
         {
           "name" : "woker_class",
           "label" : "Worker Class",
           "description" : "The worker class gunicorn should use. Choices include sync (default), eventlet, gevent.",
-          "configName" : "worker.class",
-          "required" : "true",
-          "type" : "string",
+          "configName" : "webserver:worker_class",
+          "type" : "string_enum",
+          "validValues" : [ "sync", "eventlet", "gevent" ],
           "default" : "sync"
         },
         {
           "name" : "filter_by_owner",
           "label" : "Filter By Owner",
           "description" : "Filter the list of DAGs by owner name (requires authentication to be enabled).",
-          "configName" : "filter.by.owner",
-          "required" : "true",
+          "configName" : "webserver:filter_by_owner",
           "type" : "boolean",
-          "default" : "false"
+          "default" : false
+        },
+        {
+          "name" : "owner_mode",
+          "label" : "Owner Mode",
+          "description" : "Filtering mode. Choices include user (default) and ldapgroup. Ldap group filtering requires using the ldap backend.",
+          "configName" : "webserver:owner_mode",
+          "type" : "string_enum",
+          "validValues" : [ "user", "ldapgroup" ],
+          "default" : "user"
+        },
+        {
+          "name" : "dag_default_view",
+          "label" : "Dag Default View",
+          "description" : "Default DAG view.  Valid values are: tree, graph, duration, gantt, landing_times.",
+          "configName" : "webserver:dag_default_view",
+          "type" : "string_enum",
+          "validValues" : [ "tree", "graph", "duration", "gantt", "landing_times" ],
+          "default" : "tree"
+        },
+        {
+          "name" : "dag_orientation",
+          "label" : "Dag Orientation",
+          "description" : "Default DAG orientation. Valid values are: LR (Left->Right), TB (Top->Bottom), RL (Right->Left), BT (Bottom->Top).",
+          "configName" : "webserver:dag_orientation",
+          "type" : "string_enum",
+          "validValues" : [ "LR", "TB", "RL", "BT" ],
+          "default" : "LR"
+        },
+//        {
+//          "name" : "demo_mode",
+//          "label" : "Demo Mode",
+//          "description" : "Puts the webserver in demonstration mode; blurs the names of Operators for privacy.",
+//          "configName" : "webserver:demo_mode",
+//          "type" : "boolean",
+//          "default" : false
+//        },
+        {
+          "name" : "log_fetch_timeout_sec",
+          "label" : "Log fetch timeout sec",
+          "description" : "The amount of time (in secs) webserver will wait for initial handshake while fetching logs from other worker machine.",
+          "configName" : "webserver:log_fetch_timeout_sec",
+          "type" : "long",
+          "default" : 5,
+          "unit" : "seconds"
+        },
+        {
+          "name" : "hide_paused_dags_by_default",
+          "label" : "Hide paused DAGs by default",
+          "description" : "By default, the webserver shows paused DAGs. Flip this to hide paused DAGs by default.",
+          "configName" : "webserver:hide_paused_dags_by_default",
+          "type" : "boolean",
+          "default" : false
+        },
+        {
+          "name" : "secret_key",
+          "label" : "Secret Key",
+          "description" : "Secret key used to run your flask app.",
+          "configName" : "webserver:secret_key",
+          "type" : "password",
+          "initType" : "randomBase64"
         }
-      ],
-      "generators" : [
-          {
-            "filename" : "sample_xml_file.xml",
-            "configFormat" : "hadoop_xml"
-          }
       ],
       "externalLink" : {
         "name" : "webserver_web_ui",
         "label" : "Airflow WebUI",
-        "url" : "http://${host}:${web_server_port}"
+        "url" : "http://${host}:${web_server_port}",
+        "secureUrl" : "https://${host}:${web_server_port}"
       },
-      "topology" : { 
-          "minInstances" : 1 
+      "topology" : {
+        "minInstances" : 1
       },
       "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
-         "configName" : "log.dir",
-         "modifiable" : true,
-         "loggingType" : "log4j"
+        "dir" : "/var/log/airflow",
+        "filename" : "airflow-WEBSERVER-${host}.log",
+        "modifiable" : true,
+        "loggingType" : "other"
       },
+// TODO
       "stopRunner" : {
-         "runner" : {
-             "program" : "scripts/stop_airflow_webserver.sh"
+        "runner" : {
+          "program" : "scripts/stop_airflow_webserver.sh"
         }
       }
     },
@@ -1051,122 +784,186 @@
       "label" : "Scheduler",
       "pluralLabel" : "Schedulers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_scheduler.sh",
-         "environmentVariables" : {
-          "AIRFLOW_HOME" : "${airflow_home}"
-         }
+        "program" : "scripts/control.sh",
+        "args" : [ "start_scheduler" ]
+      },
+// TODO
+      "stopRunner" : {
+        "runner" : {
+          "program" : "scripts/stop_airflow_scheduler.sh"
+        }
+      },
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
       },
       "parameters" : [
         {
           "name" : "job_heartbeat_sec",
-          "label" : "Job Heartbeat Seconds",
+          "label" : "Job Heartbeat",
           "description" : "Task instances listen for external kill signal (when you clear tasks from the CLI or the UI), this defines the frequency at which they should listen (in seconds).",
-          "configName" : "job.heartbeat.sec",
-          "required" : "true",
-          "type" : "double",
-          "default" : 5
+          "configName" : "scheduler:job_heartbeat_sec",
+          "type" : "long",
+          "default" : 5,
+          "unit" : "seconds"
         },
         {
           "name" : "scheduler_heartbeat_sec",
-          "label" : "Scheduler Heartbeat Seconds",
+          "label" : "Scheduler Heartbeat",
           "description" : "The scheduler constantly tries to trigger new tasks (look at the scheduler section in the docs for more information). This defines how often the scheduler should run (in seconds).",
-          "configName" : "scheduler.heartbeat.sec",
-          "required" : "true",
-          "type" : "double",
-          "default" : 5
+          "configName" : "scheduler:scheduler_heartbeat_sec",
+          "type" : "long",
+          "default" : 5,
+          "unit" : "seconds"
         },
+        {
+          "name" : "run_duration",
+          "label" : "Run Duration",
+          "description" : "After how much time should the scheduler terminate in seconds. -1 indicates to run continuously (see also num_runs).",
+          "configName" : "scheduler:run_duration",
+          "type" : "long",
+          "default" : -1,
+          "unit" : "seconds"
+        },
+        {
+          "name" : "min_file_process_interval",
+          "label" : "Minimum File Process Interval",
+          "description" : "After how much time in seconds should a new DAG be picked up from the filesystem.",
+          "configName" : "scheduler:min_file_process_interval",
+          "type" : "long",
+          "default" : 0,
+          "unit" : "seconds"
+        },
+        {
+          "name" : "dag_dir_list_interval",
+          "label" : "Dag Directory List Interval",
+          "description" : "How often (in seconds) to scan the DAGs directory for new files. Default to 5 minutes.",
+          "configName" : "scheduler:dag_dir_list_interval",
+          "type" : "long",
+          "default" : 300,
+          "unit" : "seconds"
+        },
+        {
+          "name" : "print_stats_interval",
+          "label" : "Print stats interval",
+          "description" : "How often should stats be printed to the logs.",
+          "configName" : "scheduler:print_stats_interval",
+          "type" : "long",
+          "default" : 30,
+          "unit" : "seconds"
+        },
+        {
+          "name" : "child_process_log_directory",
+          "label" : "Child process log directory",
+          "description" : "Child process log directory.",
+          "configName" : "scheduler:child_process_log_directory",
+          "type" : "string",
+          "default" : "/var/lib/airflow/logs/scheduler"
+        },
+        {
+          "name" : "scheduler_zombie_task_threshold",
+          "label" : "Scheduler zombie task threshold",
+          "description" : "Local task jobs periodically heartbeat to the DB. If the job has not heartbeat in this many seconds, the scheduler will mark the associated task instance as failed and will re-schedule the task.",
+          "configName" : "scheduler:scheduler_zombie_task_threshold",
+          "type" : "long",
+          "default" : 300,
+          "unit" : "seconds"
+        },
+        {
+          "name" : "catchup_by_default",
+          "label" : "Catchup by default",
+          "description" : "Turn off scheduler catchup by setting this to False. Default behavior is unchanged and Command Line Backfills still work, but the scheduler will not do scheduler catchup if this is False, however it can be set on a per DAG basis in the DAG definition (catchup).",
+          "configName" : "scheduler:catchup_by_default",
+          "type" : "boolean",
+          "default" : true
+        },
+//        {
+//          "name" : "statsd_on",
+//          "label" : "statsd on",
+//          "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
+//          "configName" : "scheduler:statsd_on",
+//          "type" : "boolean",
+//          "default" : false
+//        },
+//        {
+//          "name" : "statsd_host",
+//          "label" : "statsd_host",
+//          "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
+//          "configName" : "scheduler:statsd_host",
+//          "type" : "string",
+//          "default" : "localhost"
+//        },
+//        {
+//          "name" : "statsd_port",
+//          "label" : "statsd port",
+//          "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
+//          "configName" : "scheduler:statsd_port",
+//          "type" : "port",
+//          "default" : 8125
+//        },
+//        {
+//          "name" : "statsd_prefix",
+//          "label" : "statsd prefix",
+//          "description" : "Statsd (https://github.com/etsy/statsd) integration settings.",
+//          "configName" : "scheduler:statsd_prefix",
+//          "type" : "string",
+//          "default" : "airflow"
+//        },
         {
           "name" : "max_threads",
           "label" : "Max Threads",
           "description" : "The scheduler can run multiple threads in parallel to schedule DAGs. This defines how many threads will run. However Airflow will never use more threads than the amount of CPU cores available.",
-          "configName" : "max.threads",
-          "required" : "true",
-          "type" : "double",
+          "configName" : "scheduler:max_threads",
+          "type" : "long",
           "default" : 2
-        },
-        {
-          "name" : "master",
-          "label" : "Mesos Master",
-          "description" : "Mesos master address which MesosExecutor will connect to.",
-          "configName" : "master",
-          "required" : "true",
-          "type" : "string",
-          "default" : "localhost:5050"
-        },
-        {
-          "name" : "framework_name",
-          "label" : "Framework Name",
-          "description" : "The framework name which Airflow scheduler will register itself as on Mesos.",
-          "configName" : "framework.name",
-          "required" : "true",
-          "type" : "string",
-          "default" : "Airflow"
-        },
-        {
-          "name" : "task_cpu",
-          "label" : "Task CPU",
-          "description" : "Number of CPU cores required for running one task instance using 'airflow run <dag_id> <task_id> <execution_date> --local -p <pickle_id>' command on a Mesos slave.",
-          "configName" : "task.cpu",
-          "required" : "true",
-          "type" : "double",
-          "default" : 1
-        },
-        {
-          "name" : "task_memory",
-          "label" : "Task Memory",
-          "description" : "Memory in MB required for running one task instance using 'airflow run <dag_id> <task_id> <execution_date> --local -p <pickle_id>' command on a Mesos slave.",
-          "configName" : "task.memory",
-          "required" : "true",
-          "type" : "double",
-          "default" : 256
-        },
-        {
-          "name" : "checkpoint",
-          "label" : "Memos Checkpoint",
-          "description" : "Enable framework checkpointing for Mesos. See http://mesos.apache.org/documentation/latest/slave-recovery/.",
-          "configName" : "checkpoint",
-          "required" : "true",
-          "type" : "boolean",
-          "default" : false
         }
       ],
       "commands" : [
         {
-         "name" : "airflow_initdb_scheduler_rolecmd",
-         "label" : "Intialize Airflow DB",
-         "description" : "This command will initialize the Airflow Database.",
-         "expectedExitCodes" : [0],
-         "requiredRoleState" : "stopped",
-         "commandRunner" : {
-           "program" : "scripts/airflow_initdb.sh",
-           "environmentVariables" : {
-            "AIRFLOW_HOME" : "${airflow_home}"
-           }
-         }
+          "name" : "airflow_initdb_scheduler_rolecmd",
+          "label" : "Intialize Airflow DB",
+          "description" : "This command will initialize the Airflow Database.",
+          "expectedExitCodes" : [0],
+          "requiredRoleState" : "stopped",
+          "commandRunner" : {
+            "program" : "scripts/control.sh",
+            "args" : [ "initdb" ]
+          }
         },
         {
-         "name" : "airflow_resetdb_scheduler_rolecmd",
-         "label" : "Reset Airflow DB",
-         "description" : "This command will reset the Airflow Database.",
-         "expectedExitCodes" : [0],
-         "requiredRoleState" : "stopped",
-         "commandRunner" : {
-             "program" : "scripts/airflow_resetdb.sh",
-             "environmentVariables" : {
-              "AIRFLOW_HOME" : "${airflow_home}"
-             }
-           }
+          "name" : "airflow_upgradedb_scheduler_rolecmd",
+          "label" : "Upgrade Airflow DB",
+          "description" : "This command will upgrade the Airflow Database.",
+          "expectedExitCodes" : [0],
+          "requiredRoleState" : "stopped",
+          "commandRunner" : {
+            "program" : "scripts/control.sh",
+            "args" : [ "upgradedb" ]
+          }
          }
       ],
-      "topology" : { 
-          "maxInstances" : 1 
+      "topology" : {
+        "maxInstances" : 1
       },
       "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
-         "configName" : "log.dir",
-         "modifiable" : true,
-         "loggingType" : "log4j"
+        "dir" : "/var/log/airflow",
+        "filename" : "airflow-SCHEDULER-${host}.log",
+        "modifiable" : true,
+        "loggingType" : "other"
       }
     },
     {
@@ -1174,91 +971,217 @@
       "label" : "Worker",
       "pluralLabel" : "Workers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_worker.sh",
-         "environmentVariables" : {
-          "AIRFLOW_HOME" : "${airflow_home}"
-         }
+        "program" : "scripts/control.sh",
+        "args" : [ "start_worker" ]
       },
+// TODO
       "stopRunner" : {
-         "runner" : {
-             "program" : "scripts/stop_airflow_worker.sh"
+        "runner" : {
+          "program" : "scripts/stop_airflow_worker.sh"
         }
       },
-      "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
-         "configName" : "log.dir",
-         "modifiable" : true,
-         "loggingType" : "log4j"
-      }
-    },
-    {
-      "name" : "RABBITMQ",
-      "label" : "RabbitMQ",
-      "pluralLabel" : "RabbitMQ",
-      "startRunner" : {
-         "program" : "scripts/start_rabbitmq.sh"
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
       },
-      "stopRunner" : {
-         "runner" : {
-             "program" : "scripts/stop_rabbitmq.sh"
+      "parameters" : [
+//        {
+//          "name" : "celery_app_name",
+//          "label" : "Celery App Name",
+//          "description" : "The app name that will be used by celery.",
+//          "configName" : "celery:celery_app_name",
+//          "type" : "string",
+//          "default" : "airflow.executors.celery_executor"
+//        },
+        {
+          "name" : "worker_concurrency",
+          "label" : "Celery Concurrency",
+          "description" : "The concurrency that will be used when starting workers with the Airflow worker command. This defines the number of task instances that a worker will take, so size up your workers based on the resources on your worker box and the nature of your tasks.",
+          "configName" : "celery:worker_concurrency",
+          "type" : "long",
+          "default" : 16
+        },
+        {
+          "name" : "worker_log_server_port",
+          "label" : "Worker Log Server Port",
+          "description" : "When you start an Airflow worker, Airflow starts a tiny web server subprocess to serve the workers local log files to the Airflow main web server, who then builds pages and sends them to users. This defines the port on which the logs are served. It needs to be unused, and open visible from the main web server to connect into the workers.",
+          "configName" : "celery:worker_log_server_port",
+          "type" : "port",
+          "default" : 8793
+        },
+        {
+          "name" : "default_queue",
+          "label" : "Default Queue",
+          "description" : "Default queue that tasks get assigned to and that worker listen on.",
+          "configName" : "celery:default_queue",
+          "type" : "string",
+          "default" : "default"
         }
-      },
-      "topology" : { 
-          "maxInstances" : 1 
-      },
-      "externalLink" : {
-        "name" : "rabbitmq_ui",
-        "label" : "RabbitMQ WebUI",
-        "url" : "http://${host}:15672"
-      },
+      ],
       "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
-         "configName" : "log.dir",
-         "modifiable" : true,
-         "loggingType" : "log4j"
+        "dir" : "/var/log/airflow",
+        "filename" : "airflow-WORKER-${host}.log",
+        "modifiable" : true,
+        "loggingType" : "other"
       }
     },
     {
       "name" : "AIRFLOW_FLOWER",
-      "label" : "Flower (Optional)",
-      "pluralLabel" : "Flowers",
+      "label" : "Flower Webserver",
+      "pluralLabel" : "Flower Webservers",
       "startRunner" : {
-         "program" : "scripts/start_airflow_flower.sh",
-         "environmentVariables" : {
-          "AIRFLOW_HOME" : "${airflow_home}"
-         }
+        "program" : "scripts/control.sh",
+        "args" : [ "start_flower" ]
+      },
+// TODO
+      "stopRunner" : {
+        "runner" : {
+          "program" : "scripts/stop_airflow_flower.sh"
+        }
+      },
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
       },
       "parameters" : [
+        {
+          "name" : "flower_host",
+          "label" : "Flower Address",
+          "description" : "Celery Flower is a UI for Celery. This defines the IP that Celery Flower listens on.",
+          "configName" : "celery:flower_host",
+          "type" : "string",
+          "default" : "0.0.0.0"
+        },
+        {
+          "name" : "flower_url_prefix",
+          "label" : "Flower URL Prefix",
+          "description" : "Celery Flower is a UI for Celery. This defines the URL prefix. Example: flower_url_prefix = /flower",
+          "configName" : "celery:flower_url_prefix",
+          "type" : "string",
+          "default" : ""
+        },
         {
           "name" : "flower_port",
           "label" : "Flower Port",
           "description" : "Celery Flower is a UI for Celery. This defines the port that Celery Flower runs on.",
-          "configName" : "flower.port",
-          "required" : "true",
+          "configName" : "celery:flower_port",
           "type" : "port",
           "default" : 5555
+        },
+        {
+          "name" : "flower_basic_auth",
+          "label" : "Flower Basic Auth",
+          "description" : "Securing Flower with basic authentication. Accepts user:password pairs separated by a comma. Example: flower_basic_auth = user1:password1,user2:password2",
+          "configName" : "celery:flower_basic_auth",
+          "type" : "string",
+          "default" : ""
         }
       ],
+      "externalLink" : {
+        "name" : "flower_web_ui",
+        "label" : "Flower WebUI",
+        "url" : "http://${host}:${flower_port}",
+        "secureUrl" : "https://${host}:${flower_port}"
+      },
       "topology": {
         "minInstances" : "0"
       },
       "logging" : {
-         "dir" : "./logs",
-         "filename" : "airflow-master-${host}.log",
-         "configName" : "log.dir",
-         "modifiable" : true,
-         "loggingType" : "log4j"
+        "dir" : "/var/log/airflow",
+        "filename" : "airflow-FLOWER-${host}.log",
+        "modifiable" : true,
+        "loggingType" : "other"
       }
     },
     {
       "name" : "KERBEROS",
-      "label" : "Kerberos (Optional)",
+      "label" : "Kerberos",
       "pluralLabel" : "Kerberos",
       "startRunner" : {
-        "program" : "scripts/start_kerberos.sh"
+        "program" : "scripts/control.sh",
+        "args" : [ "start_kerberos" ]
       },
+      "configWriter" : {
+        "auxConfigGenerators" : [
+          {
+            "filename" : "airflow-env.sh",
+            "sourceFilename" : "aux/airflow-env.sh"
+          },
+          {
+            "filename" : "airflow.cfg",
+            "sourceFilename" : "aux/airflow.cfg"
+          }
+        ],
+        "generators" : [
+          {
+            "filename" : "airflow.properties",
+            "configFormat" : "properties"
+          }
+        ]
+      },
+      "parameters" : [
+        {
+          "name" : "principal",
+          "label" : "Kerberos Principal",
+          "description" : "Kerberos Principal. It gets augmented with the FQDN.",
+          "configName" : "kerberos:principal",
+          "type" : "string",
+          "default" : "airflow"
+        },
+        {
+          "name" : "keytab",
+          "label" : "Kerberos Keytab",
+          "description" : "Location of keytab file.",
+          "configName" : "kerberos:keytab",
+          "type" : "string",
+          "default" : "/var/lib/airflow/airflow.keytab"
+        },
+        {
+          "name" : "reinit_frequency",
+          "label" : "Kerberos Reinit Frequency",
+          "description" : "Frequency of Kerberos ticket renewal.",
+          "configName" : "kerberos:reinit_frequency",
+          "type" : "long",
+          "default" : 3600,
+          "unit" : "seconds"
+//        },
+//        {
+//          "name" : "ccache",
+//          "label" : "Kerberos Ccache",
+//          "description" : "Kerberos ccache location.",
+//          "configName" : "kerberos:ccache",
+//          "type" : "string",
+//          "default" : "/tmp/airflow_krb5_ccache"
+        }
+      ],
       "topology" : {
         "minInstances" : "0"
       }
