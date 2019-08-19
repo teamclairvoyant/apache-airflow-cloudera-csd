@@ -10,7 +10,7 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 
 ### Currently Supported Versions of Airflow
 - Airflow 1.9.0
-- Airflow 1.10.0
+- Airflow 1.10.3
 
 ### Currently Supported Operating Systems
 - CentOS/RHEL 6 & 7
