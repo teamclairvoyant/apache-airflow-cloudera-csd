@@ -14,7 +14,7 @@
 {
   "name" : "AIRFLOW",
   "label" : "Airflow",
-  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, ensure that the Airflow and RabbitMQ parcels have been activated.</span>",
+  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, please ensure that the Airflow parcel is activated and RabbitMQ is installed</span>",
   "version" : "1.9.0",
   "runAs" : { 
     "user" : "root",

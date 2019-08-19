@@ -5,19 +5,19 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 ## Requirements
 - A supported operating system.
 - MySQL or PostgreSQL database in which to store Airflow metadata.
+- RabbitMQ
 - [Airflow](https://github.com/teamclairvoyant/apache-airflow-parcels)
 
 ### Currently Supported Versions of Airflow
-- Airflow 1.7.1.3
-- Airflow 1.8.0
 - Airflow 1.9.0
+- Airflow 1.10.0
 
 ### Currently Supported Operating Systems
 - CentOS 6 & 7
 - RHEL 6 & 7
 
 ## Installing the CSD
-1. Download the Jar file.  [Airflow CSD](http://archive.clairvoyantsoft.com/airflow/parcels/latest/AIRFLOW-{airflow_version}.jar)
+1. Download the Jar file.  [Airflow 1.9.0 CSD](https://s3-us-west-2.amazonaws.com/archive.clairvoyantsoft.com/airflow/csd/AIRFLOW-1.9.0.jar)
 2. Copy the jar file to the `/opt/cloudera/csd` location on the Cloudera Manager server.
 3. Restart the Cloudera Manager Server service. `service cloudera-scm-server restart`
 
@@ -141,10 +141,9 @@ jar -cvf AIRFLOW-1.0.0.jar -C src/ .
 ```
 
 ## Limitations:
-1. Number of RabbitMQ instances is limited to 1.
-2. The IP address of the RabbitMQ instance has to be manually entered during installation configuration.
-3. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
-4. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
+1. The IP address of the RabbitMQ instance has to be manually entered during installation configuration.
+2. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
+3. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
 
 ## Future work:
 1. Build RabbitMQ parcel.
@@ -156,10 +155,6 @@ jar -cvf AIRFLOW-1.0.0.jar -C src/ .
 ### Markup already exists Error:
 
 Upon many deployments, you may face an error called 'Markup file already exists' while trying to stop a role and the process never stops. In that case, stop the process using the "Abort" command and navigate to `/var/run/cloudera-scm-agent/process` and delete all the `GracefulRoleStopRunner` directories.
-
-### Lag in DAG Execution:
-
-Occasionally, we experienced some delay in DAG execution. We are working to fix this.
 
 ## Resources:
 1. https://github.com/cloudera/cm_ext/wiki/The-Structure-of-a-CSD
