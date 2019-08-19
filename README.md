@@ -5,9 +5,12 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 ## Requirements
 - A supported operating system.
 - MySQL or PostgreSQL database in which to store Airflow metadata.
+- RabbitMQ
+- [Airflow Parcel](https://github.com/teamclairvoyant/apache-airflow-parcels)
 
 ### Currently Supported Versions of Airflow
-- Airflow 1.10
+- Airflow 1.9.0
+- Airflow 1.10.3
 
 ### Currently Supported Operating Systems
 - CentOS/RHEL 6 & 7
@@ -56,6 +59,7 @@ create_postgresql_dbs-airflow.sh --host <host_name> --user <username> --password
 ```
 
 ## Roles
+
 There are six roles available for deployment:
 
 1. Webserver
@@ -132,18 +136,15 @@ Update the `version` file before running `make dist` if creating a new release.
 2. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
 
 ## Future work:
-1. Test Database connection.
-2. Add the support for more Airflow user authentication methods.
+1. Build RabbitMQ parcel.
+2. Test Database connection.
+3. Add the support for more Airflow user authentication methods.
 
 ## Known Errors:
 
 ### Markup already exists Error:
 
 Upon many deployments, you may face an error called 'Markup file already exists' while trying to stop a role and the process never stops. In that case, stop the process using the "Abort" command and navigate to `/var/run/cloudera-scm-agent/process` and delete all the `GracefulRoleStopRunner` directories.
-
-### Lag in DAG Execution:
-
-Occasionally, we experienced some delay in DAG execution. We are working to fix this.
 
 ## Resources:
 1. https://github.com/teamclairvoyant/apache-airflow-parcels

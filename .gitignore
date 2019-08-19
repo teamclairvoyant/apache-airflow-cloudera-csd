@@ -1,2 +1,6 @@
 target/
 *.swp
+.gitignore
+*.DS_Store
+.idea/*
+*.iml

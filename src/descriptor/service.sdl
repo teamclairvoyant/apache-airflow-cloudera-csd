@@ -14,7 +14,7 @@
 {
   "name" : "AIRFLOW",
   "label" : "Airflow",
-  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, ensure that the Airflow parcel has been activated.</span>",
+  "description" : "Airflow is a platform to programmatically author, schedule and monitor workflows.  <span class=\"error\">Before adding this service, please ensure that the Airflow parcel is activated and RabbitMQ is installed</span>",
   "version" : "{{ version }}",
   "runAs" : {
     "user" : "root",
@@ -135,6 +135,22 @@
       "configName" : "CELERY_BROKER_HOST",
       "type" : "string",
       "default" : ""
+    },
+    {
+      "name" : "Airflow.password",
+      "label" : "Airflow Password",
+      "description" : "Password of the Airflow user.",
+      "type" : "password",
+      "default" : ""
+    },
+    {
+      "name" : "broker_url",
+      "label" : "Broker URL",
+      "description" : "Broker URL value for Celery ",
+      "type" : "string",
+      "default" : "sqla+mysql://username:password@host:3306/dbname",	
+      "configurableInWizard": true,
+      "required" : "true"
     },
     {
       "name" : "celery_broker_port",
@@ -483,6 +499,40 @@
       "program" : "scripts/control.sh",
       "args" : [ "client" ],
       "environmentVariables" : {
+        "dbType" : "${dbType}",
+        "dbHost" : "${dbHost}",
+        "dbUser" : "${dbUser}",
+        "dbName" : "${dbName}",
+        "dbPort" : "${dbPort}",
+        "dbPass" : "${dbPass}",
+	"broker_url": "${broker_url}",
+        "authenticate" : "${Airflow.authenticate}",
+        "AIRFLOW_USER" : "${Airflow.username}",
+        "AIRFLOW_PASS" : "${Airflow.password}",
+        "AIRFLOW_EMAIL" : "${Airflow.email}",
+        "airflow_home" : "${airflow_home}",
+        "AIRFLOW_HOME" : "${airflow_home}",
+        "dags_folder" : "${dags_folder}",
+        "base_log_folder" : "${base_log_folder}",
+        "remote_base_log_folder" : "${remote_base_log_folder}",
+        "remote_log_conn_id" : "${remote_log_conn_id}",
+        "encrypt_s3_logs" : "${encrypt_s3_logs}",
+        "executor" : "${executor}",
+        "sql_alchemy_pool_size" : "${sql_alchemy_pool_size}",
+        "sql_alchemy_pool_recycle" : "${sql_alchemy_pool_recycle}",
+        "parallelism" : "${parallelism}",
+        "dag_concurrency" : "${dag_concurrency}",
+        "dags_are_paused_at_creation" : "${dags_are_paused_at_creation}",
+        "non_pooled_task_slot_count" :  "${non_pooled_task_slot_count}",
+        "max_active_runs_per_dag" : "${max_active_runs_per_dag}",
+        "default_owner" : "${default_owner}",
+        "web_server_port" : "${web_server_port}",
+        "security" : "${security}",
+        "keytab" : "${keytab}",
+        "reinit_frequency" : "${reinit_frequency}",
+        "principal" : "${principal}",
+        "expose_config" : "${expose_config}",
+        "load_examples" : "${load_examples}"
         "AIRFLOW_CONFIG" : "/etc/airflow/conf/airflow.cfg",
         "DB_PASS" : "${database_password}",
         "CELERY_BROKER_PASS" : "${celery_broker_password}"
@@ -810,6 +860,11 @@
             "configFormat" : "properties"
           }
         ]
+      },
+      "stopRunner" : {
+         "runner" : {
+             "program" : "scripts/stop_airflow_scheduler.sh"
+        }
       },
       "parameters" : [
         {
