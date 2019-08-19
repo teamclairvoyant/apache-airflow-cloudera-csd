@@ -5,19 +5,30 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 ## Requirements
 - A supported operating system.
 - MySQL or PostgreSQL database in which to store Airflow metadata.
+<<<<<<< HEAD
 - RabbitMQ
 - [Airflow Parcel](https://github.com/teamclairvoyant/apache-airflow-parcels)
 
 ### Currently Supported Versions of Airflow
 - Airflow 1.9.0
 - Airflow 1.10.0
+=======
+
+### Currently Supported Versions of Airflow
+- Airflow 1.10
+>>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 
 ### Currently Supported Operating Systems
-- CentOS 6 & 7
-- RHEL 6 & 7
+- CentOS/RHEL 6 & 7
+- Debian 8
+- Ubuntu 14.04, 16.04, & 18.04
 
 ## Installing the CSD
+<<<<<<< HEAD
 1. Download the Jar file. [Airflow 1.9.0 CSD](https://s3-us-west-2.amazonaws.com/archive.clairvoyantsoft.com/airflow/csd/AIRFLOW-1.9.0.jar)
+=======
+1. Download the Jar file.  [Airflow CSD](http://archive.clairvoyantsoft.com/airflow/csd/)
+>>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 2. Copy the jar file to the `/opt/cloudera/csd` location on the Cloudera Manager server.
 3. Restart the Cloudera Manager Server service. `service cloudera-scm-server restart`
 
@@ -58,6 +69,7 @@ create_postgresql_dbs-airflow.sh --host <host_name> --user <username> --password
 ```
 
 ## Roles
+<<<<<<< HEAD
 There are seven roles defined in the CSD.
 1. Airflow Webserver
 2. Airflow Scheduler
@@ -65,18 +77,32 @@ There are seven roles defined in the CSD.
 4. Airflow Flower
 5. Kerberos
 6. Gateway
+=======
+There are six roles available for deployment:
+>>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 
-Airflow Webserver: Airflow Webserver role is used to start the Airflow Web UI. Webserver role can be deployed on more than instances. However, they will be the same and can be used for backup purposes.
+1. Webserver
+2. Scheduler
+3. Worker
+4. Flower Webserver
+5. Kerberos
+6. Gateway
 
-Airflow Scheduler: Airflow Scheduler role is used to schedule the Airflow jobs. This is limited to one instance to reduce the risk of duplicate jobs.
+Webserver: Airflow Webserver role runs the Airflow Web UI. Webserver role can be deployed on more than instances. However, they will be the same and can be used for backup purposes.
 
-Airflow Worker: Airflow Worker role picks jobs from RabbitMQ and executed them on the nodes. Multiple instances can be deployed.
+Scheduler: Airflow Scheduler role is used to schedule the Airflow jobs. This is limited to one instance to reduce the risk of duplicate jobs.
 
+<<<<<<< HEAD
 Airflow Flower: Airflow Flower is used to monitor  celery clusters. Multiple instances are supported
+=======
+Worker: Airflow Worker role picks jobs from the Scheduler and executes them. Multiple instances can be deployed.
 
-Kerberos: Kerberos is used to enable Kerberos protocol for the Airflow. It internally executes `airflow kerberos`. An external Kerberos Distribution Center must be setup. Multiple instances can be setup for load balancing purposes.
+Flower Webserver: Flower Webserver role is used to monitor Celery clusters. Celery allows for the expansion of Worker  Only one instance is needed.
+>>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 
-Gateway: The purpose of the gateway role is to write the configurations from the configurations tab into the airflow.cfg file. This is done through the update_cfg.sh file which is executed from the scriptRunner within the gateway role.
+Kerberos: Airflow Kerberos role is used to enable Kerberos protocol for the other Airflow roles and for DAGs. This role should exist on each host with an Airflow Worker role.
+
+Gateway: The purpose of the gateway role is to make the configuration available to CLI clients.
 
 ## Using the Airflow binary:
 Here are some of the examples of Airflow commands:
@@ -101,46 +127,35 @@ The DAG file has to be copied to `dags_folder` directory within all the nodes. I
 In order to enable authentication for the Airflow Web UI check the "Enable Airflow Authentication" option. You can create Airflow users using one of two options below.
 
 ### Creating Airflow Users using UI:
-1. Navigate to Airflow CSD. In the configurations page, enter the Airflow Username, Airflow Email, Airflow Password you want to create.
-2. Deploy the client configurations to create the Airflow user.
+One way to add Airflow users to the database is using the `airflow-mkuser` script.  Users can be added as follows:
+
+1. Navigate to Airflow WebUI.
+2. In the Admin dropdown choose Users.
+3. Choose Create and enter the username, email, and password you want to create.
 
 Note: Although the last created user shows up in the Airflow configurations, you can still use the previously created users.
 
-### Using mkuser.sh
-Another way to add Airflow users is using the `mkuser.sh` script.  Users can be added as follows:
-1. Navigate to the current working directory of the CSD under `/var/run/cloudera-scm-agent/process`
-2. Export PYTHONPATH and AIRFLOW_HOME environment variables. By default these are:
+### Using airflow-mkuser
+Another way to add Airflow users to the database is using the `airflow-mkuser` script.  Users can be added as follows:
 
-   PYTHONPATH:
-   ```bash
-   export PYTHONPATH=/opt/cloudera/parcels/AIRFLOW/usr/lib/python2.7/site-packages:$PYTHONPATH
-   ```
-   Airflow Home:
-   ```bash
-   export AIRFLOW_HOME=/var/lib/airflow
-   ```
-3. Within the scripts directory, you can find the `mkuser.py` file. Execute `mkuser.py` to add a user to Airflow:
-   ```bash
-   /opt/cloudera/parcels/AIRFLOW/bin/python2.7 mkuser.py <Username> <UserEmail> <Password>
-   ```
-   For example, this can be like
-   ```bash
-   /opt/cloudera/parcels/AIRFLOW/usr/bin/python2.7 mkuser.py airflowUser airflow@email.com airflowUserPassword
-   ```
+```bash
+airflow-mkuser <username> <email> <password>
+```
+For example, this can be like:
+```bash
+airflow-mkuser admin admin@localdomain password123
+```
 
 ## Building the CSD
 ```bash
 git clone https://github.com/teamclairvoyant/apache-airflow-cloudera-csd
 cd apache-airflow-cloudera-csd
-mvn clean package
+make dist
 ```
-or
-```bash
-java -jar target/validator.jar -s src/descriptor/service.sdl
-jar -cvf AIRFLOW-1.0.0.jar -C src/ .
-```
+Update the `version` file before running `make dist` if creating a new release.
 
 ## Limitations:
+<<<<<<< HEAD
 1. The IP address of the RabbitMQ instance has to be manually entered during installation configuration.
 2. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
 3. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
@@ -149,6 +164,14 @@ jar -cvf AIRFLOW-1.0.0.jar -C src/ .
 1. Build RabbitMQ parcel.
 2. Test Database connection.
 3. Add the support for more Airflow user authentication methods.
+=======
+1. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
+2. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
+
+## Future work:
+1. Test Database connection.
+2. Add the support for more Airflow user authentication methods.
+>>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 
 ## Known Errors:
 
@@ -157,7 +180,8 @@ jar -cvf AIRFLOW-1.0.0.jar -C src/ .
 Upon many deployments, you may face an error called 'Markup file already exists' while trying to stop a role and the process never stops. In that case, stop the process using the "Abort" command and navigate to `/var/run/cloudera-scm-agent/process` and delete all the `GracefulRoleStopRunner` directories.
 
 ## Resources:
-1. https://github.com/cloudera/cm_ext/wiki/The-Structure-of-a-CSD
-2. https://github.com/cloudera/cm_ext/wiki/Service-Descriptor-Language-Reference
-3. https://github.com/cloudera/cm_csds
+1. https://github.com/teamclairvoyant/apache-airflow-parcels
+2. https://github.com/cloudera/cm_ext/wiki/The-Structure-of-a-CSD
+3. https://github.com/cloudera/cm_ext/wiki/Service-Descriptor-Language-Reference
+4. https://github.com/cloudera/cm_csds
 
