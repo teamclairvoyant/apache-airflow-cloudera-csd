@@ -6,7 +6,7 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 - A supported operating system.
 - MySQL or PostgreSQL database in which to store Airflow metadata.
 - RabbitMQ
-- [Airflow](https://github.com/teamclairvoyant/apache-airflow-parcels)
+- [Airflow Parcel](https://github.com/teamclairvoyant/apache-airflow-parcels)
 
 ### Currently Supported Versions of Airflow
 - Airflow 1.9.0
@@ -17,7 +17,7 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 - RHEL 6 & 7
 
 ## Installing the CSD
-1. Download the Jar file.  [Airflow 1.9.0 CSD](https://s3-us-west-2.amazonaws.com/archive.clairvoyantsoft.com/airflow/csd/AIRFLOW-1.9.0.jar)
+1. Download the Jar file. [Airflow 1.9.0 CSD](https://s3-us-west-2.amazonaws.com/archive.clairvoyantsoft.com/airflow/csd/AIRFLOW-1.9.0.jar)
 2. Copy the jar file to the `/opt/cloudera/csd` location on the Cloudera Manager server.
 3. Restart the Cloudera Manager Server service. `service cloudera-scm-server restart`
 
