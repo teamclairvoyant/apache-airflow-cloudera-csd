@@ -5,18 +5,12 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 ## Requirements
 - A supported operating system.
 - MySQL or PostgreSQL database in which to store Airflow metadata.
-<<<<<<< HEAD
 - RabbitMQ
 - [Airflow Parcel](https://github.com/teamclairvoyant/apache-airflow-parcels)
 
 ### Currently Supported Versions of Airflow
 - Airflow 1.9.0
 - Airflow 1.10.0
-=======
-
-### Currently Supported Versions of Airflow
-- Airflow 1.10
->>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 
 ### Currently Supported Operating Systems
 - CentOS/RHEL 6 & 7
@@ -24,11 +18,7 @@ This repository allows you to install [Apache Airflow](https://airflow.apache.or
 - Ubuntu 14.04, 16.04, & 18.04
 
 ## Installing the CSD
-<<<<<<< HEAD
-1. Download the Jar file. [Airflow 1.9.0 CSD](https://s3-us-west-2.amazonaws.com/archive.clairvoyantsoft.com/airflow/csd/AIRFLOW-1.9.0.jar)
-=======
 1. Download the Jar file.  [Airflow CSD](http://archive.clairvoyantsoft.com/airflow/csd/)
->>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 2. Copy the jar file to the `/opt/cloudera/csd` location on the Cloudera Manager server.
 3. Restart the Cloudera Manager Server service. `service cloudera-scm-server restart`
 
@@ -69,17 +59,8 @@ create_postgresql_dbs-airflow.sh --host <host_name> --user <username> --password
 ```
 
 ## Roles
-<<<<<<< HEAD
-There are seven roles defined in the CSD.
-1. Airflow Webserver
-2. Airflow Scheduler
-3. Airflow Worker
-4. Airflow Flower
-5. Kerberos
-6. Gateway
-=======
+
 There are six roles available for deployment:
->>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 
 1. Webserver
 2. Scheduler
@@ -92,13 +73,9 @@ Webserver: Airflow Webserver role runs the Airflow Web UI. Webserver role can be
 
 Scheduler: Airflow Scheduler role is used to schedule the Airflow jobs. This is limited to one instance to reduce the risk of duplicate jobs.
 
-<<<<<<< HEAD
-Airflow Flower: Airflow Flower is used to monitor  celery clusters. Multiple instances are supported
-=======
 Worker: Airflow Worker role picks jobs from the Scheduler and executes them. Multiple instances can be deployed.
 
 Flower Webserver: Flower Webserver role is used to monitor Celery clusters. Celery allows for the expansion of Worker  Only one instance is needed.
->>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 
 Kerberos: Airflow Kerberos role is used to enable Kerberos protocol for the other Airflow roles and for DAGs. This role should exist on each host with an Airflow Worker role.
 
@@ -155,23 +132,13 @@ make dist
 Update the `version` file before running `make dist` if creating a new release.
 
 ## Limitations:
-<<<<<<< HEAD
-1. The IP address of the RabbitMQ instance has to be manually entered during installation configuration.
-2. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
-3. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
+1. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
+2. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
 
 ## Future work:
 1. Build RabbitMQ parcel.
 2. Test Database connection.
 3. Add the support for more Airflow user authentication methods.
-=======
-1. After deploying configurations, there is no alert or warning that the specific roles needs to be restarted.
-2. Only 'airflow.contrib.auth.backends.password_auth' mechanism is supported for Airflow user authentication.
-
-## Future work:
-1. Test Database connection.
-2. Add the support for more Airflow user authentication methods.
->>>>>>> 11b39ebe4b384d6ad1c1735474123e5af2c8676a
 
 ## Known Errors:
 
